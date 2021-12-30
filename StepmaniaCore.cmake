@@ -22,18 +22,21 @@ set(SM_EXE_NAME "ITGmania")
 # Some OS specific helpers.
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(LINUX TRUE)
+
 else()
   set(LINUX FALSE)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set(MACOSX TRUE)
+
 else()
   set(MACOSX FALSE)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "BSD")
   set(BSD TRUE)
+
 else()
   set(BSD FALSE)
 endif()
@@ -122,6 +125,8 @@ check_symbol_exists(size_t stdlib.h HAVE_SIZE_T_STDLIB)
 check_symbol_exists(size_t stdio.h HAVE_SIZE_T_STDIO)
 check_symbol_exists(posix_fadvise fcntl.h HAVE_POSIX_FADVISE)
 
+
+
 # Checks to make it easier to work with 32-bit/64-bit builds if required.
 include(CheckTypeSize)
 check_type_size(int16_t SIZEOF_INT16_T)
@@ -190,6 +195,8 @@ endif()
 # Dependencies go here.
 include(ExternalProject)
 
+
+
 find_package(nasm)
 find_package(yasm)
 
@@ -213,6 +220,8 @@ else()
 endif()
 
 if(WIN32)
+  include_directories(${SM_EXTERN_DIR}/discord-rpc-2.0.1/include)
+  link_libraries(${SM_EXTERN_DIR}/discord-rpc-2.0.1/lib/discord-rpc.lib)
   # FFMPEG...it can be evil.
   find_library(LIB_SWSCALE
                NAMES "swscale"
