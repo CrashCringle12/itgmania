@@ -15,6 +15,8 @@ class Course;
 class Trail;
 struct HighScore;
 struct lua_State;
+
+
 /** @brief Interface to machine and memory card profiles. */
 class ProfileManager
 {
@@ -29,6 +31,10 @@ public:
 	// local profiles
 	void UnloadAllLocalProfiles();
 	void RefreshLocalProfilesFromDisk();
+	void LoadLocalProfilesByPriority();
+	void LoadLocalProfilesByRecent();
+	void LoadLocalProfilesByName(bool bAscending = true);
+
 	const Profile *GetLocalProfile( const RString &sProfileID ) const;
 	Profile *GetLocalProfile( const RString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfile(sProfileID); }
 	Profile *GetLocalProfileFromIndex( int iIndex );
@@ -58,6 +64,8 @@ public:
 	void MergeLocalProfileIntoMachine(RString const& from_id, bool skip_totals);
 	void ChangeProfileType(int index, ProfileType new_type);
 	void MoveProfilePriority(int index, bool up);
+	void MoveProfileToTop(int index);
+	void MoveProfileSorted(int index, bool bAscending);
 
 	// General data
 	void IncrementToastiesCount( PlayerNumber pn );

@@ -112,6 +112,18 @@ enum BackgroundFitMode
 	BackgroundFitMode_Invalid
 };
 
+// Profile sort types exist for sorting the list of profiles.
+// Guest profiles at the top, test at the bottom.
+enum ProfileSortType
+{
+	ProfileSortType_Priority,
+	ProfileSortType_Recent,
+	ProfileSortType_Alphabetical,
+	ProfileSortType_Alphabetical_DESC,
+	NUM_ProfileSortType,
+	ProfileSortType_Invalid
+};
+
 /** @brief Holds user-chosen preferences that are saved between sessions. */
 class PrefsManager
 {
@@ -270,6 +282,10 @@ public:
 	// on different machines that don't have the same key, or else the
 	// profile's data will be discarded.
 	Preference<bool>	m_bSignProfileData;
+
+	// Currently supports Priority (Default), Name (Alphabetical), and Recent (Date) sorting
+	// Will default to Priority sorting if invalid value is set -cringle
+	Preference<ProfileSortType>	m_ProfileSortType;
 
 	// course ranking
 	Preference<CourseSortOrders>	m_CourseSortOrder;
