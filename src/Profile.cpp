@@ -1331,6 +1331,12 @@ void Profile::LoadTypeFromDir(RString dir)
 					}
 				}
 				data->GetAttrValue("Priority", m_ListPriority);
+				RString date_str;
+				if (data->GetAttrValue("LastPlayedDate", date_str))
+				{
+					m_LastPlayedDate.FromString(date_str);
+					
+				}
 			}
 		}
 	}
@@ -1501,6 +1507,7 @@ void Profile::SaveTypeToDir(RString dir) const
 	IniFile ini;
 	ini.SetValue("ListPosition", "Type", ProfileTypeToString(m_Type));
 	ini.SetValue("ListPosition", "Priority", m_ListPriority);
+	ini.SetValue("ListPosition", "LastPlayedDate", DateTime::GetNowDateTime().GetString());
 	ini.WriteFile(dir + TYPE_INI);
 }
 
