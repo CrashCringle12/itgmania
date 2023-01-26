@@ -282,14 +282,19 @@ public:
 	// on different machines that don't have the same key, or else the
 	// profile's data will be discarded.
 	Preference<bool>	m_bSignProfileData;
-
+	
+	// Should Random buttons prioritize finding a song of your preferred difficulty?
+	// This means that if your preferred difficulty is Challenge, it will find a random
+	// song with a Challenge difficulty (If it can't find one after so many attempts, it will
+	// stop prioritizing difficulty and find any random playable song)
+	// This may impact performance.
+	Preference<bool>	m_bRandomPrioritizeDifficulty;
 	// Used to control the ordering of the player profiles.
 	// See the the definition of ProfileSortOrder above about the available sort options.
 	Preference<ProfileSortOrder>	m_ProfileSortOrder;
 
 	// Determines whether the ProfileSortOrder is in ascending order (true) or descending order (false).
 	Preference<bool>	m_bProfileSortOrderAscending;
-
 	// course ranking
 	Preference<CourseSortOrders>	m_CourseSortOrder;
 	Preference<bool>	m_bSubSortByNumSteps;

@@ -267,6 +267,7 @@ PrefsManager::PrefsManager() :
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
 
 	m_bSignProfileData		( "SignProfileData",			false ),
+	m_bRandomPrioritizeDifficulty		( "RandomPrioritizeDifficulty",			true ),
 	m_ProfileSortOrder		( "ProfileSortOrder",			ProfileSortOrder_Priority ),
 	m_bProfileSortOrderAscending		( "ProfileSortOrderAscending",			true ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
@@ -297,6 +298,7 @@ PrefsManager::PrefsManager() :
 	m_sCoursesToShowRanking		( "CoursesToShowRanking",		"" ),
 	m_MuteActions			( "MuteActions",			false ),
 	m_bAllowSongDeletion		( "AllowSongDeletion",			false ),
+
 
 	m_bQuirksMode			( "QuirksMode",		false ),
 
