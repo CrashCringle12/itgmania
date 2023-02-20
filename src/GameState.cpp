@@ -2335,29 +2335,42 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 		m_vpsNamesThatWereFilled.push_back( aFeats[i].pStringToFill );
 	}
 
+	// Loop through filled names anD count unique names
+	std::set<RString> sNames;
+	for( unsigned i=0; i<m_vpsNamesThatWereFilled.size(); i++ )
+	{
+		sNames.insert( *m_vpsNamesThatWereFilled[i] );
+	}
+	LOG->Trace( "Unique names: %d", sNames.size() );
+	for (auto &name : sNames)
+		LOG->Trace( "Name: %s", name.c_str() );
+
 
 	Profile *pProfile = PROFILEMAN->GetMachineProfile();
 
-	if( !PREFSMAN->m_bAllowMultipleHighScoreWithSameName )
-	{
-		// erase all but the highest score for each name
+	int num_players= GAMESTATE->GetNumPlayersEnabled();
+	if (num_players <= sNames.size()) {
 		for (auto &songIter : pProfile->m_SongHighScores)
-			for (auto &stepIter : songIter.second.m_StepsHighScores)
-				stepIter.second.hsl.RemoveAllButOneOfEachName();
+			for (auto &stepIter : songIter.second.m_StepsHighScores) {
+				if( !PREFSMAN->m_bAllowMultipleHighScoreWithSameName )
+				{
+					// erase all but the highest score for each name
+					stepIter.second.hsl.RemoveAllButOneOfEachName();
+				}
+				stepIter.second.hsl.ClampSize( true );
+			}
 
 		for (auto &courseIter : pProfile->m_CourseHighScores)
-			for (auto &trailIter : courseIter.second.m_TrailHighScores)
-				trailIter.second.hsl.RemoveAllButOneOfEachName();
+			for (auto &trailIter : courseIter.second.m_TrailHighScores) {
+				if( !PREFSMAN->m_bAllowMultipleHighScoreWithSameName )
+				{
+					trailIter.second.hsl.RemoveAllButOneOfEachName();
+				}
+				trailIter.second.hsl.ClampSize( true );
+			}
 	}
+	
 
-	// clamp high score sizes
-	for (auto &songIter : pProfile->m_SongHighScores)
-		for (auto &stepIter : songIter.second.m_StepsHighScores)
-			stepIter.second.hsl.ClampSize( true );
-
-	for (auto &courseIter : pProfile->m_CourseHighScores)
-		for (auto &trailIter : courseIter.second.m_TrailHighScores)
-			trailIter.second.hsl.ClampSize( true );
 }
 
 bool GameState::AllAreInDangerOrWorse() const
