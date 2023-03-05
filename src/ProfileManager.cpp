@@ -541,6 +541,8 @@ void ProfileManager::LoadLocalProfilesByName(bool bAscending)
 			case ProfileType_Test:
 				testProfiles.push_back(derp);
 				break;
+			default:
+				break;
 		}
 	}
 
@@ -615,6 +617,8 @@ void ProfileManager::LoadLocalProfilesByRecent()
 				break;
 			case ProfileType_Test:
 				testProfiles.push_back(derp);
+				break;
+			default:
 				break;
 		}
 	}
