@@ -282,13 +282,19 @@ public:
 	// on different machines that don't have the same key, or else the
 	// profile's data will be discarded.
 	Preference<bool>	m_bSignProfileData;
-
 	// Currently supports Priority (Default), Name (Alphabetical), and Recent (Date) sorting
 	// Will default to Priority sorting if invalid value is set -cringle
 	Preference<ProfileSortType>	m_ProfileSortType;
 
 	// course ranking
 	Preference<CourseSortOrders>	m_CourseSortOrder;
+	// Should Random buttons prioritize finding a song of your preferred difficulty?
+	// This means that if your preferred difficulty is Challenge, it will find a random
+	// song with a Challenge difficulty (If it can't find one after so many attempts, it will
+	// stop prioritizing difficulty and find any random playable song)
+	// This may impact performance.
+	Preference<bool>	m_bRandomPrioritizeDifficulty;
+
 	Preference<bool>	m_bSubSortByNumSteps;
 	Preference<GetRankingName>	m_GetRankingName;
 

@@ -270,6 +270,7 @@ PrefsManager::PrefsManager() :
 	m_bSignProfileData		( "SignProfileData",			false ),
 	m_ProfileSortType		( "ProfileSortType",			ProfileSortType_Priority ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
+	m_bRandomPrioritizeDifficulty		( "RandomPrioritizeDifficulty",			true ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
 	m_sAdditionalSongFoldersReadOnly( "AdditionalSongFoldersReadOnly",	"", nullptr, PreferenceType::Immutable ),
