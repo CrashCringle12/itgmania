@@ -22,18 +22,21 @@ set(SM_EXE_NAME "ITGmania")
 # Some OS specific helpers.
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(LINUX TRUE)
+
 else()
   set(LINUX FALSE)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
   set(MACOSX TRUE)
+
 else()
   set(MACOSX FALSE)
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "BSD")
   set(BSD TRUE)
+
 else()
   set(BSD FALSE)
 endif()
@@ -122,6 +125,8 @@ check_symbol_exists(size_t stdlib.h HAVE_SIZE_T_STDLIB)
 check_symbol_exists(size_t stdio.h HAVE_SIZE_T_STDIO)
 check_symbol_exists(posix_fadvise fcntl.h HAVE_POSIX_FADVISE)
 
+
+
 # Checks to make it easier to work with 32-bit/64-bit builds if required.
 include(CheckTypeSize)
 check_type_size(int16_t SIZEOF_INT16_T)
@@ -182,6 +187,8 @@ endif()
 # Dependencies go here.
 include(ExternalProject)
 
+
+
 find_package(nasm)
 find_package(yasm)
 
@@ -205,7 +212,9 @@ else()
 endif()
 
 if(WIN32)
+
   # FFMPEG...it can be evil.
+
   find_library(LIB_SWSCALE
                NAMES "swscale"
                PATHS "${SM_EXTERN_DIR}/ffmpeg-w32/${SM_WIN32_ARCH}"
@@ -240,8 +249,12 @@ if(WIN32)
     file(REMOVE "${SM_PROGRAM_DIR}/${dll}")
     file(COPY "${SM_EXTERN_DIR}/ffmpeg-w32/${SM_WIN32_ARCH}/${dll}" DESTINATION "${SM_PROGRAM_DIR}/")
   endforeach()
+  link_libraries(${SM_EXTERN_DIR}/discord-rpc-2.0.1/lib/${SM_WIN32_ARCH}/discord-rpc.lib)
+  include_directories(${SM_EXTERN_DIR}/discord-rpc-2.0.1/include)
 elseif(MACOSX)
   include("${SM_CMAKE_DIR}/SetupFfmpeg.cmake")
+  link_libraries(${SM_EXTERN_DIR}/discord-rpc-2.0.1/lib/libdiscord-rpcMac.a)
+  include_directories(${SM_EXTERN_DIR}/discord-rpc-2.0.1/include)
 
   set(WITH_CRASH_HANDLER TRUE)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "11")
@@ -370,6 +383,8 @@ elseif(LINUX)
 
   set(OpenGL_GL_PREFERENCE GLVND)
   find_package(OpenGL REQUIRED)
+  link_libraries(${SM_EXTERN_DIR}/discord-rpc-2.0.1/lib/libdiscord-rpc.a)
+  include_directories(${SM_EXTERN_DIR}/discord-rpc-2.0.1/include)
 endif(WIN32) # LINUX, APPLE
 
 configure_file("${SM_SRC_DIR}/config.in.hpp"
