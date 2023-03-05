@@ -4,6 +4,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "ThemeManager.h"
+#include "RageLog.h"
 #include "XmlFile.h"
 #include "RadarValues.h"
 
@@ -421,8 +422,24 @@ void HighScoreList::RemoveAllButOneOfEachName()
 void HighScoreList::ClampSize( bool bIsMachine )
 {
 	const int iMaxScores = bIsMachine ? 
-		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
-		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
+		PREFSMAN->m_iMaxHighScoresPerListForMachine : // 10
+		PREFSMAN->m_iMaxHighScoresPerListForPlayer;   // 3
+	
+	// Print out if is machine or not
+	if( bIsMachine )
+		LOG->Trace( "Is Machine" );
+	else
+		LOG->Trace( "Is Not Machine" );
+
+	LOG->Trace( "Clamping high score list to %i scores", iMaxScores );
+	LOG->Trace( "High score list has %i scores", vHighScores.size() );
+	// Loop through the high scores and print out the names
+	for( unsigned i=0; i<vHighScores.size(); i++ )
+	{
+		LOG->Trace( "High score %i is %s with %f percent", i, vHighScores[i].GetName().c_str(), vHighScores[i].GetPercentDP());
+		
+	}
+
 	if( vHighScores.size() > unsigned(iMaxScores) )
 		vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
 }

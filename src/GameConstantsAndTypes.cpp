@@ -162,6 +162,8 @@ static const char *SortOrderNames[] = {
 	"BPM",
 	"Popularity",
 	"TopGrades",
+	"TopP1Grades",
+	"TopP2Grades",
 	"Artist",
 	"Genre",
 	"BeginnerMeter",
