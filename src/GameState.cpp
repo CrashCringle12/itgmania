@@ -843,7 +843,7 @@ void GameState::FinishStage()
 				Profile *profile = PROFILEMAN->GetLocalProfileFromIndex(i);
 				if (profile->m_sGuid == pProfile->m_sGuid)
 				{
-					PROFILEMAN->MoveProfileToTop(i);
+					PROFILEMAN->MoveProfileTopBottom(i, PREFSMAN->m_bProfileSortOrderAscending);
 					break;
 				}
 			}

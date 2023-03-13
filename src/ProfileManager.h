@@ -33,7 +33,7 @@ public:
 	void RefreshLocalProfilesFromDisk();
 	void LoadLocalProfilesByPriority();
 	void LoadLocalProfilesByRecent();
-	void LoadLocalProfilesByName(bool bAscending = true);
+	void LoadLocalProfilesByName();
 
 	const Profile *GetLocalProfile( const RString &sProfileID ) const;
 	Profile *GetLocalProfile( const RString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfile(sProfileID); }
@@ -64,7 +64,7 @@ public:
 	void MergeLocalProfileIntoMachine(RString const& from_id, bool skip_totals);
 	void ChangeProfileType(int index, ProfileType new_type);
 	void MoveProfilePriority(int index, bool up);
-	void MoveProfileToTop(int index);
+	void MoveProfileTopBottom(int index, bool top);
 	void MoveProfileSorted(int index, bool bAscending);
 
 	// General data

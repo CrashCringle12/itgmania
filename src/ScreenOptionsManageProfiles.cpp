@@ -244,8 +244,8 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		
 			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditLocalProfileID, sNewName );
-			if (PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Alphabetical || PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Alphabetical_DESC) {
-				PROFILEMAN->MoveProfileSorted(GetLocalProfileIndexWithFocus(), PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Alphabetical);
+			if (PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Alphabetical) {
+				PROFILEMAN->MoveProfileSorted(GetLocalProfileIndexWithFocus(), PREFSMAN->m_bProfileSortOrderAscending);
 			}
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}

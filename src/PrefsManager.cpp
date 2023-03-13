@@ -128,8 +128,7 @@ LuaXType( BackgroundFitMode );
 static const char* ProfileSortOrderNames[] = {
 	"Priority",
 	"Recent",
-	"Alphabetical",
-	"Alphabetical_DESC",
+	"Alphabetical"
 };
 XToString(ProfileSortOrder);
 StringToX(ProfileSortOrder);
@@ -269,6 +268,7 @@ PrefsManager::PrefsManager() :
 
 	m_bSignProfileData		( "SignProfileData",			false ),
 	m_ProfileSortOrder		( "ProfileSortOrder",			ProfileSortOrder_Priority ),
+	m_bProfileSortOrderAscending		( "ProfileSortOrderAscending",			true ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),

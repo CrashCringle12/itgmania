@@ -120,7 +120,6 @@ enum ProfileSortOrder
 	ProfileSortOrder_Priority, // This is the default sorting order. Allowing manual sorting of profiles
 	ProfileSortOrder_Recent, // Sorts profiles by recently used. The last used profile is put at the top of the list
 	ProfileSortOrder_Alphabetical, // Sorts profiles alphabetically A -> Z in ascending order
-	ProfileSortOrder_Alphabetical_DESC, // Sorts profiles alphabetically in descending order
 	NUM_ProfileSortOrder,
 	ProfileSortOrder_Invalid
 };
@@ -287,6 +286,9 @@ public:
 	// Currently supports Priority (Default), Name (Alphabetical), and Recent (Date) sorting
 	// Will default to Priority sorting if invalid value is set -cringle
 	Preference<ProfileSortOrder>	m_ProfileSortOrder;
+
+	// Determiners whether the ProfileSortOrder is in Ascending order.
+	Preference<bool>	m_bProfileSortOrderAscending;
 
 	// course ranking
 	Preference<CourseSortOrders>	m_CourseSortOrder;

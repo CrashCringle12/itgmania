@@ -885,7 +885,9 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "MaxHighScoresPerListForMachine", MaxHighScoresPerListForMachine, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") );
 	ADD( ConfOption( "MaxHighScoresPerListForPlayer", MaxHighScoresPerListForPlayer, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20") );
 	ADD( ConfOption( "MinTNSToHideNotes", MovePref<TapNoteScore>, "TNS_None", "TNS_HitMine", "TNS_AvoidMine", "TNS_CheckpointMiss", "TNS_Miss", "TNS_W5", "TNS_W4", "TNS_W3", "TNS_W2", "TNS_W1", "TNS_CheckpointHit"));
-	ADD( ConfOption( "ProfileSortOrder", MovePref<ProfileSortOrder>, "Priority", "Recent", "Alphabetical", "Alphabetical_DESC") );
+	ADD( ConfOption( "ProfileSortOrderAscending", MovePref<bool>, "No", "Yes") );
+	g_ConfOptions.back().m_iEffects = OPT_APPLY_PROFILES;
+	ADD( ConfOption( "ProfileSortOrder", MovePref<ProfileSortOrder>, "Priority", "Recent", "Alphabetical") );
 	g_ConfOptions.back().m_sPrefName = "ProfileSortOrder";
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_PROFILES;
 
