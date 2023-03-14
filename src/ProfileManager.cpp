@@ -983,12 +983,15 @@ void ProfileManager::MoveProfileTopBottom(int index, bool top)
 	for(size_t i= 0; i < g_vLocalProfile.size(); ++i)
 	{
 		ProfileType type= g_vLocalProfile[i].profile.m_Type;
-		if (!top)
-			if (type == ProfileType_Test)
+		if (!top) {
+			if (type == ProfileType_Test) {
 				break;
-		else
-			if (type != ProfileType_Guest)
+			}
+		} else {
+			if (type != ProfileType_Guest) {
 				break;
+			}
+		}
 		swindex++;
 	}
 	if((top && index < swindex) || (!top && index > swindex))
