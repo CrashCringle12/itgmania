@@ -244,8 +244,8 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		
 			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditLocalProfileID, sNewName );
-			if (PREFSMAN->m_ProfileSortType == ProfileSortType_Alphabetical || PREFSMAN->m_ProfileSortType == ProfileSortType_Alphabetical_DESC) {
-				PROFILEMAN->MoveProfileSorted(GetLocalProfileIndexWithFocus(), PREFSMAN->m_ProfileSortType == ProfileSortType_Alphabetical);
+			if (PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Alphabetical) {
+				PROFILEMAN->MoveProfileSorted(GetLocalProfileIndexWithFocus(), PREFSMAN->m_bProfileSortOrderAscending);
 			}
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
@@ -315,7 +315,6 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 						pProfile->m_sDisplayName, 
 						PROFILE_MAX_DISPLAY_NAME_LENGTH, 
 						ValidateLocalProfileName );
-
 				}
 				break;
 			case ProfileAction_Delete:
@@ -454,7 +453,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus & )
 			ADD_ACTION( ProfileAction_ChangeToTest );
 			// There technically isn't an issue keeping this always enabled in other ProfileSorts, but it would be overwritten 
 			// so it's not really useful.
-			if( PREFSMAN->m_ProfileSortType == ProfileSortType_Priority ) {
+			if( PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Priority ) {
 				ADD_ACTION( ProfileAction_MoveUp );
 				ADD_ACTION( ProfileAction_MoveDown );
 			}

@@ -835,8 +835,8 @@ void GameState::FinishStage()
 	{
 		Profile* pProfile = PROFILEMAN->GetProfile(p);
 		pProfile->m_iCurrentCombo = STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo;
-		//If the sort type is recent move the profile to the top of the list
-		if (PREFSMAN->m_ProfileSortType == ProfileSortType_Recent && PROFILEMAN->IsPersistentProfile(p))
+		//If the sort order is recent move the profile to the top of the list
+		if (PREFSMAN->m_ProfileSortOrder == ProfileSortOrder_Recent && PROFILEMAN->IsPersistentProfile(p))
 		{
 			int numLocalProfiles = PROFILEMAN->GetNumLocalProfiles();
 			for (int i = 0; i < numLocalProfiles; i++)
@@ -844,7 +844,7 @@ void GameState::FinishStage()
 				Profile *profile = PROFILEMAN->GetLocalProfileFromIndex(i);
 				if (profile->m_sGuid == pProfile->m_sGuid)
 				{
-					PROFILEMAN->MoveProfileToTop(i);
+					PROFILEMAN->MoveProfileTopBottom(i, PREFSMAN->m_bProfileSortOrderAscending);
 					break;
 				}
 			}

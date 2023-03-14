@@ -112,16 +112,16 @@ enum BackgroundFitMode
 	BackgroundFitMode_Invalid
 };
 
-// Profile sort types exist for sorting the list of profiles.
-// Guest profiles at the top, test at the bottom.
-enum ProfileSortType
+// Profile sort orders exist for sorting the list of profiles.
+// Regardless of sort order, Guest profiles are always at the top of the list
+// and Test profiles are always at the bottom of the list. --cringle
+enum ProfileSortOrder
 {
-	ProfileSortType_Priority,
-	ProfileSortType_Recent,
-	ProfileSortType_Alphabetical,
-	ProfileSortType_Alphabetical_DESC,
-	NUM_ProfileSortType,
-	ProfileSortType_Invalid
+	ProfileSortOrder_Priority, // This is the default sorting order. Allowing manual sorting of profiles
+	ProfileSortOrder_Recent, // Sorts profiles by recently used. The last used profile is put at the top of the list
+	ProfileSortOrder_Alphabetical, // Sorts profiles alphabetically A -> Z in ascending order
+	NUM_ProfileSortOrder,
+	ProfileSortOrder_Invalid
 };
 
 /** @brief Holds user-chosen preferences that are saved between sessions. */
@@ -284,7 +284,10 @@ public:
 	Preference<bool>	m_bSignProfileData;
 	// Currently supports Priority (Default), Name (Alphabetical), and Recent (Date) sorting
 	// Will default to Priority sorting if invalid value is set -cringle
-	Preference<ProfileSortType>	m_ProfileSortType;
+	Preference<ProfileSortOrder>	m_ProfileSortOrder;
+
+	// Determiners whether the ProfileSortOrder is in Ascending order.
+	Preference<bool>	m_bProfileSortOrderAscending;
 
 	// course ranking
 	Preference<CourseSortOrders>	m_CourseSortOrder;

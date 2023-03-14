@@ -125,15 +125,14 @@ XToString( BackgroundFitMode );
 StringToX( BackgroundFitMode );
 LuaXType( BackgroundFitMode );
 
-static const char* ProfileSortTypeNames[] = {
+static const char* ProfileSortOrderNames[] = {
 	"Priority",
 	"Recent",
-	"Alphabetical",
-	"Alphabetical_DESC",
+	"Alphabetical"
 };
-XToString(ProfileSortType);
-StringToX(ProfileSortType);
-LuaXType(ProfileSortType);
+XToString(ProfileSortOrder);
+StringToX(ProfileSortOrder);
+LuaXType(ProfileSortOrder);
 
 bool g_bAutoRestart = false;
 #ifdef DEBUG
@@ -268,7 +267,8 @@ PrefsManager::PrefsManager() :
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
 
 	m_bSignProfileData		( "SignProfileData",			false ),
-	m_ProfileSortType		( "ProfileSortType",			ProfileSortType_Priority ),
+	m_ProfileSortOrder		( "ProfileSortOrder",			ProfileSortOrder_Priority ),
+	m_bProfileSortOrderAscending		( "ProfileSortOrderAscending",			true ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bRandomPrioritizeDifficulty		( "RandomPrioritizeDifficulty",			true ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
