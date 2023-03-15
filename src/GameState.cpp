@@ -2387,7 +2387,7 @@ void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 	std::vector<SongAndSteps>::iterator toDelete = unique( vSongAndSteps.begin(), vSongAndSteps.end() );
 	vSongAndSteps.erase(toDelete, vSongAndSteps.end());
 
-	if (num_players <= sNames.size()) {
+	if (num_players <= static_cast<int>(sNames.size())) {
 
 		for (auto &courseIter : pProfile->m_CourseHighScores)
 			for (auto &trailIter : courseIter.second.m_TrailHighScores) {
