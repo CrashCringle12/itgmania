@@ -111,10 +111,11 @@ PlayerInfo::PlayerInfo(): m_pn(PLAYER_INVALID), m_mp(MultiPlayer_Invalid),
 	m_NoteData(), m_pPlayer(nullptr), m_pInventory(nullptr),
 	m_pStepsDisplay(nullptr), m_sprOniGameOver() {}
 
-void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty )
+void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty, RoutinePlayer rp )
 {
 	m_pn = pn;
 	m_mp = mp;
+	m_rp = rp;
 	m_bPlayerEnabled = IsEnabled();
 	m_bIsDummy = false;
 	m_iAddToDifficulty = iAddToDifficulty;
@@ -182,9 +183,9 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 	m_pInventory = nullptr;
 	m_pStepsDisplay = nullptr;
 
-	if( IsMultiPlayer() )
+	if( IsMultiPlayer() || GAMESTATE->GetCurrentStyle(pn)->m_StyleType == StyleType_TwoPlayersSharedSides )
 	{
-		pPlayerState->m_PlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		pPlayerState->m_PlayerOptions= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 	}
 }
 
@@ -477,6 +478,8 @@ void ScreenGameplay::Init()
 	{
 		STATSMAN->m_CurStageStats.m_multiPlayer[pn].m_pStyle= GAMESTATE->GetCurrentStyle(PLAYER_INVALID);
 	}
+	STATSMAN->m_CurStageStats.m_routinePlayer[COUPLES_PLAYER].m_pStyle= GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
+
 
 	/* Record combo rollover. */
 	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
@@ -644,6 +647,15 @@ void ScreenGameplay::Init()
 			this->AddChild( m_pCombinedLifeMeter );
 		default:
 			break;
+	}
+
+	// Add Combined life meter also in routine mode
+	if (GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType == StyleType_TwoPlayersSharedSides)
+	{
+		m_pCombinedLifeMeter = new CombinedLifeMeterTug;
+		m_pCombinedLifeMeter->SetName("CombinedLife");
+		LOAD_ALL_COMMANDS_AND_SET_XY(*m_pCombinedLifeMeter);
+		this->AddChild(m_pCombinedLifeMeter);
 	}
 
 	// Add individual life meter
@@ -2533,6 +2545,31 @@ bool ScreenGameplay::Input( const InputEventPlus &input )
 					pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 			}
 			return true;
+		}
+	} 
+	//If we are in routine mode, two players share sides so a step could correspond to either P1 or P2, we don't really know
+	//Let's just send it to both players and let them decide what to do with it.
+	else if (GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType == StyleType_TwoPlayersSharedSides) {
+		if( GAMESTATE->IsHumanPlayer( input.pn ) ) {
+			if( GamePreferences::m_AutoPlay == PC_HUMAN && GAMESTATE->m_pPlayerState[input.pn]->m_PlayerOptions.GetCurrent().m_fPlayerAutoPlay == 0 )
+			{
+				ASSERT( input.GameI.IsValid() );
+
+				GameButtonType gbt = GAMESTATE->m_pCurGame->GetPerButtonInfo(input.GameI.button)->m_gbt;
+				switch( gbt )
+				{
+				case GameButtonType_Menu:
+					return false;
+				case GameButtonType_Step:
+					if( iCol != -1 ) {
+						m_vPlayerInfo[PLAYER_1].m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+						m_vPlayerInfo[PLAYER_2].m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+						m_vPlayerInfo[COUPLES_PLAYER].m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+					}
+					return true;
+				}
+			}
+
 		}
 	}
 	else

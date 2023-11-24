@@ -19,14 +19,15 @@ void ScreenGameplayShared::FillPlayerInfo( std::vector<PlayerInfo> &vPlayerInfoO
 
 	/* The master player is where all of the real work takes place.  The other player exists
 	 * only so we have a place to split stats out into at the end. */
-	vPlayerInfoOut.resize( 2 );
+	vPlayerInfoOut.resize( 3 );
 	vPlayerInfoOut[master].Load( master, MultiPlayer_Invalid, true, Difficulty_Invalid );
-	vPlayerInfoOut[other].Load( other, MultiPlayer_Invalid, false, Difficulty_Invalid );
+	vPlayerInfoOut[other].Load( other, MultiPlayer_Invalid, true, Difficulty_Invalid );
+	vPlayerInfoOut[COUPLES_PLAYER].Load( master, MultiPlayer_Invalid, true, Difficulty_Invalid );
 }
 
 PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& iep )
 {
-	return m_vPlayerInfo[GAMESTATE->GetMasterPlayerNumber()];
+	return m_vPlayerInfo[COUPLES_PLAYER];
 }
 
 /*

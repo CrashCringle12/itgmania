@@ -209,6 +209,9 @@ void NoteSkinManager::GetNoteSkinNames( std::vector<RString> &AddTo )
 void NoteSkinManager::GetNoteSkinNames( const Game* pGame, std::vector<RString> &AddTo )
 {
 	GetAllNoteSkinNamesForGame( pGame, AddTo );
+	LOG->Trace("Testeroni1");
+	FilterNoteSkinsByStyle( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()), AddTo ); 
+	
 }
 
 bool NoteSkinManager::NoteSkinNameInList(const RString name, std::vector<RString> name_list)
@@ -242,6 +245,7 @@ RString NoteSkinManager::GetDefaultNoteSkinName()
 	RString name= THEME->GetMetric("Common", "DefaultNoteSkinName");
 	std::vector<RString> all_names;
 	GetAllNoteSkinNamesForGame(GAMESTATE->m_pCurGame, all_names);
+
 	if(all_names.empty())
 	{
 		return "";
@@ -284,6 +288,55 @@ void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, std::vector
 		StripCvsAndSvn( AddTo );
 		StripMacResourceForks( AddTo );
 	}
+}
+
+// 	// // Routine mode has its own noteskins that do not show in other modes.
+// 	// // If we're in routine mode, we need to filter out the non-routine noteskins.
+// 	// FilterNoteskinsByStyle(GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber()), all_names);
+void NoteSkinManager::FilterNoteSkinsByStyle( const Style *pStyle, std::vector<RString> &AddTo )
+{	
+	LOG->Trace("Testeroni");
+	if (pStyle == nullptr)
+	{
+		LOG->Trace("Style is null");
+		return;
+	}
+	LOG->Trace("We in here w/ this style: %d", pStyle->m_StyleType);
+	// If the styletype is TwoPlayersSharedSides then filter noteskins where the metric "TwoPlayersSharedSides" is not "true"
+	if( pStyle->m_StyleType == StyleType_TwoPlayersSharedSides )
+	{
+		for( std::vector<RString>::iterator iter = AddTo.begin(); iter != AddTo.end(); )
+		{
+			RString sNoteSkinName = *iter;
+			sNoteSkinName.MakeLower();
+			std::map<RString, NoteSkinData>::const_iterator it = g_mapNameToData.find(sNoteSkinName);
+			LOG->Trace( "FilterNoteSkinsByStyle: %s", sNoteSkinName.c_str() );
+			ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
+			LOG->Trace(" We survived the assert.");
+			const NoteSkinData& data = it->second;
+
+			RString bIsRoutine;
+			if( !data.metrics.GetValue( "Global", "IsRoutineNoteSkin", bIsRoutine ) )
+			{
+
+				// If the metric doesn't exist, then it's not a TwoPlayersSharedSides noteskin.
+				iter = AddTo.erase( iter );
+				LOG->Trace("IsRoutine doesn't exist.");
+				continue;
+			}
+
+			if( !bIsRoutine )
+			{
+				LOG->Trace("IsRoutine isn't true.");
+				// If the metric exists but isn't "true", then it's not a TwoPlayersSharedSides noteskin.
+				iter = AddTo.erase( iter );
+				continue;
+			} else {
+				LOG->Trace("IsRoutine is true.");
+			}
+			++iter;
+		}
+	}		
 }
 
 RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &sValue )

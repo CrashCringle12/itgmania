@@ -87,6 +87,11 @@ void PlayerStageStats::Init(MultiPlayer pn)
 	m_multiplayer_number= pn;
 }
 
+void PlayerStageStats::Init(RoutinePlayer pn)
+{
+	m_routineplayer_number= pn;
+}
+
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
 	m_pStyle= other.m_pStyle;
@@ -164,6 +169,68 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	}
 }
 
+
+void PlayerStageStats::AddRoutineStats( const PlayerStageStats& other )
+{
+	LOG->Trace( "PlayerStageStats::AddRoutineStats" );
+	m_iStepsPlayed += other.m_iStepsPlayed;
+	LOG->Trace( "m_iStepsPlayed = %i", m_iStepsPlayed );
+	m_iPossibleDancePoints += other.m_iPossibleDancePoints;
+	m_iActualDancePoints += other.m_iActualDancePoints;
+	m_iCurPossibleDancePoints += other.m_iCurPossibleDancePoints;
+	m_iPossibleGradePoints += other.m_iPossibleGradePoints;
+
+	for( int t=0; t<NUM_TapNoteScore; t++ )
+		m_iTapNoteScores[t] += other.m_iTapNoteScores[t];
+	for( int h=0; h<NUM_HoldNoteScore; h++ )
+		m_iHoldNoteScores[h] += other.m_iHoldNoteScores[h];
+	m_iCurCombo += other.m_iCurCombo;
+	m_iMaxCombo += other.m_iMaxCombo;
+	m_iCurMissCombo += other.m_iCurMissCombo;
+	m_iScore += other.m_iScore;
+	m_iMaxScore += other.m_iMaxScore;
+	m_iCurMaxScore += other.m_iCurMaxScore;
+	m_radarPossible += other.m_radarPossible;
+	m_radarActual += other.m_radarActual;
+	m_iSongsPassed += other.m_iSongsPassed;
+	m_iSongsPlayed += other.m_iSongsPlayed;
+	m_fCaloriesBurned += other.m_fCaloriesBurned;
+
+	// FirstSecond is always 0, and last second is the time of the last step,
+	// so add 1 second between the stages so that the last element of this
+	// stage's record isn't overwritten by the first element of the other
+	// stage's record. -Kyz
+	const float fOtherFirstSecond = other.m_fFirstSecond + m_fLastSecond + 1.0f;
+	const float fOtherLastSecond = other.m_fLastSecond + m_fLastSecond + 1.0f;
+	m_fLastSecond = fOtherLastSecond;
+	for( unsigned i=0; i<other.m_ComboList.size(); ++i )
+	{
+		const Combo_t &combo = other.m_ComboList[i];
+
+		Combo_t newcombo(combo);
+		newcombo.m_fStartSecond += fOtherFirstSecond;
+		m_ComboList.push_back( newcombo );
+	}
+
+	/* Merge identical combos. This normally only happens in course mode, when
+	 * a combo continues between songs. */
+	for( unsigned i=1; i<m_ComboList.size(); ++i )
+	{
+		Combo_t &prevcombo = m_ComboList[i-1];
+		Combo_t &combo = m_ComboList[i];
+		const float PrevComboEnd = prevcombo.m_fStartSecond + prevcombo.m_fSizeSeconds;
+		const float ThisComboStart = combo.m_fStartSecond;
+		if( std::abs(PrevComboEnd - ThisComboStart) > 0.001 )
+			continue;
+
+		// These are really the same combo.
+		prevcombo.m_fSizeSeconds += combo.m_fSizeSeconds;
+		prevcombo.m_cnt += combo.m_cnt;
+		m_ComboList.erase( m_ComboList.begin()+i );
+		--i;
+	}
+	LOG->Trace("We made it to the end of PlayerStageStats::AddRoutineStats");
+}
 Grade GetGradeFromPercent( float fPercent )
 {
 	Grade grade = Grade_Failed;

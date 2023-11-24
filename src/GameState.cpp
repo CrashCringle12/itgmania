@@ -165,7 +165,12 @@ GameState::GameState() :
 	{
 		m_pPlayerState[p] = new PlayerState;
 		m_pPlayerState[p]->SetPlayerNumber(p);
+		m_pRoutinePlayerState[p] = m_pPlayerState[p];
 	}
+	m_pRoutinePlayerState[COUPLES_PLAYER] = new PlayerState;
+	m_pRoutinePlayerState[COUPLES_PLAYER]->SetPlayerNumber(GetMasterPlayerNumber());
+
+
 	FOREACH_MultiPlayer( p )
 	{
 		m_pMultiPlayerState[p] = new PlayerState;
@@ -201,6 +206,9 @@ GameState::~GameState()
 		RageUtil::SafeDelete( m_pPlayerState[p] );
 	FOREACH_MultiPlayer( p )
 		RageUtil::SafeDelete( m_pMultiPlayerState[p] );
+
+	FOREACH_RoutinePlayer( p )
+		RageUtil::SafeDelete( m_pRoutinePlayerState[p] );
 
 	RageUtil::SafeDelete( m_Environment );
 	RageUtil::SafeDelete( g_pImpl );
@@ -333,6 +341,7 @@ void GameState::Reset()
 
 	FOREACH_MultiPlayer( p )
 		m_pMultiPlayerState[p]->Reset();
+	m_pRoutinePlayerState[COUPLES_PLAYER]->Reset();
 
 	m_SongOptions.Init();
 

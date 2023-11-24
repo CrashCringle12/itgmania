@@ -22,11 +22,14 @@ public:
 	void InternalInit();
 	void Init(PlayerNumber pn);
 	void Init(MultiPlayer pn);
+	void Init(RoutinePlayer pn);
 
 	/**
 	 * @brief Add stats from one PlayerStageStats to another.
 	 * @param other the other stats to add to this one. */
 	void AddStats( const PlayerStageStats& other );		// accumulate
+
+	void AddRoutineStats( const PlayerStageStats& other );		// accumulate
 
 	Grade GetGrade() const;
 	static float MakePercentScore( int iActual, int iPossible );
@@ -41,6 +44,7 @@ public:
 	bool m_for_multiplayer;
 	PlayerNumber m_player_number;
 	MultiPlayer m_multiplayer_number;
+	RoutinePlayer m_routineplayer_number;
 	const Style*	m_pStyle;
 
 	bool		m_bJoined;

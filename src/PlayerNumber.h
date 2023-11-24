@@ -24,6 +24,21 @@ LuaDeclareType( PlayerNumber );
 
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
+// Player number stuff
+enum RoutinePlayer
+{
+	COMBINED = 0,
+	PLAYER_3,
+	PLAYER_4,
+	NUM_RoutinePlayer,	// leave this at the end
+	RoutinePlayer_Invalid
+};
+const RoutinePlayer COUPLES_PLAYER = COMBINED;
+const RString& RoutinePlayerToString( RoutinePlayer pn );
+const RString& RoutinePlayerToLocalizedString( RoutinePlayer pn );
+LuaDeclareType( RoutinePlayer );
+/** @brief A foreach loop to handle the different Players in Routine. */
+#define FOREACH_RoutinePlayer( pn ) FOREACH_ENUM( RoutinePlayer, pn )
 
 enum MultiPlayer
 {
