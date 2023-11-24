@@ -21,7 +21,7 @@ void ScreenGameplayShared::FillPlayerInfo( std::vector<PlayerInfo> &vPlayerInfoO
 	 * only so we have a place to split stats out into at the end. */
 	vPlayerInfoOut.resize( 2 );
 	vPlayerInfoOut[master].Load( master, MultiPlayer_Invalid, true, Difficulty_Invalid );
-	vPlayerInfoOut[other].Load( other, MultiPlayer_Invalid, false, Difficulty_Invalid );
+	vPlayerInfoOut[other].Load( other, MultiPlayer_Invalid, true, Difficulty_Invalid );
 }
 
 PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& iep )
