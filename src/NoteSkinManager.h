@@ -6,6 +6,7 @@
 #include "PlayerNumber.h"
 #include "GameInput.h"
 #include "IniFile.h"
+#include "Style.h"
 
 #include <vector>
 
@@ -50,7 +51,7 @@ public:
 protected:
 	RString GetPathFromDirAndFile( const RString &sDir, const RString &sFileName );
 	void GetAllNoteSkinNamesForGame( const Game *pGame, std::vector<RString> &AddTo );
-
+	void FilterNoteSkinsByStyle( const Style *pStyle, std::vector<RString> &AddTo );
 	bool LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out );
 	bool LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );
 	RString m_sCurrentNoteSkin;
