@@ -31,6 +31,12 @@ public:
 	 * @param mp the Multiplayer to check. */
 	void AssertValid( MultiPlayer mp ) const;
 
+	/**
+	 * @brief Ensure that the Player is valid.
+	 * @param pn the PlayerNumber to check. */
+	void AssertValid( PlayerNumber pn, bool bRoutine) const;
+
+
 	void AddStats( const StageStats& other );		// accumulate
 
 	bool OnePassed() const;
@@ -70,6 +76,7 @@ public:
 	float GetTotalPossibleStepsSeconds() const;
 
 	PlayerStageStats m_player[NUM_PLAYERS];
+	PlayerStageStats m_RoutinePlayer;
 	PlayerStageStats m_multiPlayer[NUM_MultiPlayer];
 
 	void FinalizeScores( bool bSummary );
