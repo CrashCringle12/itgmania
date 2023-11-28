@@ -223,8 +223,10 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	grade = clamp( grade, Grade_Tier01, Grade_Failed );
 
     const XNode *pRoutineNode = pNode->GetChild("RoutineData");
+
 	if (pRoutineNode) {
 		  // Load player-specific data
+		bIsRoutine = true;
 		FOREACH_PlayerNumber( pn ) {
 			const XNode* pPlayerNode = pRoutineNode->GetChild(PlayerNumberToString(pn));
 			if (pPlayerNode) {
@@ -233,8 +235,11 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 				pPlayerNode->GetChildValue("Grade", gradeStr);
 				playerGrades[pn] = StringToGrade(gradeStr);
 				pPlayerNode->GetChildValue("Score", playerScores[pn]);
+				LOG->Trace("Loaded player score %d", playerScores[pn]);
 				pPlayerNode->GetChildValue("PercentDP", playerPercentDPs[pn]);
+				LOG->Trace("Loaded player percentDP %f", playerPercentDPs[pn]);
 				pPlayerNode->GetChildValue("MaxCombo", playerMaxCombos[pn]);
+				LOG->Trace("Loaded player maxCombo %d", playerMaxCombos[pn]);
 				pPlayerNode->GetChildValue("PlayerGuid", playerGuids[pn]);
 
 				const XNode* pPTapNoteScores = pNode->GetChild( "TapNoteScores" );
@@ -245,9 +250,14 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 				if( pPHoldNoteScores )
 					FOREACH_ENUM( HoldNoteScore, hns )
 						pPHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), playerHoldNoteScores[pn][hns] );
+				LOG->Trace("Loaded player-specific data for player %d", pn);
+
 			}
 		}
+	} else {
+		bIsRoutine = false;
 	}
+
 
 }
 
@@ -314,6 +324,7 @@ void HighScore::SetHoldNoteScore( HoldNoteScore hns, int i ) { m_Impl->iHoldNote
 void HighScore::SetRadarValues( const RadarValues &rv ) { m_Impl->radarValues = rv; }
 void HighScore::SetLifeRemainingSeconds( float f ) { m_Impl->fLifeRemainingSeconds = f; }
 void HighScore::SetDisqualified( bool b ) { m_Impl->bDisqualified = b; }
+void HighScore::SetRoutine( bool b ) { m_Impl->bIsRoutine = b; }
 
 
 // Getters
