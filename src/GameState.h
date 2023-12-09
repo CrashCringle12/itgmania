@@ -417,6 +417,7 @@ public:
 	// Discord Rich Presence
 	// All of the method names are temporary, and will likely change to be more
 	// intuitive -CrashCringle
+	// test
 	void discordInit();
 	void updateDiscordPresence(const std::string& largeImageText, const std::string& details, const std::string& state, const int64_t startTime);
 	void updateDiscordMenu( const std::string& largeImageText );
