@@ -147,7 +147,7 @@ public:
 	std::vector<RString> GetPreferredSortSectionNames() const;
 	std::vector<Song*> GetPreferredSortSongsBySectionName( const RString &sSectionName ) const;
 	void GetPreferredSortSongsBySectionName( const RString &sSectionName, std::vector<Song*> &AddTo ) const;
-
+	std::vector<Song*> GetSongsByMeter( int iMeter ) const;
 	const std::vector<Course*> &GetPopularCourses( CourseType ct ) const { return m_pPopularCourses[ct]; }
 	Song *FindSong( RString sPath ) const;
 	Song *FindSong( RString sGroup, RString sSong ) const;
@@ -187,6 +187,7 @@ public:
 
 	void UpdatePopular();
 	void UpdateShuffled();	// re-shuffle songs and courses
+	void UpdateMeterSort();
 	void SetPreferredSongs(RString sPreferredSongs, bool bIsAbsolute = false);
 	void SetPreferredCourses(RString sPreferredCourses, bool bIsAbsolute = false);
 	void UpdatePreferredSort(RString sPreferredSongs = "PreferredSongs.txt", RString sPreferredCourses = "PreferredCourses.txt");
@@ -224,6 +225,10 @@ protected:
 	/** @brief The most popular songs ranked by number of plays. */
 	std::vector<Song*>	m_pPopularSongs;
 	std::vector<Song*>	m_pShuffledSongs;	// used by GetRandomSong
+
+	/** @brief Meter numbers and the songs with Steps that are within.*/
+	std::map<int, std::vector<Song*>> m_pSongsByDifficulty;
+	
 	struct PreferredSortSection
 	{
 		RString sName;

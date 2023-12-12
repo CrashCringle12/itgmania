@@ -543,6 +543,7 @@ void SongUtil::SortSongPointerArrayByDisplayArtist( std::vector<Song*> &vpSongsI
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 }
 
+
 static int CompareSongPointersByGenre(const Song *pSong1, const Song *pSong2)
 {
 	return pSong1->m_sGenre < pSong2->m_sGenre;
@@ -601,6 +602,8 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 
 	switch( so )
 	{
+	case SORT_METER:
+		return "1";
 	case SORT_PREFERRED:
 		return SONGMAN->SongToPreferredSortSectionName( pSong );
 	case SORT_GROUP:
