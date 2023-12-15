@@ -325,7 +325,7 @@ void NoteSkinManager::FilterNoteSkinsByStyle( const Style *pStyle, std::vector<R
 				continue;
 			}
 
-			if( bIsRoutine != "true" )
+			if( !bIsRoutine )
 			{
 				LOG->Trace("IsRoutine isn't true.");
 				// If the metric exists but isn't "true", then it's not a TwoPlayersSharedSides noteskin.
