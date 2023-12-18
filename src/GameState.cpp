@@ -164,13 +164,19 @@ GameState::GameState() :
 	{
 		m_pPlayerState[p] = new PlayerState;
 		m_pPlayerState[p]->SetPlayerNumber(p);
+		m_pRoutinePlayerState[p] = m_pPlayerState[p];
 	}
+
+	m_pRoutinePlayerState[COUPLES_PLAYER] = new PlayerState;
+	m_pRoutinePlayerState[COUPLES_PLAYER]->SetPlayerNumber(GetMasterPlayerNumber());
+
 	FOREACH_MultiPlayer( p )
 	{
 		m_pMultiPlayerState[p] = new PlayerState;
 		m_pMultiPlayerState[p]->SetPlayerNumber(PLAYER_1);
 		m_pMultiPlayerState[p]->m_mp = p;
 	}
+
 
 	m_Environment = new LuaTable;
 
@@ -200,6 +206,8 @@ GameState::~GameState()
 		SAFE_DELETE( m_pPlayerState[p] );
 	FOREACH_MultiPlayer( p )
 		SAFE_DELETE( m_pMultiPlayerState[p] );
+	FOREACH_RoutinePlayer( p )
+		SAFE_DELETE( m_pRoutinePlayerState[p] );
 
 	SAFE_DELETE( m_Environment );
 	SAFE_DELETE( g_pImpl );
@@ -332,6 +340,7 @@ void GameState::Reset()
 
 	FOREACH_MultiPlayer( p )
 		m_pMultiPlayerState[p]->Reset();
+	m_pRoutinePlayerState[COUPLES_PLAYER]->Reset();
 
 	m_SongOptions.Init();
 

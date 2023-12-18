@@ -87,6 +87,11 @@ void PlayerStageStats::Init(MultiPlayer pn)
 	m_multiplayer_number= pn;
 }
 
+void PlayerStageStats::Init(RoutinePlayer pn)
+{
+	m_routineplayer_number= pn;
+}
+
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
 {
 	m_pStyle= other.m_pStyle;

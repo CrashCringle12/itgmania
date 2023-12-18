@@ -376,6 +376,7 @@ public:
 	/** @brief Allow access to each player's PlayerState. */
 	PlayerState* m_pPlayerState[NUM_PLAYERS];
 	PlayerState* m_pMultiPlayerState[NUM_MultiPlayer];
+	PlayerState* m_pRoutinePlayerState[NUM_RoutinePlayer];
 
 	// Preferences
 	static Preference<bool> m_bAutoJoin;

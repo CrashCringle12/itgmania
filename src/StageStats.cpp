@@ -33,12 +33,15 @@ StageStats::StageStats()
 	FOREACH_PlayerNumber(pn)
 	{
 		m_player[pn].Init(pn);
+		m_routinePlayer[pn] = m_player[pn];
 	}
+	m_routinePlayer[COUPLES_PLAYER].Init(COUPLES_PLAYER);
+	
 	FOREACH_MultiPlayer(pn)
 	{
 		m_multiPlayer[pn].Init(pn);
 	}
-	m_RoutinePlayer.Init(GAMESTATE->GetMasterPlayerNumber());
+	
 }
 
 void StageStats::Init()
@@ -76,19 +79,19 @@ void StageStats::AssertValid( MultiPlayer pn ) const
 }
 
 
-void StageStats::AssertValid( PlayerNumber pn, bool bRoutine) const
+void StageStats::AssertValid( RoutinePlayer pn) const
 {
 	ASSERT( m_vpPlayedSongs.size() != 0 );
 	ASSERT( m_vpPossibleSongs.size() != 0 );
 	if( m_vpPlayedSongs[0] )
 		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
-	ASSERT( m_RoutinePlayer.m_iStepsPlayed > 0 );
-	ASSERT( m_RoutinePlayer.m_vpPossibleSteps.size() != 0 );
-	ASSERT( m_RoutinePlayer.m_vpPossibleSteps[0] != nullptr );
+	ASSERT( m_routinePlayer[pn].m_iStepsPlayed > 0 );
+	ASSERT( m_routinePlayer[pn].m_vpPossibleSteps.size() != 0 );
+	ASSERT( m_routinePlayer[pn].m_vpPossibleSteps[0] != nullptr );
 	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
-	ASSERT_M( m_RoutinePlayer.m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("Invalid Difficulty %i", m_RoutinePlayer.m_vpPossibleSteps[0]->GetDifficulty()) );
-	ASSERT_M( (int) m_vpPlayedSongs.size() == m_RoutinePlayer.m_iStepsPlayed, ssprintf("%i Songs Played != %i Steps Played for player %i", (int)m_vpPlayedSongs.size(), (int)m_RoutinePlayer.m_iStepsPlayed, pn) );
-	ASSERT_M( m_vpPossibleSongs.size() == m_RoutinePlayer.m_vpPossibleSteps.size(), ssprintf("%i Possible Songs != %i Possible Steps for player %i", (int)m_vpPossibleSongs.size(), (int)m_RoutinePlayer.m_vpPossibleSteps.size(), pn) );
+	ASSERT_M( m_routinePlayer[pn].m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("Invalid Difficulty %i", m_routinePlayer[pn].m_vpPossibleSteps[0]->GetDifficulty()) );
+	ASSERT_M( (int) m_vpPlayedSongs.size() == m_routinePlayer[pn].m_iStepsPlayed, ssprintf("%i Songs Played != %i Steps Played for player %i", (int)m_vpPlayedSongs.size(), (int)m_routinePlayer[pn].m_iStepsPlayed, pn) );
+	ASSERT_M( m_vpPossibleSongs.size() == m_routinePlayer[pn].m_vpPossibleSteps.size(), ssprintf("%i Possible Songs != %i Possible Steps for player %i", (int)m_vpPossibleSongs.size(), (int)m_routinePlayer[pn].m_vpPossibleSteps.size(), pn) );
 }
 
 
@@ -284,17 +287,20 @@ void StageStats::FinalizeScores( bool bSummary )
 		std::vector<PlayerStageStats> ppss;
 		FOREACH_HumanPlayer( pn )
 		{
-			sName += RANKING_TO_FILL_IN_MARKER[pn] + "&";
+			sName += RANKING_TO_FILL_IN_MARKER[pn];
 			ppss.push_back(m_player[pn]);
 		}
 		// Loop through ppss and add routine stats together
 		for (int i = 0; i < ppss.size(); i++)
 		{
-			m_RoutinePlayer.AddStats(ppss[i]);
-			LOG->Trace("Routine Player Score: %i", m_RoutinePlayer.m_iScore);
-			LOG->Trace("Routine Player Percent: %f", m_RoutinePlayer.GetPercentDancePoints());
+			LOG->Trace("Player Name: %s", sName.c_str());
+			LOG->Trace("Player Grade: %i", ppss[i].GetGrade());
+			LOG->Trace("Player Score: %i", ppss[i].m_iScore);
+			LOG->Trace("Player Percent: %f", ppss[i].GetPercentDancePoints());
+			LOG->Trace("Routine Player Score: %i", m_routinePlayer[COUPLES_PLAYER].m_iScore);
+			LOG->Trace("Routine Player Percent: %f", m_routinePlayer[COUPLES_PLAYER].GetPercentDancePoints());
 		}
-		m_player[p].m_HighScore = FillInRoutineHighScore( m_RoutinePlayer, *GAMESTATE->m_pPlayerState[p], sPlayerGuid, sName, ppss );
+		m_player[p].m_HighScore = FillInRoutineHighScore( m_routinePlayer[COUPLES_PLAYER], *GAMESTATE->m_pRoutinePlayerState[p], sPlayerGuid, sName, ppss );
 	} else {
 		FOREACH_HumanPlayer( p )
 		{
@@ -446,7 +452,7 @@ class LunaStageStats: public Luna<StageStats>
 {
 public:
 	static int GetPlayerStageStats( T* p, lua_State *L )		{ p->m_player[Enum::Check<PlayerNumber>(L, 1)].PushSelf(L); return 1; }
-	static int GetRoutineStageStats( T* p, lua_State *L )		{ p->m_RoutinePlayer.PushSelf(L); return 1; }
+	static int GetRoutineStageStats( T* p, lua_State *L )		{ p->m_routinePlayer[COUPLES_PLAYER].PushSelf(L); return 1; }
 	static int GetMultiPlayerStageStats( T* p, lua_State *L )	{ p->m_multiPlayer[Enum::Check<MultiPlayer>(L, 1)].PushSelf(L); return 1; }
 	static int GetPlayedSongs( T* p, lua_State *L )
 	{

@@ -42,7 +42,7 @@ public:
 	PlayerInfo();
 	~PlayerInfo();
 
-	void Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty );
+	void Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int iAddToDifficulty, RoutinePlayer = RoutinePlayer_Invalid );
 	void LoadDummyP1( int iDummyIndex, int iAddToDifficulty );
 
 	/** @brief The player has lost all of their lives: show the special game over. */
@@ -83,6 +83,7 @@ public:
 	PlayerNumber		m_pn;
 	/** @brief The present Player's multiplayer number. */
 	MultiPlayer		m_mp;
+	RoutinePlayer   m_rp;
 	bool			m_bIsDummy;
 	int			m_iDummyIndex;
 	int			m_iAddToDifficulty;	// if > 0, use the Nth harder Steps

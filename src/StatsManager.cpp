@@ -94,6 +94,13 @@ static StageStats AccumPlayedStageStats( const std::vector<StageStats>& vss )
 			ssreturn.m_multiPlayer[p].m_radarActual[r] /= uNumSongs;
 		}
 	}
+
+	for( int r = 0; r < RadarCategory_TapsAndHolds; r++)
+	{
+		ssreturn.m_routinePlayer[COUPLES_PLAYER].m_radarPossible[r] /= uNumSongs;
+		ssreturn.m_routinePlayer[COUPLES_PLAYER].m_radarActual[r] /= uNumSongs;
+	}
+
 	return ssreturn;
 }
 
@@ -514,6 +521,8 @@ void StatsManager::GetStepsInUse( std::set<Steps*> &apInUseOut ) const
 			const PlayerStageStats &pss = m_vPlayedStageStats[i].m_multiPlayer[mp];
 			apInUseOut.insert( pss.m_vpPossibleSteps.begin(), pss.m_vpPossibleSteps.end() );
 		}
+		const PlayerStageStats &pss = m_vPlayedStageStats[i].m_routinePlayer[COUPLES_PLAYER];
+		apInUseOut.insert( pss.m_vpPossibleSteps.begin(), pss.m_vpPossibleSteps.end() );
 	}
 }
 
