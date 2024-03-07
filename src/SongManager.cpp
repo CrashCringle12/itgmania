@@ -1647,6 +1647,7 @@ std::map<int, std::vector<Song*>> SongManager::UpdateMeterSort( std::vector<Song
 			}
 		}
 	}
+  
 	return m_mapSongsByDifficulty;
 }
 
