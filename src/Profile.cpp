@@ -10,7 +10,6 @@
 #include "Song.h"
 #include "SongManager.h"
 #include "Steps.h"
-#include "sqlite3.h"
 #include "Course.h"
 #include "ThemeManager.h"
 #include "CryptManager.h"
@@ -35,7 +34,6 @@
 
 const RString STATS_XML            = "Stats.xml";
 const RString STATS_XML_GZ         = "Stats.xml.gz";
-const RString STATS_DB 		   	   = "Stats.db";
 /** @brief The filename for where one can edit their personal profile information. */
 const RString EDITABLE_INI         = "Editable.ini";
 /** @brief A tiny file containing the type and list priority. */
@@ -60,7 +58,6 @@ static ThemeMetric<RString> UNLOCK_AUTH_STRING( "Profile", "UnlockAuthString" );
 
 const int DEFAULT_WEIGHT_POUNDS	= 120;
 const float DEFAULT_BIRTH_YEAR= 1995;
-sqlite3* db;
 
 #if defined(_MSC_VER)
 #pragma warning (disable : 4706) // assignment within conditional expression
@@ -225,66 +222,6 @@ void Profile::InitScreenshotData()
 void Profile::InitCalorieData()
 {
 	m_mapDayToCaloriesBurned.clear();
-}
-
-void Profile::InitSQLiteData()
-{
-
-		int rc = sqlite3_open(STATS_DB, &db);
-		if (rc) {
-			LOG->Trace("Can't open database: %s", sqlite3_errmsg(db));
-		} else {
-			// Create tables if they don't exist
-			const char* sqlCreateTable = R"(
-				CREATE TABLE IF NOT EXISTS GeneralData (
-					id INTEGER PRIMARY KEY AUTOINCREMENT,
-					DisplayName TEXT,
-					CharacterID TEXT,
-					LastUsedHighScoreName TEXT,
-					WeightPounds INTEGER,
-					Voomax REAL,
-					BirthYear INTEGER,
-					IgnoreStepCountCalories INTEGER,
-					IsMale INTEGER,
-					IsMachine INTEGER,
-					Guid TEXT,
-					SortOrder TEXT,
-					LastDifficulty TEXT,
-					LastCourseDifficulty TEXT,
-					LastStepsType TEXT,
-					LastSong TEXT,
-					LastCourse TEXT,
-					CurrentCombo INTEGER,
-					TotalSessions INTEGER,
-					TotalSessionSeconds INTEGER,
-					TotalGameplaySeconds INTEGER,
-					TotalCaloriesBurned REAL,
-					GoalType INTEGER,
-					GoalCalories INTEGER,
-					GoalSeconds INTEGER,
-					LastPlayedMachineGuid TEXT,
-					LastPlayedDate TEXT,
-					TotalDancePoints INTEGER,
-					NumExtraStagesPassed INTEGER,
-					NumExtraStagesFailed INTEGER,
-					NumToasties INTEGER,
-					TotalTapsAndHolds INTEGER,
-					TotalJumps INTEGER,
-					TotalHolds INTEGER,
-					TotalRolls INTEGER,
-					TotalMines INTEGER,
-					TotalHands INTEGER,
-					TotalLifts INTEGER
-				);
-			)";
-			char* errMsg;
-			rc = sqlite3_exec(db, sqlCreateTable, nullptr, nullptr, &errMsg);
-			if (rc != SQLITE_OK) {
-				// Handle SQL error, e.g., by printing an error message
-				LOG->Trace("SQL error: %s", errMsg);
-				sqlite3_free(errMsg);
-			}
-		}
 }
 
 RString Profile::GetDisplayNameOrHighScoreName() const
@@ -1504,7 +1441,6 @@ XNode *Profile::SaveStatsXmlCreateNode() const
 	XNode *xml = new XNode( "Stats" );
 
 	xml->AppendChild( SaveGeneralDataCreateNode() );
-	SaveGeneralDataInsertSQL();
 	xml->AppendChild( SaveSongScoresCreateNode() );
 	xml->AppendChild( SaveCourseScoresCreateNode() );
 	xml->AppendChild( SaveCategoryScoresCreateNode() );
@@ -1597,75 +1533,6 @@ void Profile::SaveEditableDataToDir( RString sDir ) const
 	ini.WriteFile( sDir + EDITABLE_INI );
 }
 
-void *Profile::SaveGeneralDataInsertSQL() const {
-const char* sqlInsert = "INSERT INTO GeneralData "
-    "(DisplayName, CharacterID, LastUsedHighScoreName, WeightPounds, Voomax, BirthYear, "
-    "IgnoreStepCountCalories, IsMale, IsMachine, Guid, SortOrder, LastDifficulty, "
-    "LastCourseDifficulty, LastStepsType, LastSong, LastCourse, CurrentCombo, TotalSessions, "
-    "TotalSessionSeconds, TotalGameplaySeconds, TotalCaloriesBurned, GoalType, GoalCalories, "
-    "GoalSeconds, LastPlayedMachineGuid, LastPlayedDate, TotalDancePoints, NumExtraStagesPassed, "
-    "NumExtraStagesFailed, NumToasties, TotalTapsAndHolds, TotalJumps, TotalHolds, TotalRolls, "
-    "TotalMines, TotalHands, TotalLifts) "
-    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-    sqlite3_stmt* stmt;
-    int rc = sqlite3_prepare_v2(db, sqlInsert, -1, &stmt, nullptr);
-
-    if (rc != SQLITE_OK) {
-        // Handle error
-		LOG->Trace("Error preparing insert into GeneralData: %s", sqlite3_errmsg(db));
-		return nullptr;
-	}
-
-    // Binding values to the prepared statement
-    sqlite3_bind_text(stmt, 1, GetDisplayNameOrHighScoreName(), -1, SQLITE_STATIC);
-	sqlite3_bind_text(stmt, 2, m_sCharacterID.c_str(), -1, SQLITE_STATIC);
-	sqlite3_bind_text(stmt, 3, m_sLastUsedHighScoreName.c_str(), -1, SQLITE_STATIC);
-	sqlite3_bind_int(stmt, 4, m_iWeightPounds);
-	sqlite3_bind_double(stmt, 5, m_Voomax);
-	sqlite3_bind_int(stmt, 6, m_BirthYear);
-	sqlite3_bind_int(stmt, 7, m_IgnoreStepCountCalories);
-	sqlite3_bind_int(stmt, 8, m_IsMale);
-	sqlite3_bind_int(stmt, 9, IsMachine());
-	sqlite3_bind_text(stmt, 10, m_sGuid.c_str(), -1, SQLITE_STATIC);
-	sqlite3_bind_int(stmt, 11, m_SortOrder);
-	sqlite3_bind_int(stmt, 12, m_LastDifficulty);
-	sqlite3_bind_int(stmt, 13, m_LastCourseDifficulty);
-	if( m_LastStepsType != StepsType_Invalid )
-		sqlite3_bind_text(stmt, 14, GAMEMAN->GetStepsTypeInfo(m_LastStepsType).szName, -1, SQLITE_STATIC);
-	sqlite3_bind_text(stmt, 15, m_lastSong.ToString(), -1, SQLITE_STATIC);
-	sqlite3_bind_text(stmt, 16, m_lastCourse.ToString().c_str(), -1, SQLITE_STATIC);
-	sqlite3_bind_int(stmt, 17, m_iCurrentCombo);
-	sqlite3_bind_int(stmt, 18, m_iTotalSessions);
-	sqlite3_bind_int(stmt, 19, m_iTotalSessionSeconds);
-	sqlite3_bind_int(stmt, 20, m_iTotalGameplaySeconds);
-	sqlite3_bind_double(stmt, 21, m_fTotalCaloriesBurned);
-	sqlite3_bind_int(stmt, 22, m_GoalType);
-	sqlite3_bind_int(stmt, 23, m_iGoalCalories);
-	sqlite3_bind_int(stmt, 24, m_iGoalSeconds);
-	sqlite3_bind_text(stmt, 25, m_sLastPlayedMachineGuid.c_str(), -1, SQLITE_STATIC);
-	sqlite3_bind_text(stmt, 26, m_LastPlayedDate.GetString().c_str(), -1, SQLITE_STATIC);
-	sqlite3_bind_int(stmt, 27, m_iTotalDancePoints);
-	sqlite3_bind_int(stmt, 28, m_iNumExtraStagesPassed);
-	sqlite3_bind_int(stmt, 29, m_iNumExtraStagesFailed);
-	sqlite3_bind_int(stmt, 30, m_iNumToasties);
-	sqlite3_bind_int(stmt, 31, m_iTotalTapsAndHolds);
-	sqlite3_bind_int(stmt, 32, m_iTotalJumps);
-	sqlite3_bind_int(stmt, 33, m_iTotalHolds);
-	sqlite3_bind_int(stmt, 34, m_iTotalRolls);
-	sqlite3_bind_int(stmt, 35, m_iTotalMines);
-	sqlite3_bind_int(stmt, 36, m_iTotalHands);
-	sqlite3_bind_int(stmt, 37, m_iTotalLifts);
-
-    // Execute the statement
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_DONE) {
-        // Handle error
-		LOG->Trace("Error inserting into GeneralData: %s", sqlite3_errmsg(db));
-    }
-    // Clean up
-    sqlite3_finalize(stmt);
-}
-
 XNode* Profile::SaveGeneralDataCreateNode() const
 {
 	XNode* pGeneralDataNode = new XNode( "GeneralData" );
@@ -1714,7 +1581,6 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalHands",			m_iTotalHands );
 	pGeneralDataNode->AppendChild( "TotalLifts",			m_iTotalLifts );
 
-	SaveGeneralDataInsertSQL();
 	// Keep declared variables in a very local scope so they aren't
 	// accidentally used where they're not intended.  There's a lot of
 	// copying and pasting in this code.

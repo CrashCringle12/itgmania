@@ -352,4 +352,3 @@ configure_file("${SM_SRC_DIR}/verstub.in.cpp"
 
 # Define installer based items for cpack.
 include("${CMAKE_CURRENT_LIST_DIR}/CMake/CPackSetup.cmake")
-include_directories("${SM_EXTERN_DIR}/sqlite")

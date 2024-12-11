@@ -379,7 +379,6 @@ public:
 	// Init'ing
 	void InitAll()
 	{
-		InitSQLiteData();
 		InitEditableData();
 		InitGeneralData();
 		InitSongScores();
@@ -396,7 +395,6 @@ public:
 	void InitCategoryScores();
 	void InitScreenshotData();
 	void InitCalorieData();
-	void InitSQLiteData();
 	void ClearStats();
 
 	void swap(Profile& other);
@@ -424,7 +422,6 @@ public:
 	bool SaveStatsXmlToDir( RString sDir, bool bSignData ) const;
 	XNode* SaveStatsXmlCreateNode() const;
 	XNode* SaveGeneralDataCreateNode() const;
-	void* SaveGeneralDataInsertSQL() const;
 	XNode* SaveSongScoresCreateNode() const;
 	XNode* SaveCourseScoresCreateNode() const;
 	XNode* SaveCategoryScoresCreateNode() const;
