@@ -187,6 +187,14 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField, int
 	{
 		pPlayerState->m_PlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 	}
+	// Copy P1 options to PLAYER 2 but save their noteskin first so we can reapply only if in routine mode
+	// pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin
+	// if ( pn == PLAYER_2 && GAMESTATE->GetCurrentStyle(pn)->m_StyleType == StyleType_TwoPlayersSharedSides)
+	// {
+	// 	RString sNoteSkin = pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin;
+	// 	pPlayerState->m_PlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+	// 	pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin = sNoteSkin;
+	// }
 }
 
 void PlayerInfo::LoadDummyP1( int iDummyIndex, int iAddToDifficulty )

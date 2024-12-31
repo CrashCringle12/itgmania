@@ -50,11 +50,11 @@ void EditModePlayerManager::ReloadNoteData(const NoteData& note_data) {
 
 void EditModePlayerManager::SetVisible(bool visible) {
 	// If this is a routine chart, only set visibility of PLAYER_1.
-	if (GAMESTATE->GetCurrentStyle(PLAYER_1)->m_StyleType ==
-		StyleType::StyleType_TwoPlayersSharedSides) {
-		(*players_[PLAYER_1])->SetVisible(visible);
-		return;
-	}
+	// if (GAMESTATE->GetCurrentStyle(PLAYER_1)->m_StyleType ==
+	// 	StyleType::StyleType_TwoPlayersSharedSides) {
+	// 	(*players_[PLAYER_1])->SetVisible(visible);
+	// 	return;
+	// }
 
 	for (auto& player : players_) {
 		(*player.second)->SetVisible(visible);
@@ -65,9 +65,9 @@ bool EditModePlayerManager::HandleGameplayInput(const InputEventPlus& input, con
 	PlayerNumber pn = input.pn;
 
 	// Redirect Player2's inputs to P1's notefield in case of Routine charts.
-	if (GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType == StyleType_TwoPlayersSharedSides) {
-		pn = PLAYER_1;
-	}
+	// if (GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType == StyleType_TwoPlayersSharedSides) {
+	// 	pn = PLAYER_1;
+	// }
 	if (gbt == GameButtonType_Step && GAMESTATE->IsPlayerEnabled(pn)) {
 		if (GAMESTATE->m_pPlayerState[pn]->m_PlayerController == PC_AUTOPLAY) {
 			return false;
@@ -104,7 +104,10 @@ void EditModePlayerManager::PlayTicks(GameplayAssist& gameplay_assist) {
 		// Edit mode does not support 2p practicing different steps, so
 		// enabling one set of ticks is fine.
 		gameplay_assist.PlayTicks((*player.second)->GetNoteData(), (*player.second)->GetPlayerState());
-		return;
+		if (GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType != StyleType_TwoPlayersSharedSides) {
+			return;
+		}
 	}
+
 	
 }
