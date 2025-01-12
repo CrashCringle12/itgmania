@@ -650,13 +650,13 @@ void ScreenGameplay::Init()
 	}
 
 	// Add Combined life meter also in routine mode
-	if (GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType == StyleType_TwoPlayersSharedSides)
-	{
-		m_pCombinedLifeMeter = new CombinedLifeMeterTug;
-		m_pCombinedLifeMeter->SetName("CombinedLife");
-		LOAD_ALL_COMMANDS_AND_SET_XY(*m_pCombinedLifeMeter);
-		this->AddChild(m_pCombinedLifeMeter);
-	}
+	//if (GAMESTATE->GetCurrentStyle(PLAYER_INVALID)->m_StyleType == StyleType_TwoPlayersSharedSides)
+	//{
+	//	m_pCombinedLifeMeter = new CombinedLifeMeterTug;
+	//	m_pCombinedLifeMeter->SetName("CombinedLife");
+	//	LOAD_ALL_COMMANDS_AND_SET_XY(*m_pCombinedLifeMeter);
+	//	this->AddChild(m_pCombinedLifeMeter);
+	//}
 
 	// Add individual life meter
 	switch( GAMESTATE->m_PlayMode )
