@@ -27,9 +27,9 @@ const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 // Player number stuff
 enum RoutinePlayer
 {
-	COMBINED = 0,
-	PLAYER_3,
-	PLAYER_4,
+	PLAYER_1 = 0,
+	PLAYER_2,
+	COMBINED,
 	NUM_RoutinePlayer,	// leave this at the end
 	RoutinePlayer_Invalid
 };
