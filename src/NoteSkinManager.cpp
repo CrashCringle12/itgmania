@@ -14,6 +14,7 @@
 #include "XmlFileUtil.h"
 #include "Sprite.h"
 #include "SpecialFiles.h"
+#include "CommonMetrics.h"
 
 #include <cstddef>
 #include <map>
@@ -336,10 +337,8 @@ void NoteSkinManager::FilterNoteSkinsByStyle( const Style *pStyle, std::vector<R
 			}
 			++iter;
 		}
-	} else {
+	} else if( !CommonMetrics::AUTO_SET_STYLE) {
 		// First make sure we're in game
-		
-
 		for( std::vector<RString>::iterator iter = AddTo.begin(); iter != AddTo.end(); )
 		{
 			RString sNoteSkinName = *iter;
