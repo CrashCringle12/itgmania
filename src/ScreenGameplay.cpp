@@ -1743,7 +1743,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 						if( ft == FailType_Off || ft == FailType_EndOfSong )
 							continue;
 						// check for individual fail
-						if( pi->m_pLifeMeter == nullptr || !pi->m_pLifeMeter->IsFailing() )
+						if( pi->m_pLifeMeter == nullptr || pi->m_pLifeMeter->IsFailing() )
 							continue; /* isn't failing */
 						if( pi->GetPlayerStageStats()->m_bFailed )
 							continue; /* failed and is already dead */
