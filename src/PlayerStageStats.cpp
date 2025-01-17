@@ -165,28 +165,30 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 }
 
 
-void PlayerStageStats::AddRoutineStats( const PlayerStageStats* other )
+void PlayerStageStats::AddRoutineStats( const PlayerStageStats* player, const PlayerStageStats* other )
 {
 	LOG->Trace( "PlayerStageStats::AddRoutineStats" );
-	m_iStepsPlayed += other->m_iStepsPlayed;
+	//m_iStepsPlayed += other->m_iStepsPlayed;
 	LOG->Trace( "m_iStepsPlayed = %i", m_iStepsPlayed );
-	m_iPossibleDancePoints += other->m_iPossibleDancePoints;
-	m_iActualDancePoints += other->m_iActualDancePoints;
-	m_iCurPossibleDancePoints += other->m_iCurPossibleDancePoints;
-	m_iPossibleGradePoints += other->m_iPossibleGradePoints;
+	m_iPossibleDancePoints = other->m_iPossibleDancePoints + player->m_iPossibleDancePoints;
+	m_iActualDancePoints = other->m_iActualDancePoints + player->m_iActualDancePoints;
+	m_iCurPossibleDancePoints = other->m_iCurPossibleDancePoints + player->m_iCurPossibleDancePoints;
+	m_iPossibleGradePoints = other->m_iPossibleGradePoints + player->m_iPossibleGradePoints;
 
 	for( int t=0; t<NUM_TapNoteScore; t++ )
-		m_iTapNoteScores[t] += other->m_iTapNoteScores[t];
+		m_iTapNoteScores[t] = other->m_iTapNoteScores[t] + player->m_iTapNoteScores[t];
 	for( int h=0; h<NUM_HoldNoteScore; h++ )
-		m_iHoldNoteScores[h] += other->m_iHoldNoteScores[h];
-	m_iCurCombo += other->m_iCurCombo;
-	m_iMaxCombo += other->m_iMaxCombo;
-	m_iCurMissCombo += other->m_iCurMissCombo;
-	m_iScore += other->m_iScore;
-	m_iMaxScore += other->m_iMaxScore;
-	m_iCurMaxScore += other->m_iCurMaxScore;
-	m_radarPossible += other->m_radarPossible;
-	m_radarActual += other->m_radarActual;
+		m_iHoldNoteScores[h] = other->m_iHoldNoteScores[h] + player->m_iHoldNoteScores[h];
+	m_iCurCombo = other->m_iCurCombo + player->m_iCurCombo;
+	m_iMaxCombo = other->m_iMaxCombo + player->m_iMaxCombo;
+	m_iCurMissCombo = other->m_iCurMissCombo + player->m_iCurMissCombo;
+	m_iScore = other->m_iScore + player->m_iScore;
+	m_iMaxScore = other->m_iMaxScore + player->m_iMaxScore;
+	m_iCurMaxScore = other->m_iCurMaxScore + player->m_iCurMaxScore;
+	// m_radarPossible = other->m_radarPossible + player->m_radarPossible;
+	// m_radarActual = other->m_radarActual + player->m_radarActual;
+	m_iCurMissCombo = other->m_iCurMissCombo + player->m_iCurMissCombo;
+
 	//m_iSongsPassed += other->m_iSongsPassed;
 	//m_iSongsPlayed += other->m_iSongsPlayed;
 	m_fCaloriesBurned += other->m_fCaloriesBurned;

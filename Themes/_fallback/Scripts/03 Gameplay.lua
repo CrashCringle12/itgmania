@@ -299,7 +299,7 @@ local CodeDetectorCodes = {
 	-- steps
 	PrevSteps1 = {
 		default = "",
-		dance = "Up,Up",
+		dance = "Left,Left",
 		pump = "+UpLeft",
 	},
 	PrevSteps2 = {
@@ -309,7 +309,7 @@ local CodeDetectorCodes = {
 	},
 	NextSteps1 = {
 		default = "",
-		dance = "Down,Down",
+		dance = "Right,Right",
 		pump = "+UpRight",
 	},
 	NextSteps2 = {

@@ -1728,11 +1728,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 						pi->GetPlayerStageStats()->m_bFailed = true;	// fail
 					}
 				}
-				// Add the player stage stats together for routinestagestats
-				FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-				{
-					STATSMAN->m_CurStageStats.m_RoutinePlayer.AddRoutineStats(pi->GetPlayerStageStats());
-				}
+				STATSMAN->m_CurStageStats.m_RoutinePlayer.AddRoutineStats(m_vPlayerInfo[PLAYER_1].GetPlayerStageStats(), m_vPlayerInfo[PLAYER_2].GetPlayerStageStats());
 			}
 
 			/* Set STATSMAN->m_CurStageStats.bFailed for failed players.  In, FAIL_IMMEDIATE, send
