@@ -187,8 +187,8 @@ void PlayerStageStats::AddRoutineStats( const PlayerStageStats* other )
 	m_iCurMaxScore += other->m_iCurMaxScore;
 	m_radarPossible += other->m_radarPossible;
 	m_radarActual += other->m_radarActual;
-	m_iSongsPassed += other->m_iSongsPassed;
-	m_iSongsPlayed += other->m_iSongsPlayed;
+	//m_iSongsPassed += other->m_iSongsPassed;
+	//m_iSongsPlayed += other->m_iSongsPlayed;
 	m_fCaloriesBurned += other->m_fCaloriesBurned;
 
 	// FirstSecond is always 0, and last second is the time of the last step,
