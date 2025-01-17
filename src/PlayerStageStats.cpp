@@ -165,42 +165,42 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 }
 
 
-void PlayerStageStats::AddRoutineStats( const PlayerStageStats& other )
+void PlayerStageStats::AddRoutineStats( const PlayerStageStats* other )
 {
 	LOG->Trace( "PlayerStageStats::AddRoutineStats" );
-	m_iStepsPlayed += other.m_iStepsPlayed;
+	m_iStepsPlayed += other->m_iStepsPlayed;
 	LOG->Trace( "m_iStepsPlayed = %i", m_iStepsPlayed );
-	m_iPossibleDancePoints += other.m_iPossibleDancePoints;
-	m_iActualDancePoints += other.m_iActualDancePoints;
-	m_iCurPossibleDancePoints += other.m_iCurPossibleDancePoints;
-	m_iPossibleGradePoints += other.m_iPossibleGradePoints;
+	m_iPossibleDancePoints += other->m_iPossibleDancePoints;
+	m_iActualDancePoints += other->m_iActualDancePoints;
+	m_iCurPossibleDancePoints += other->m_iCurPossibleDancePoints;
+	m_iPossibleGradePoints += other->m_iPossibleGradePoints;
 
 	for( int t=0; t<NUM_TapNoteScore; t++ )
-		m_iTapNoteScores[t] += other.m_iTapNoteScores[t];
+		m_iTapNoteScores[t] += other->m_iTapNoteScores[t];
 	for( int h=0; h<NUM_HoldNoteScore; h++ )
-		m_iHoldNoteScores[h] += other.m_iHoldNoteScores[h];
-	m_iCurCombo += other.m_iCurCombo;
-	m_iMaxCombo += other.m_iMaxCombo;
-	m_iCurMissCombo += other.m_iCurMissCombo;
-	m_iScore += other.m_iScore;
-	m_iMaxScore += other.m_iMaxScore;
-	m_iCurMaxScore += other.m_iCurMaxScore;
-	m_radarPossible += other.m_radarPossible;
-	m_radarActual += other.m_radarActual;
-	m_iSongsPassed += other.m_iSongsPassed;
-	m_iSongsPlayed += other.m_iSongsPlayed;
-	m_fCaloriesBurned += other.m_fCaloriesBurned;
+		m_iHoldNoteScores[h] += other->m_iHoldNoteScores[h];
+	m_iCurCombo += other->m_iCurCombo;
+	m_iMaxCombo += other->m_iMaxCombo;
+	m_iCurMissCombo += other->m_iCurMissCombo;
+	m_iScore += other->m_iScore;
+	m_iMaxScore += other->m_iMaxScore;
+	m_iCurMaxScore += other->m_iCurMaxScore;
+	m_radarPossible += other->m_radarPossible;
+	m_radarActual += other->m_radarActual;
+	m_iSongsPassed += other->m_iSongsPassed;
+	m_iSongsPlayed += other->m_iSongsPlayed;
+	m_fCaloriesBurned += other->m_fCaloriesBurned;
 
 	// FirstSecond is always 0, and last second is the time of the last step,
 	// so add 1 second between the stages so that the last element of this
 	// stage's record isn't overwritten by the first element of the other
 	// stage's record. -Kyz
-	const float fOtherFirstSecond = other.m_fFirstSecond + m_fLastSecond + 1.0f;
-	const float fOtherLastSecond = other.m_fLastSecond + m_fLastSecond + 1.0f;
+	const float fOtherFirstSecond = other->m_fFirstSecond + m_fLastSecond + 1.0f;
+	const float fOtherLastSecond = other->m_fLastSecond + m_fLastSecond + 1.0f;
 	m_fLastSecond = fOtherLastSecond;
-	for( unsigned i=0; i<other.m_ComboList.size(); ++i )
+	for( unsigned i=0; i<other->m_ComboList.size(); ++i )
 	{
-		const Combo_t &combo = other.m_ComboList[i];
+		const Combo_t &combo = other->m_ComboList[i];
 
 		Combo_t newcombo(combo);
 		newcombo.m_fStartSecond += fOtherFirstSecond;

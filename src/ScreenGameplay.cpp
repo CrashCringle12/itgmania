@@ -1596,6 +1596,16 @@ bool ScreenGameplay::AllAreFailing()
 	return true;
 }
 
+bool ScreenGameplay::OneFailed()
+{
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		if( pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing() )
+			return true;
+	}
+	return false;
+}
+
 void ScreenGameplay::GetMusicEndTiming( float &fSecondsToStartFadingOutMusic, float &fSecondsToStartTransitioningOut )
 {
 	float fLastStepSeconds = GAMESTATE->m_pCurSong->GetLastSecond();
@@ -1699,7 +1709,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			msg.SetParam( "OldHealthState", OldHealthState );
 			MESSAGEMAN->Broadcast( msg );
 		}
-
 		pi->m_SoundEffectControl.Update( fDeltaTime );
 	}
 
@@ -1720,6 +1729,34 @@ void ScreenGameplay::Update( float fDeltaTime )
 	{
 		case STATE_DANCING:
 		{
+			// If we're in TwoPlayerSharedSides, if one player fails, both fail.
+			if( GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())->m_StyleType == StyleType_TwoPlayersSharedSides )
+			{
+				if (OneFailed())
+				{
+					FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+					{
+						PlayerNumber pn = pi->GetStepsAndTrailIndex();
+
+						FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
+						LifeType lt = pi->GetPlayerState()->m_PlayerOptions.GetStage().m_LifeType;
+						if( ft == FailType_Off || ft == FailType_EndOfSong )
+							continue;
+						// check for individual fail
+						if( pi->m_pLifeMeter == nullptr || !pi->m_pLifeMeter->IsFailing() )
+							continue; /* isn't failing */
+						if( pi->GetPlayerStageStats()->m_bFailed )
+							continue; /* failed and is already dead */
+						pi->GetPlayerStageStats()->m_bFailed = true;	// fail
+					}
+				}
+				// Add the player stage stats together for routinestagestats
+				FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+				{
+					STATSMAN->m_CurStageStats.m_RoutinePlayer.AddRoutineStats(pi->GetPlayerStageStats());
+				}
+			}
+
 			/* Set STATSMAN->m_CurStageStats.bFailed for failed players.  In, FAIL_IMMEDIATE, send
 			 * SM_BeginFailed if all players failed, and kill dead Oni players. */
 			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )

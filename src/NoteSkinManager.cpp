@@ -310,9 +310,9 @@ void NoteSkinManager::FilterNoteSkinsByStyle( const Style *pStyle, std::vector<R
 			RString sNoteSkinName = *iter;
 			sNoteSkinName.MakeLower();
 			std::map<RString, NoteSkinData>::const_iterator it = g_mapNameToData.find(sNoteSkinName);
-			LOG->Trace( "FilterNoteSkinsByStyle: %s", sNoteSkinName.c_str() );
+			//LOG->Trace( "FilterNoteSkinsByStyle: %s", sNoteSkinName.c_str() );
 			ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
-			LOG->Trace(" We survived the assert.");
+			//LOG->Trace(" We survived the assert.");
 			const NoteSkinData& data = it->second;
 
 			RString bIsRoutine;
@@ -321,22 +321,46 @@ void NoteSkinManager::FilterNoteSkinsByStyle( const Style *pStyle, std::vector<R
 
 				// If the metric doesn't exist, then it's not a TwoPlayersSharedSides noteskin.
 				iter = AddTo.erase( iter );
-				LOG->Trace("IsRoutine doesn't exist.");
+			//	LOG->Trace("IsRoutine doesn't exist.");
 				continue;
 			}
 
 			if( !bIsRoutine )
 			{
-				LOG->Trace("IsRoutine isn't true.");
+			//	LOG->Trace("IsRoutine isn't true.");
 				// If the metric exists but isn't "true", then it's not a TwoPlayersSharedSides noteskin.
 				iter = AddTo.erase( iter );
 				continue;
 			} else {
-				LOG->Trace("IsRoutine is true.");
+			//	LOG->Trace("IsRoutine is true.");
 			}
 			++iter;
 		}
-	}		
+	} else {
+		// First make sure we're in game
+		
+
+		for( std::vector<RString>::iterator iter = AddTo.begin(); iter != AddTo.end(); )
+		{
+			RString sNoteSkinName = *iter;
+			sNoteSkinName.MakeLower();
+			std::map<RString, NoteSkinData>::const_iterator it = g_mapNameToData.find(sNoteSkinName);
+			ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
+			const NoteSkinData& data = it->second;
+
+			RString bIsRoutine;
+			if( data.metrics.GetValue( "Global", "IsRoutineNoteSkin", bIsRoutine ) )
+			{
+				if( bIsRoutine )
+				{
+					// If the metric exists but isn't "true", then it's not a TwoPlayersSharedSides noteskin.
+					iter = AddTo.erase( iter );
+					continue;
+				} 
+			} 
+			++iter;
+		}
+	}	
 }
 
 RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &sValue )

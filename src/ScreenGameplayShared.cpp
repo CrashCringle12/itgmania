@@ -16,7 +16,6 @@ void ScreenGameplayShared::FillPlayerInfo( std::vector<PlayerInfo> &vPlayerInfoO
 {
 	const PlayerNumber master = GAMESTATE->GetMasterPlayerNumber();
 	const PlayerNumber other = (master == PLAYER_1? PLAYER_2:PLAYER_1);
-
 	/* The master player is where all of the real work takes place.  The other player exists
 	 * only so we have a place to split stats out into at the end. */
 	vPlayerInfoOut.resize( 2 );
