@@ -822,7 +822,7 @@ void NoteField::DrawPrimitives()
 		segs[tst] = &(pTiming->GetTimingSegments(tst));
 
 	// Draw beat bars
-	if( ( GAMESTATE->IsEditing() || m_bShowBeatBars ) && pTiming != nullptr )
+	if( ((GAMESTATE->IsEditing() && GAMESTATE->m_EditMode != EditMode_Practice) || m_bShowBeatBars ) && pTiming != nullptr )
 	{
 		const std::vector<TimingSegment *> &tSigs = *segs[SEGMENT_TIME_SIG];
 		int iMeasureIndex = 0;
