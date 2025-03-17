@@ -218,7 +218,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "Disqualified",		bDisqualified);
 
 	// Validate input.
-	grade = clamp( grade, Grade_Tier01, Grade_Failed );
+	grade = std::clamp( grade, Grade_Tier01, Grade_Failed );
     const XNode *pRoutineNode = pNode->GetChild("RoutineData");
 
 	if (pRoutineNode) {
