@@ -190,10 +190,15 @@ static HighScore FillInHighScore( const PlayerStageStats &pss, const PlayerState
 }
 
 
-static HighScore FillInRoutineHighScore( const PlayerStageStats &pss, const PlayerState &ps, RString sPlayerGuid,  RString sRankingToFillInMarker, std::vector<PlayerStageStats> &ppss )
+static HighScore FillInRoutineHighScore( const PlayerStageStats &pss, const PlayerState &ps, RString sPlayerGuid,  std::vector<RString> sRankingToFillInMarker, std::vector<PlayerStageStats> &ppss )
 {
 	HighScore hs;
-	hs.SetName( sRankingToFillInMarker );
+	RString sName = "";
+	FOREACH_HumanPlayer( pn )
+	{
+		sName += sRankingToFillInMarker[pn] + "&";
+	}
+	hs.SetName( sName );
 	hs.SetGrade( pss.GetGrade() );
 	hs.SetScore( pss.m_iScore );
 	hs.SetPercentDP( pss.GetPercentDancePoints() );
@@ -227,14 +232,19 @@ static HighScore FillInRoutineHighScore( const PlayerStageStats &pss, const Play
 	hs.SetRoutine( true );
 	FOREACH_HumanPlayer( pn )
 	{	
+		LOG->Trace( "Name: %s, Grade: %s, Score: %i, PercentDP: %f, MaxCombo: %i, AliveSeconds: %f, StageAward: %i, PeakComboAward: %i", sRankingToFillInMarker[pn].c_str(), GradeToString( ppss[pn].GetGrade() ).c_str(), ppss[pn].m_iScore, ppss[pn].GetPercentDancePoints(), ppss[pn].GetMaxCombo().m_cnt, ppss[pn].m_fAliveSeconds, ppss[pn].m_StageAward, ppss[pn].m_PeakComboAward );
 		hs.SetPlayerName( pn, RANKING_TO_FILL_IN_MARKER[pn] );
 		hs.SetPlayerGrade( pn, ppss[pn].GetGrade());
 		hs.SetPlayerScore( pn, ppss[pn].m_iScore );
 		hs.SetPlayerPercentDP( pn, ppss[pn].GetPercentDancePoints() );
 		hs.SetPlayerMaxCombo( pn, ppss[pn].GetMaxCombo().m_cnt );
 		hs.SetPlayerGuid( pn, sPlayerGuid );
-		FOREACH_ENUM( TapNoteScore, tns )
+		RString tnsStr = "";
+		FOREACH_ENUM( TapNoteScore, tns ) {
 			hs.SetPlayerTapNoteScore( pn, tns, ppss[pn].m_iTapNoteScores[tns] );
+			tnsStr += TapNoteScoreToString( tns ) + ": " + ssprintf( "%i", ppss[pn].m_iTapNoteScores[tns] ) + ", ";
+		}
+		LOG->Trace( "TapNoteScores: %s", tnsStr.c_str() );
 		FOREACH_ENUM( HoldNoteScore, hns )
 			hs.SetPlayerHoldNoteScore( pn, hns, ppss[pn].m_iHoldNoteScores[hns] );
 
@@ -284,7 +294,6 @@ void StageStats::FinalizeScores( bool bSummary )
 		std::vector<PlayerStageStats> ppss;
 		FOREACH_HumanPlayer( pn )
 		{
-			sName += RANKING_TO_FILL_IN_MARKER[pn] + "&";
 			ppss.push_back(m_player[pn]);
 		}
 		// Loop through ppss and add routine stats together
@@ -294,7 +303,7 @@ void StageStats::FinalizeScores( bool bSummary )
 			//LOG->Trace("Routine Player Score: %i", m_RoutinePlayer.m_iScore);
 			//LOG->Trace("Routine Player Percent: %f", m_RoutinePlayer.GetPercentDancePoints());
 		}
-		m_player[p].m_HighScore = FillInRoutineHighScore( m_RoutinePlayer, *GAMESTATE->m_pPlayerState[p], sPlayerGuid, sName, ppss );
+		m_player[p].m_HighScore = FillInRoutineHighScore( m_RoutinePlayer, *GAMESTATE->m_pPlayerState[p], sPlayerGuid, RANKING_TO_FILL_IN_MARKER, ppss );
 	} else {
 		FOREACH_HumanPlayer( p )
 		{

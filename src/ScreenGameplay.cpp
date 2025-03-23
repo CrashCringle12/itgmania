@@ -1724,6 +1724,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 						if( pi->GetPlayerStageStats()->m_bFailed )
 							continue; /* failed and is already dead */
 						pi->GetPlayerStageStats()->m_bFailed = true;	// fail
+						pi->m_pLifeMeter->SetLife( 0 );
 					}
 				}
 				STATSMAN->m_CurStageStats.m_RoutinePlayer.AddRoutineStats(m_vPlayerInfo[PLAYER_1].GetPlayerStageStats(), m_vPlayerInfo[PLAYER_2].GetPlayerStageStats());
