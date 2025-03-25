@@ -703,47 +703,57 @@ void Player::Load()
 	NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType);
 
 	const Song* pSong = GAMESTATE->m_pCurSong;
+	if (GAMESTATE->m_PlayMode == PLAY_MODE_RAVE || GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE) {
+		// I have no idea what the original code was trying to do here but it was cursed.
+		// I think the goal was to mirror steps for each player so they're different.
+		// In reality it just ended up moving all of P1s left arrows to right and just making really
+		// messy charts. I left it commented out for now and will remove once I'm certain its unneeded - CrashCringle
+		if (BATTLE_RAVE_MIRROR)
+		{
+			NoteDataUtil::Turn( m_NoteData, GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType, NoteDataUtil::mirror);
+		}
+	}
 
 	// Generate some cache data structure.
 	GenerateCacheDataStructure(m_pPlayerState, m_NoteData);
 
-	switch( GAMESTATE->m_PlayMode )
-	{
-		case PLAY_MODE_RAVE:
-		case PLAY_MODE_BATTLE:
-		{
-			// ugly, ugly, ugly.  Works only w/ dance.
-			// Why does this work only with dance? - Steve
-			// it has to do with there only being four cases. This is a lame
-			// workaround, but since only DDR has ever really implemented those
-			// modes, it's stayed like this. -aj
-			StepsType st = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
-			NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, m_pPlayerState->m_PlayerOptions.GetStage(), st);
+	// switch( GAMESTATE->m_PlayMode )
+	// {
+	// 	case PLAY_MODE_RAVE:
+	// 	case PLAY_MODE_BATTLE:
+	// 	{
+	// 		// ugly, ugly, ugly.  Works only w/ dance.
+	// 		// Why does this work only with dance? - Steve
+	// 		// it has to do with there only being four cases. This is a lame
+	// 		// workaround, but since only DDR has ever really implemented those
+	// 		// modes, it's stayed like this. -aj
+	// 		// StepsType st = GAMESTATE->GetCurrentStyle(GetPlayerState()->m_PlayerNumber)->m_StepsType;
+	// 		// NoteDataUtil::TransformNoteData(m_NoteData, *m_Timing, m_pPlayerState->m_PlayerOptions.GetStage(), st);
 
-			if (BATTLE_RAVE_MIRROR)
-			{
-				// shuffle either p1 or p2
-				static int count = 0;
-				switch( count )
-				{
-				case 0:
-				case 3:
-					NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::left);
-					break;
-				case 1:
-				case 2:
-					NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::right);
-					break;
-				default:
-					FAIL_M(ssprintf("Count %i not in range 0-3", count));
-				}
-				count++;
-				count %= 4;
-			}
-			break;
-		}
-		default: break;
-	}
+	// 		// if (BATTLE_RAVE_MIRROR)
+	// 		// {
+	// 		// 	// shuffle either p1 or p2
+	// 		// 	static int count = 0;
+	// 		// 	switch( count )
+	// 		// 	{
+	// 		// 	case 0:
+	// 		// 	case 3:
+	// 		// 		NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::left);
+	// 		// 		break;
+	// 		// 	case 1:
+	// 		// 	case 2:
+	// 		// 		NoteDataUtil::Turn( m_NoteData, st, NoteDataUtil::right);
+	// 		// 		break;
+	// 		// 	default:
+	// 		// 		FAIL_M(ssprintf("Count %i not in range 0-3", count));
+	// 		// 	}
+	// 		// 	count++;
+	// 		// 	count %= 4;
+	// 		// }
+	// 		// break;
+	// 	}
+	// 	default: break;
+	// }
 
 	int iDrawDistanceAfterTargetsPixels = GAMESTATE->IsEditing() ? -100 : DRAW_DISTANCE_AFTER_TARGET_PIXELS;
 	int iDrawDistanceBeforeTargetsPixels = GAMESTATE->IsEditing() ? 400 : DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
@@ -2360,7 +2370,13 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				if( (pTN->type == TapNoteType_Lift) == bRelease )
 				{
 					const auto &disabledWindows = m_pPlayerState->m_PlayerOptions.GetCurrent().m_twDisabledWindows;
-					if(	fSecondsFromExact <= GetWindowSeconds(TW_W1) && !disabledWindows[TW_W1] )	score = TNS_W1;
+					// Lifts have a wider window, anything above W3 is a W1
+					if (pTN->type == TapNoteType_Lift) {
+						if (fSecondsFromExact <= GetWindowSeconds(TW_W3) && !disabledWindows[TW_W3]) {
+							score = TNS_W1;
+						}
+					}
+					else if( fSecondsFromExact <= GetWindowSeconds(TW_W1) && !disabledWindows[TW_W1] )	score = TNS_W1;
 					else if( fSecondsFromExact <= GetWindowSeconds(TW_W2) && !disabledWindows[TW_W2] )	score = TNS_W2;
 					else if( fSecondsFromExact <= GetWindowSeconds(TW_W3) && !disabledWindows[TW_W3] )	score = TNS_W3;
 					else if( fSecondsFromExact <= GetWindowSeconds(TW_W4) && !disabledWindows[TW_W4] )	score = TNS_W4;
