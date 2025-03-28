@@ -2370,13 +2370,14 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				if( (pTN->type == TapNoteType_Lift) == bRelease )
 				{
 					const auto &disabledWindows = m_pPlayerState->m_PlayerOptions.GetCurrent().m_twDisabledWindows;
-					// Lifts have a wider window, anything above W3 is a W1
-					if (pTN->type == TapNoteType_Lift) {
-						if (fSecondsFromExact <= GetWindowSeconds(TW_W3) && !disabledWindows[TW_W3]) {
-							score = TNS_W1;
-						}
-					}
-					else if( fSecondsFromExact <= GetWindowSeconds(TW_W1) && !disabledWindows[TW_W1] )	score = TNS_W1;
+					// // Lifts have a wider window, anything above W3 is a W1
+					// if (pTN->type == TapNoteType_Lift) {
+					// 	if (fSecondsFromExact <= GetWindowSeconds(TW_W3) && !disabledWindows[TW_W3]) {
+					// 		score = TNS_W1;
+					// 	}
+					// }
+					// else 
+					if( fSecondsFromExact <= GetWindowSeconds(TW_W1) && !disabledWindows[TW_W1] )	score = TNS_W1;
 					else if( fSecondsFromExact <= GetWindowSeconds(TW_W2) && !disabledWindows[TW_W2] )	score = TNS_W2;
 					else if( fSecondsFromExact <= GetWindowSeconds(TW_W3) && !disabledWindows[TW_W3] )	score = TNS_W3;
 					else if( fSecondsFromExact <= GetWindowSeconds(TW_W4) && !disabledWindows[TW_W4] )	score = TNS_W4;
