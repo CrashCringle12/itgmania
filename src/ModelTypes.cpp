@@ -228,8 +228,6 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 	const RString sDir = Dirname( sPath );
 
 	RageFile f;
-	LOG->Warn( "Loading animation \"%s\" from \"%s\"", sAniName.c_str(), sPath.c_str() );
-	LOG->Warn( "Dirname is \"%s\"", sDir.c_str() );
 	if ( !f.Open(sPath) )
 		RageException::Throw( "Model:: Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 

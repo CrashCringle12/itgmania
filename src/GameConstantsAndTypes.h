@@ -439,14 +439,12 @@ LuaDeclareType( StageResult );
 
 // Battle stuff
 /** @brief The number of inventory slots available for attacks. */
-const int NUM_INVENTORY_SLOTS	= 5;
+const int NUM_INVENTORY_SLOTS	= 3;
 enum AttackLevel
 {
 	ATTACK_LEVEL_1,
 	ATTACK_LEVEL_2,
 	ATTACK_LEVEL_3,
-	ATTACK_LEVEL_4,
-	ATTACK_LEVEL_5,
 	NUM_ATTACK_LEVELS
 };
 const int NUM_ATTACKS_PER_LEVEL	= 3;
