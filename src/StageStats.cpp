@@ -375,12 +375,12 @@ void StageStats::FinalizeScores( bool bSummary )
 
 		HighScore &hs = m_player[p].m_HighScore;
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
-		StepsType st = GAMESTATE->GetCurrentStyle(p)->m_StepsType;
+		StepsType st1 = GAMESTATE->GetCurrentStyle(p)->m_StepsType;
 
 		const HighScoreList *pHSL = nullptr;
 		if( bSummary )
 		{
-			pHSL = &pProfile->GetCategoryHighScoreList( st, m_player[p].m_rc );
+			pHSL = &pProfile->GetCategoryHighScoreList( st1, m_player[p].m_rc );
 		}
 		else if( GAMESTATE->IsCourseMode() )
 		{

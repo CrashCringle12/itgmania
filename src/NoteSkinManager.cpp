@@ -309,7 +309,7 @@ void NoteSkinManager::FilterNoteSkinsByStyle( const Style *pStyle, std::vector<R
 		for( std::vector<RString>::iterator iter = AddTo.begin(); iter != AddTo.end(); )
 		{
 			RString sNoteSkinName = *iter;
-			sNoteSkinName.MakeLower();
+			MakeLower(sNoteSkinName);
 			std::map<RString, NoteSkinData>::const_iterator it = g_mapNameToData.find(sNoteSkinName);
 			//LOG->Trace( "FilterNoteSkinsByStyle: %s", sNoteSkinName.c_str() );
 			ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
@@ -342,7 +342,7 @@ void NoteSkinManager::FilterNoteSkinsByStyle( const Style *pStyle, std::vector<R
 		for( std::vector<RString>::iterator iter = AddTo.begin(); iter != AddTo.end(); )
 		{
 			RString sNoteSkinName = *iter;
-			sNoteSkinName.MakeLower();
+			MakeLower(sNoteSkinName);
 			std::map<RString, NoteSkinData>::const_iterator it = g_mapNameToData.find(sNoteSkinName);
 			ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
 			const NoteSkinData& data = it->second;
