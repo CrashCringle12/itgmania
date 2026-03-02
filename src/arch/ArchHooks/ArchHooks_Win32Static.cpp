@@ -46,7 +46,11 @@ int64_t ArchHooks::GetSystemTimeInMicroseconds()
 	QueryPerformanceCounter(&current_time);
 
 	// Calculate the elapsed time in microseconds.
-	return (current_time.QuadPart * 1000000LL) / g_liFrequency.QuadPart;
+	// Split into whole seconds and remainder to avoid int64_t overflow
+	// when multiplying large counter values by 1000000.
+	int64_t seconds = current_time.QuadPart / g_liFrequency.QuadPart;
+	int64_t remainder = current_time.QuadPart % g_liFrequency.QuadPart;
+	return seconds * 1000000LL + (remainder * 1000000LL) / g_liFrequency.QuadPart;
 }
 
 static RString GetMountDir( const RString &sDirOfExecutable )
