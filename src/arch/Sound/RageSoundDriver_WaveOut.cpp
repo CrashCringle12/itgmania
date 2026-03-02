@@ -117,7 +117,21 @@ int64_t RageSoundDriver_WaveOut::GetPosition() const
   	if( ret != MMSYSERR_NOERROR )
 		FAIL_M( wo_ssprintf(ret, "waveOutGetPosition failed").c_str() );
 
-	return tm.u.sample;
+	// waveOutGetPosition returns a DWORD (32-bit unsigned), which wraps around
+	// after 2^32 samples (~27 hours at 44100 Hz, ~24.8 hours at 48000 Hz).
+	// Use wo_last_cursor_position_ (the write cursor, tracked as int64_t) as a
+	// reference to correct for this wraparound.
+	constexpr int64_t kSampleWrap = 0x100000000LL; // 2^32
+	int64_t iSample = static_cast<int64_t>(tm.u.sample);
+	int64_t iWraps = wo_last_cursor_position_ / kSampleWrap;
+	iSample += iWraps * kSampleWrap;
+	// The hardware play position always lags behind the write cursor.
+	// If iSample is still ahead of wo_last_cursor_position_, we over-counted
+	// wraps by one (write cursor just crossed a multiple of 2^32 but hardware
+	// hasn't yet), so subtract one wrap period.
+	if( iSample > wo_last_cursor_position_ )
+		iSample -= kSampleWrap;
+	return iSample;
 }
 
 RageSoundDriver_WaveOut::RageSoundDriver_WaveOut()

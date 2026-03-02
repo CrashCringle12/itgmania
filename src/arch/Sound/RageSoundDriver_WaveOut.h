@@ -37,7 +37,7 @@ private:
 	WAVEHDR wo_buffers_[kMaximumNumBlocks];
 	int wo_samplerate_;
 	bool wo_shutdown_;
-	int wo_last_cursor_position_;
+	int64_t wo_last_cursor_position_;
 	bool wo_init_success_;
 	int wo_frames_per_block_;
 	int wo_num_blocks_;
