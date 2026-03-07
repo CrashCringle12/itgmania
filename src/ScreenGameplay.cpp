@@ -1757,9 +1757,7 @@ bool ScreenGameplay::AllAreFailing() {
       GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
   if (pStyle != nullptr &&
       pStyle->m_StyleType == StyleType_TwoPlayersSharedSides) {
-    const CombinedLifeMeterShared* pCoop =
-        dynamic_cast<const CombinedLifeMeterShared*>(m_pCombinedLifeMeter);
-    return pCoop ? pCoop->IsFailing() : false;
+  return m_pCombinedLifeMeter != nullptr && m_pCombinedLifeMeter->IsFailing();
   }
 
   FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
@@ -1768,6 +1766,22 @@ bool ScreenGameplay::AllAreFailing() {
     }
   }
   return true;
+}
+
+bool ScreenGameplay::OneFailed() {
+  const Style* pStyle =
+      GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
+  if (pStyle != nullptr &&
+      pStyle->m_StyleType == StyleType_TwoPlayersSharedSides) {
+    return m_pCombinedLifeMeter != nullptr && m_pCombinedLifeMeter->IsFailing();
+  }
+
+  FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
+    if (pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void ScreenGameplay::GetMusicEndTiming(
@@ -1855,26 +1869,22 @@ void ScreenGameplay::Update(float fDeltaTime) {
   // m_Music.GetPositionSeconds() );
 
   m_AutoKeysounds.Update(fDeltaTime);
+  const Style* pStyle =
+      GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
+  const bool bSharedSides =
+      pStyle != nullptr &&
+      pStyle->m_StyleType == StyleType_TwoPlayersSharedSides;
 
   // update GameState HealthState
   FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
-    const Style* pStyle =
-        GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber());
-    const bool bSharedSides =
-        pStyle != nullptr &&
-        pStyle->m_StyleType == StyleType_TwoPlayersSharedSides;
-    const CombinedLifeMeterShared* pCoop =
-        bSharedSides
-            ? dynamic_cast<const CombinedLifeMeterShared*>(m_pCombinedLifeMeter)
-            : nullptr;
-    const bool bFailing =
-        pCoop ? pCoop->IsFailing()
-              : (pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing());
-    const bool bHot = pCoop ? pCoop->IsHot()
-                            : (pi->m_pLifeMeter && pi->m_pLifeMeter->IsHot());
-    const bool bDanger =
-        pCoop ? pCoop->IsInDanger()
-              : (pi->m_pLifeMeter && pi->m_pLifeMeter->IsInDanger());
+    bool bFailing = pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing();
+    bool bHot = pi->m_pLifeMeter && pi->m_pLifeMeter->IsHot();
+    bool bDanger = pi->m_pLifeMeter && pi->m_pLifeMeter->IsInDanger();
+    if (bSharedSides && m_pCombinedLifeMeter != nullptr) {
+      bFailing = m_pCombinedLifeMeter->IsFailing();
+      bHot = m_pCombinedLifeMeter->IsHot();
+      bDanger = m_pCombinedLifeMeter->IsInDanger();
+    }
 
     HealthState& hs = pi->GetPlayerState()->m_HealthState;
     HealthState OldHealthState = hs;
@@ -1918,9 +1928,8 @@ void ScreenGameplay::Update(float fDeltaTime) {
   switch (m_DancingState) {
     case STATE_DANCING: {
       // If we're in TwoPlayerSharedSides, if one player fails, both fail.
-      if (GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())
-              ->m_StyleType == StyleType_TwoPlayersSharedSides) {
-        if (AllAreFailing()) {
+      if (bSharedSides) {
+        if (OneFailed()) {
           FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
             PlayerNumber pn = pi->GetStepsAndTrailIndex();
 
@@ -1951,10 +1960,18 @@ void ScreenGameplay::Update(float fDeltaTime) {
           continue;
         }
 
-        // check for individual fail
-        if (pi->m_pLifeMeter == nullptr || !pi->m_pLifeMeter->IsFailing()) {
-          continue; /* isn't failing */
+        if (bSharedSides) {
+          if (m_pCombinedLifeMeter != nullptr &&
+              !m_pCombinedLifeMeter->IsFailing()) {
+            continue; /* isn't failing */
+          }
+        } else {
+          // check for individual fail
+          if (pi->m_pLifeMeter == nullptr || !pi->m_pLifeMeter->IsFailing()) {
+            continue; /* isn't failing */
+          }
         }
+
         if (pi->GetPlayerStageStats()->m_bFailed) {
           continue; /* failed and is already dead */
         }
@@ -1991,9 +2008,16 @@ void ScreenGameplay::Update(float fDeltaTime) {
         FailType ft = GAMESTATE->GetPlayerFailType(pi->GetPlayerState());
         switch (ft) {
           case FailType_Immediate:
-            if (pi->m_pLifeMeter == nullptr ||
-                (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing())) {
-              bAllFailed = false;
+            if (bSharedSides) {
+              if (m_pCombinedLifeMeter != nullptr &&
+                  !m_pCombinedLifeMeter->IsFailing()) {
+                bAllFailed = false;
+              }
+            } else {
+              if (pi->m_pLifeMeter == nullptr ||
+                  (pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing())) {
+                bAllFailed = false;
+              }
             }
             break;
           case FailType_ImmediateContinue:
@@ -3386,13 +3410,8 @@ class LunaScreenGameplay : public Luna<ScreenGameplay> {
       return 0;
     }
     LifeMeter* pLM = pi->m_pLifeMeter;
-    if (pLM == nullptr) {
-      const CombinedLifeMeterShared* pShared =
-          dynamic_cast<const CombinedLifeMeterShared*>(
-              p->GetCombinedLifeMeter());
-      if (pShared != nullptr) {
-        pLM = pShared->GetInnerLifeMeter();
-      }
+    if (pLM == nullptr && p->GetCombinedLifeMeter() != nullptr) {
+      pLM = p->GetCombinedLifeMeter()->GetInnerLifeMeter();
     }
     if (pLM == nullptr) {
       return 0;
