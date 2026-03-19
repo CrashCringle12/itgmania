@@ -372,7 +372,7 @@ class ScreenEdit : public ScreenWithMenuElements {
   RageSound m_soundMarker;
   RageSound m_soundValueIncrease;
   RageSound m_soundValueDecrease;
-  /** @brief The sound that is played when switching players for Routine. */
+  /** @brief The sound that is played when switching players for Couples. */
   RageSound m_soundSwitchPlayer;
   /** @brief The sound that is played when switching song/step timing. */
   RageSound m_soundSwitchTiming;
@@ -461,9 +461,9 @@ class ScreenEdit : public ScreenWithMenuElements {
     convert_to_warp,       /**< Convert the range into a WarpSegment. */
     convert_to_fake,       /**< Convert the range into a FakeSegment. */
     convert_to_attack,     /**< Convert the range into an Attack. */
-    routine_invert_notes,  /**< Switch which player hits the note. */
-    routine_mirror_1_to_2, /**< Mirror Player 1's notes for Player 2. */
-    routine_mirror_2_to_1, /**< Mirror Player 2's notes for Player 1. */
+    couples_invert_notes,  /**< Switch which player hits the note. */
+    couples_mirror_1_to_2, /**< Mirror Player 1's notes for Player 2. */
+    couples_mirror_2_to_1, /**< Mirror Player 2's notes for Player 1. */
     NUM_ALTER_MENU_CHOICES
 
   };

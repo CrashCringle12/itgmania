@@ -60,11 +60,11 @@ static ThemeMetric<float> BAR_8TH_ALPHA("NoteField", "Bar8thAlpha");
 static ThemeMetric<float> BAR_16TH_ALPHA("NoteField", "Bar16thAlpha");
 static ThemeMetric<float> FADE_FAIL_TIME("NoteField", "FadeFailTime");
 
-static std::string RoutineNoteSkinName(size_t i) {
-  return ssprintf("RoutineNoteSkinP%i", int(i + 1));
+static std::string CoupleNoteSkinName(size_t i) {
+  return ssprintf("CoupleNoteSkinP%i", int(i + 1));
 }
-static ThemeMetric1D<std::string> ROUTINE_NOTESKIN(
-    "NoteField", RoutineNoteSkinName, NUM_PLAYERS);
+static ThemeMetric1D<std::string> COUPLE_NOTESKIN(
+    "NoteField", CoupleNoteSkinName, NUM_PLAYERS);
 
 NoteField::NoteField() {
   m_pNoteData = nullptr;
@@ -277,7 +277,7 @@ void NoteField::Load(
           GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)
               ->m_iColsPerPlayer));
 
-  // If we're in routine mode, the noteskin is forcibly set to the routine
+  // If we're in couples mode, the noteskin is forcibly set to the couples
   // noteskin metrics (which is bad in its own way).  The noteskin set in the
   // options is ignored and probably already set anyway. -Kyz
   if (GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)->m_StyleType !=

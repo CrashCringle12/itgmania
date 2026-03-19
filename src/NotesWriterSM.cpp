@@ -225,6 +225,23 @@ static std::string JoinLineList(std::vector<std::string>& lines) {
   return join("\r\n", lines.begin() + j, lines.end());
 }
 
+static std::string GetLegacySMStepsType(const Steps& in) {
+  std::string stepsType = in.m_StepsTypeStr;
+  if (CompareNoCase(stepsType, "dance-routine") == 0) {
+    return "dance-couple";
+  }
+  if (CompareNoCase(stepsType, "dance-couple") == 0) {
+    return "dance-routine";
+  }
+  if (CompareNoCase(stepsType, "pump-routine") == 0) {
+    return "pump-couple";
+  }
+  if (CompareNoCase(stepsType, "pump-couple") == 0) {
+    return "pump-routine";
+  }
+  return stepsType;
+}
+
 /**
  * @brief Retrieve the notes from the #NOTES tag.
  * @param song the Song in question.
@@ -232,14 +249,15 @@ static std::string JoinLineList(std::vector<std::string>& lines) {
  * @return the #NOTES tag. */
 static std::string GetSMNotesTag(const Song& song, const Steps& in) {
   std::vector<std::string> lines;
+  const std::string smStepsType = GetLegacySMStepsType(in);
 
   lines.push_back("");
   // Escape to prevent some clown from making a comment of "\r\n;"
   lines.push_back(ssprintf(
-      "//---------------%s - %s----------------", in.m_StepsTypeStr.c_str(),
+      "//---------------%s - %s----------------", smStepsType.c_str(),
       SmEscape(in.GetDescription()).c_str()));
   lines.push_back(song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:");
-  lines.push_back(ssprintf("     %s:", in.m_StepsTypeStr.c_str()));
+  lines.push_back(ssprintf("     %s:", smStepsType.c_str()));
   std::string desc = (USE_CREDIT ? in.GetCredit() : in.GetChartName());
   lines.push_back(ssprintf("     %s:", SmEscape(desc).c_str()));
   lines.push_back(

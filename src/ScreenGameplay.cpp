@@ -388,7 +388,7 @@ std::vector<PlayerInfo>::iterator GetNextVisiblePlayerInfo(
 ScreenGameplay::ScreenGameplay() {
   m_pSongBackground = nullptr;
   m_pSongForeground = nullptr;
-  m_pRoutineSharedScoreKeeper = nullptr;
+  m_pCouplesSharedScoreKeeper = nullptr;
   m_delaying_ready_announce = false;
   GAMESTATE->m_AdjustTokensBySongCostForFinalStageCheck = false;
 }
@@ -453,15 +453,15 @@ void ScreenGameplay::Init() {
   if (bSharedSidesStyle) {
     const PlayerNumber master = GAMESTATE->GetMasterPlayerNumber();
     PlayerInfo& masterInfo = m_vPlayerInfo[master];
-    m_pRoutineSharedScoreKeeper = ScoreKeeper::MakeScoreKeeper(
+    m_pCouplesSharedScoreKeeper = ScoreKeeper::MakeScoreKeeper(
         "ScoreKeeperShared", masterInfo.GetPlayerState(),
-        &STATSMAN->m_CurStageStats.m_RoutinePlayer);
+        &STATSMAN->m_CurStageStats.m_SharedPlayer);
 
     FOREACH_EnabledPlayerNumberInfo(m_vPlayerInfo, pi) {
       if (pi->m_pSecondaryScoreKeeper != nullptr) {
         RageUtil::SafeDelete(pi->m_pSecondaryScoreKeeper);
       }
-      pi->m_pSecondaryScoreKeeper = m_pRoutineSharedScoreKeeper;
+      pi->m_pSecondaryScoreKeeper = m_pCouplesSharedScoreKeeper;
     }
   }
 
@@ -550,7 +550,7 @@ void ScreenGameplay::Init() {
         GAMESTATE->GetCurrentStyle(pn);
   }
   if (bSharedSidesStyle) {
-    STATSMAN->m_CurStageStats.m_RoutinePlayer.m_pStyle = pMasterStyle;
+    STATSMAN->m_CurStageStats.m_SharedPlayer.m_pStyle = pMasterStyle;
   }
   FOREACH_MultiPlayer(pn) {
     STATSMAN->m_CurStageStats.m_multiPlayer[pn].m_pStyle =
@@ -926,12 +926,12 @@ void ScreenGameplay::Init() {
   }
   if (bSharedSidesStyle) {
     const PlayerNumber master = GAMESTATE->GetMasterPlayerNumber();
-    STATSMAN->m_CurStageStats.m_RoutinePlayer.m_vpPossibleSteps =
+    STATSMAN->m_CurStageStats.m_SharedPlayer.m_vpPossibleSteps =
         m_vPlayerInfo[master].m_vpStepsQueue;
-    STATSMAN->m_CurStageStats.m_RoutinePlayer.m_bJoined = true;
+    STATSMAN->m_CurStageStats.m_SharedPlayer.m_bJoined = true;
   }
 
-  bool bLoadedRoutineSharedKeeper = false;
+  bool bLoadedCouplesSharedKeeper = false;
   FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
     ASSERT(!pi->m_vpStepsQueue.empty());
     if (pi->GetPlayerStageStats()) {
@@ -942,11 +942,11 @@ void ScreenGameplay::Init() {
           m_apSongsQueue, pi->m_vpStepsQueue, pi->m_asModifiersQueue);
     }
     if (pi->m_pSecondaryScoreKeeper) {
-      if (pi->m_pSecondaryScoreKeeper == m_pRoutineSharedScoreKeeper) {
-        if (bLoadedRoutineSharedKeeper) {
+      if (pi->m_pSecondaryScoreKeeper == m_pCouplesSharedScoreKeeper) {
+        if (bLoadedCouplesSharedKeeper) {
           continue;
         }
-        bLoadedRoutineSharedKeeper = true;
+        bLoadedCouplesSharedKeeper = true;
       }
       pi->m_pSecondaryScoreKeeper->Load(
           m_apSongsQueue, pi->m_vpStepsQueue, pi->m_asModifiersQueue);
@@ -1112,7 +1112,7 @@ ScreenGameplay::~ScreenGameplay() {
   }
 
   RageUtil::SafeDelete(m_pCombinedLifeMeter);
-  m_pRoutineSharedScoreKeeper = nullptr;
+  m_pCouplesSharedScoreKeeper = nullptr;
   if (m_pSoundMusic) {
     m_pSoundMusic->StopPlaying();
   }
@@ -1289,7 +1289,7 @@ void ScreenGameplay::LoadNextSong() {
   SetupSong(iPlaySongIndex);
 
   Song* pSong = GAMESTATE->m_pCurSong;
-  bool bSentRoutineSharedOnNextSong = false;
+  bool bSentCoupleSharedOnNextSong = false;
   FOREACH_EnabledPlayerInfo(m_vPlayerInfo, pi) {
     Steps* pSteps = GAMESTATE->m_pCurSteps[pi->GetStepsAndTrailIndex()];
     ++pi->GetPlayerStageStats()->m_iStepsPlayed;
@@ -1343,13 +1343,13 @@ void ScreenGameplay::LoadNextSong() {
           &pi->m_pPlayer->GetNoteData());
     }
     if (pi->m_pSecondaryScoreKeeper) {
-      const bool bIsRoutineSharedKeeper =
-          pi->m_pSecondaryScoreKeeper == m_pRoutineSharedScoreKeeper;
+      const bool bIsCouplesSharedKeeper =
+          pi->m_pSecondaryScoreKeeper == m_pCouplesSharedScoreKeeper;
       const bool bShouldCallSecondary =
-          !bIsRoutineSharedKeeper || !bSentRoutineSharedOnNextSong;
+          !bIsCouplesSharedKeeper || !bSentCoupleSharedOnNextSong;
       if (bShouldCallSecondary) {
-        if (bIsRoutineSharedKeeper) {
-          bSentRoutineSharedOnNextSong = true;
+        if (bIsCouplesSharedKeeper) {
+          bSentCoupleSharedOnNextSong = true;
         }
         pi->m_pSecondaryScoreKeeper->OnNextSong(
             GAMESTATE->GetCourseSongIndex(), pSteps,
@@ -2741,7 +2741,7 @@ bool ScreenGameplay::Input(const InputEventPlus& input) {
       return true;
     }
   }
-  // If we are in routine mode, two players share sides so a step could
+  // If we are in couples mode, two players share sides so a step could
   // correspond to either P1 or P2, we don't really know Let's just send it to
   // both players and let them decide what to do with it.
   else if (

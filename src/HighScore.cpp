@@ -40,7 +40,7 @@ struct HighScoreImpl {
   RadarValues radarValues;
   float fLifeRemainingSeconds;
   bool bDisqualified;
-  bool bIsRoutine;
+  bool bIsShared;
 
   // Additional player-specific attributes for HighScore
   std::vector<std::string> playerNames;
@@ -142,7 +142,7 @@ HighScoreImpl::HighScoreImpl() {
   ZERO(iHoldNoteScores);
   radarValues.MakeUnknown();
   fLifeRemainingSeconds = 0;
-  bIsRoutine = false;
+  bIsShared = false;
 
   playerNames = std::vector<std::string>(NUM_PLAYERS, "");
   playerGrades = std::vector<Grade>(NUM_PLAYERS, Grade_NoData);
@@ -199,12 +199,12 @@ XNode* HighScoreImpl::CreateNode() const {
       radarValues.CreateNode(bWriteSimpleValues, bWriteComplexValues));
   pNode->AppendChild("LifeRemainingSeconds", fLifeRemainingSeconds);
   pNode->AppendChild("Disqualified", bDisqualified);
-  if (bIsRoutine) {
-    XNode* pRoutineNode = pNode->AppendChild("RoutineData");
+  if (bIsShared) {
+    XNode* pCouplesNode = pNode->AppendChild("RoutineData");
     // Loop through each player and add their specific data to "RoutineData"
     for (size_t i = 0; i < playerNames.size(); ++i) {
       XNode* pPlayerNode =
-          pRoutineNode->AppendChild(PlayerNumberToString((PlayerNumber)i));
+          pCouplesNode->AppendChild(PlayerNumberToString((PlayerNumber)i));
       pPlayerNode->AppendChild("Grade", playerGrades[i]);
       pPlayerNode->AppendChild("Score", playerScores[i]);
       pPlayerNode->AppendChild("PercentDP", playerPercentDPs[i]);
@@ -272,14 +272,14 @@ void HighScoreImpl::LoadFromNode(const XNode* pNode) {
 
   // Validate input.
   grade = std::clamp(grade, Grade_Tier01, Grade_Failed);
-  const XNode* pRoutineNode = pNode->GetChild("RoutineData");
+  const XNode* pCouplesNode = pNode->GetChild("RoutineData");
 
-  if (pRoutineNode) {
+  if (pCouplesNode) {
     // Load player-specific data
-    bIsRoutine = true;
+    bIsShared = true;
     FOREACH_PlayerNumber(pn) {
       const XNode* pPlayerNode =
-          pRoutineNode->GetChild(PlayerNumberToString(pn));
+          pCouplesNode->GetChild(PlayerNumberToString(pn));
       if (pPlayerNode) {
         std::string gradeStr;
         pPlayerNode->GetChildValue("Name", playerNames[pn]);
@@ -311,7 +311,7 @@ void HighScoreImpl::LoadFromNode(const XNode* pNode) {
       }
     }
   } else {
-    bIsRoutine = false;
+    bIsShared = false;
   }
 }
 
@@ -394,7 +394,7 @@ void HighScore::SetLifeRemainingSeconds(float f) {
 }
 void HighScore::SetDisqualified(bool b) { m_Impl->bDisqualified = b; }
 
-void HighScore::SetRoutine(bool b) { m_Impl->bIsRoutine = b; }
+void HighScore::SetShared(bool b) { m_Impl->bIsShared = b; }
 
 // Getters
 std::string HighScore::GetPlayerName(const PlayerNumber& playerNum) const {

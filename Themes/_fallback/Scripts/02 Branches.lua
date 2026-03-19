@@ -151,7 +151,7 @@ Branch = {
 		end
 	end,
 	GameplayScreen = function()
-		return IsRoutine() and "ScreenGameplayShared" or "ScreenGameplay"
+		return IsCouples() and "ScreenGameplayShared" or "ScreenGameplay"
 	end,
 	EvaluationScreen= function()
 		-- todo: account for courses etc?

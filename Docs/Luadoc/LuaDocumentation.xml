@@ -85,7 +85,7 @@ save yourself some time, copy this for undocumented things:
 		[02 Colors.lua] Modifies the brightness of the specified color.
 	</Function>
 	<Function name='Center1Player' theme='_fallback' return='bool' arguments=''>
-		[02 Utilities.lua] Returns <code>true</code> if the <code>Center1Player</code> preference is enabled during single style.   Returns <code>true</code> when the style is double or routine, regardless of the <code>Center1Player</code> preference.<br />
+		[02 Utilities.lua] Returns <code>true</code> if the <code>Center1Player</code> preference is enabled during single style.   Returns <code>true</code> when the style is double or couple, regardless of the <code>Center1Player</code> preference.<br />
 		Returns <code>false</code> otherwise.
 	</Function>
 	<Function name='CheckpointsTapsSeparateJudgment' theme='_fallback' return='bool' arguments=''>
@@ -403,8 +403,8 @@ save yourself some time, copy this for undocumented things:
 	<Function name='IsW1Allowed' theme='_fallback' return='bool' arguments='TapNoteScore tns'>
 		[04 Scoring.lua] Returns <code>true</code> if W1 is allowed (and <code>tns == 'TapNoteScore_W2'</code>)
 	</Function>
-	<Function name='IsRoutine' theme='_fallback' return='bool' arguments=''>
-		[02 Branches.lua] Returns <code>true</code> if Routine mode is being played.
+	<Function name='IsCouples' theme='_fallback' return='bool' arguments=''>
+		[02 Branches.lua] Returns <code>true</code> if Couples mode is being played.
 	</Function>
 	<Function name='IsUsingWideScreen' theme='_fallback' return='bool' arguments=''>
 		[04 WidescreenHelpers.lua] Returns <code>true</code> if the aspect ratio is 16:10 (<code>1.6</code>) or higher.
@@ -583,11 +583,11 @@ save yourself some time, copy this for undocumented things:
 	<Function name='round' theme='_fallback' return='int' arguments='float val, int decimal'>
 		[02 Utilities.lua] Round a number.
 	</Function>
-	<Function name='RoutineSkinP1' theme='_fallback' return='string' arguments=''>
-		[03 Gameplay.lua] Returns the routine noteskin for player .
+	<Function name='CouplesSkinP1' theme='_fallback' return='string' arguments=''>
+		[03 Gameplay.lua] Returns the couples noteskin for player .
 	</Function>
-	<Function name='RoutineSkinP2' theme='_fallback' return='string' arguments=''>
-		[03 Gameplay.lua] Returns the routine noteskin for player 2.
+	<Function name='CouplesSkinP2' theme='_fallback' return='string' arguments=''>
+		[03 Gameplay.lua] Returns the couples noteskin for player 2.
 	</Function>
 	<Function name='Saturation' theme='_fallback' return='color' arguments='color c, float percent'>
 		[02 Colors.lua] Modifies the saturation of the specified color
@@ -6408,7 +6408,7 @@ local spr = Def.Sprite{
 		Returns the <Link class='TapNoteResult' /> of the Tap Note.
 	</Function>
 	<Function name='GetPlayerNumber' return='PlayerNumber' arguments=''>
-		Returns the <Link class='PlayerNumber' /> of the Tap Note. Relevant for routine steps.
+		Returns the <Link class='PlayerNumber' /> of the Tap Note. Relevant for couples steps.
 	</Function>
 	<Function name='GetAttackModifiers' return='string' arguments=''>
 		Returns the Attack Modifiers of the Tap Note.

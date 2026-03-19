@@ -290,7 +290,7 @@ class NoteDisplay {
   float m_fYReverseOffsetPixels;
 };
 
-// So, this is a bit screwy, and it's partly because routine forces rendering
+// So, this is a bit screwy, and it's partly because couples forces rendering
 // notes from different noteskins in the same column.
 // NoteColumnRenderer exists to hold all the data needed for rendering a
 // column and apply any transforms from that column's actor to the

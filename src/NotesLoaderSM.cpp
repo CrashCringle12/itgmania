@@ -295,6 +295,18 @@ void SMLoader::LoadFromTokens(
     sStepsType = "para-single";
   }
 
+  // HACK: In v0.84+, routine and couple were swapped. Pre-0.84 .SM files use the
+  // legacy naming, so we swap them when reading into engine.
+  if (CompareNoCase(sStepsType, "dance-couple") == 0) {
+    sStepsType = "dance-routine";
+  } else if (CompareNoCase(sStepsType, "dance-routine") == 0) {
+    sStepsType = "dance-couple";
+  } else if (CompareNoCase(sStepsType, "pump-couple") == 0) {
+    sStepsType = "pump-routine";
+  } else if (CompareNoCase(sStepsType, "pump-routine") == 0) {
+    sStepsType = "pump-couple";
+  }
+
   out.m_StepsType = GAMEMAN->StringToStepsType(sStepsType);
   out.m_StepsTypeStr = sStepsType;
   out.SetDescription(sDescription);

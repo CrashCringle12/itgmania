@@ -56,18 +56,18 @@ static const StepsTypeInfo g_StepsTypeInfos[] = {
     // dance
     {"dance-single", 4, true, StepsTypeCategory_Single},
     {"dance-double", 8, true, StepsTypeCategory_Double},
-    {"dance-couple", 8, true, StepsTypeCategory_Couple},
+    {"dance-routine", 8, true, StepsTypeCategory_Routine},
     {"dance-solo", 6, true, StepsTypeCategory_Single},
     {"dance-threepanel", 3, true,
      StepsTypeCategory_Single},  // thanks to kurisu
-    {"dance-routine", 8, false, StepsTypeCategory_Routine},
+    {"dance-couple", 8, false, StepsTypeCategory_Couple},
     // pump
     {"pump-single", 5, true, StepsTypeCategory_Single},
     {"pump-halfdouble", 6, true, StepsTypeCategory_Double},
     {"pump-double", 10, true, StepsTypeCategory_Double},
-    {"pump-couple", 10, true, StepsTypeCategory_Couple},
-    // uh, dance-routine has that one bool as false... wtf? -aj
     {"pump-routine", 10, true, StepsTypeCategory_Routine},
+    // uh, dance-couple has that one bool as false... wtf? -aj
+    {"pump-couple", 10, true, StepsTypeCategory_Couple},
     // kb7
     {"kb7-single", 7, true, StepsTypeCategory_Single},
     // { "kb7-small",		7,	true,	StepsTypeCategory_Single },
@@ -273,14 +273,14 @@ static const Style g_Style_Dance_Double = {
     false,  // m_bLockDifficulties
 };
 
-static const Style g_Style_Dance_Couple = {
-    // STYLE_DANCE_COUPLE
+static const Style g_Style_Dance_Routine = {
+    // STYLE_DANCE_ROUTINE
     true,                          // m_bUsedForGameplay
     false,                         // m_bUsedForEdit
     false,                         // m_bUsedForDemonstration
     false,                         // m_bUsedForHowToPlay
-    "couple",                      // m_szName
-    StepsType_dance_couple,        // m_StepsType
+    "routine",                      // m_szName
+    StepsType_dance_routine,        // m_StepsType
     StyleType_TwoPlayersTwoSides,  // m_StyleType
     4,                             // m_iColsPerPlayer
     {
@@ -349,14 +349,14 @@ static const Style g_Style_Dance_Solo = {
     false,  // m_bLockDifficulties
 };
 
-static const Style g_Style_Dance_Couple_Edit = {
-    // STYLE_DANCE_COUPLE
+static const Style g_Style_Dance_Routine_Edit = {
+    // STYLE_DANCE_ROUTINE
     false,                        // m_bUsedForGameplay
     true,                         // m_bUsedForEdit
     false,                        // m_bUsedForDemonstration
     false,                        // m_bUsedForHowToPlay
-    "couple-edit",                // m_szName
-    StepsType_dance_couple,       // m_StepsType
+    "routine-edit",                // m_szName
+    StepsType_dance_routine,       // m_StepsType
     StyleType_OnePlayerTwoSides,  // m_StyleType
     8,                            // m_iColsPerPlayer
     {
@@ -467,14 +467,14 @@ static const Style g_Style_Dance_Solo_Versus =
         false, // m_bLockDifficulties
 };	*/
 
-static const Style g_Style_Dance_Routine = {
-    // STYLE_DANCE_ROUTINE
+static const Style g_Style_Dance_Couple = {
+    // STYLE_DANCE_COUPLE
     true,                             // m_bUsedForGameplay
     true,                             // m_bUsedForEdit
     false,                            // m_bUsedForDemonstration
     false,                            // m_bUsedForHowToPlay
-    "routine",                        // m_szName
-    StepsType_dance_routine,          // m_StepsType
+    "couple",                        // m_szName
+    StepsType_dance_couple,          // m_StepsType
     StyleType_TwoPlayersSharedSides,  // m_StyleType
     8,                                // m_iColsPerPlayer
     {
@@ -514,10 +514,10 @@ static const Style g_Style_Dance_Routine = {
 static const Style* g_apGame_Dance_Styles[] = {&g_Style_Dance_Single,
                                                &g_Style_Dance_Versus,
                                                &g_Style_Dance_Double,
-                                               &g_Style_Dance_Couple,
-                                               &g_Style_Dance_Solo,
-                                               &g_Style_Dance_Couple_Edit,
                                                &g_Style_Dance_Routine,
+                                               &g_Style_Dance_Solo,
+                                               &g_Style_Dance_Routine_Edit,
+                                               &g_Style_Dance_Couple,
                                                &g_Style_Dance_ThreePanel,
                                                nullptr};
 
@@ -749,14 +749,14 @@ static const Style g_Style_Pump_Double = {
     false,  // m_bLockDifficulties
 };
 
-static const Style g_Style_Pump_Couple = {
-    // STYLE_PUMP_COUPLE
+static const Style g_Style_Pump_Routine = {
+    // STYLE_PUMP_ROUTINE
     true,                          // m_bUsedForGameplay
     false,                         // m_bUsedForEdit
     false,                         // m_bUsedForDemonstration
     false,                         // m_bUsedForHowToPlay
-    "couple",                      // m_szName
-    StepsType_pump_couple,         // m_StepsType
+    "routine",                      // m_szName
+    StepsType_pump_routine,         // m_StepsType
     StyleType_TwoPlayersTwoSides,  // m_StyleType
     5,                             // m_iColsPerPlayer
     {
@@ -789,14 +789,14 @@ static const Style g_Style_Pump_Couple = {
     true,   // m_bLockDifficulties
 };
 
-static const Style g_Style_Pump_Couple_Edit = {
-    // STYLE_PUMP_EDIT_COUPLE
+static const Style g_Style_Pump_Routine_Edit = {
+    // STYLE_PUMP_EDIT_ROUTINE
     false,                        // m_bUsedForGameplay
     true,                         // m_bUsedForEdit
     false,                        // m_bUsedForDemonstration
     false,                        // m_bUsedForHowToPlay
-    "couple-edit",                // m_szName
-    StepsType_pump_couple,        // m_StepsType
+    "routine-edit",                // m_szName
+    StepsType_pump_routine,        // m_StepsType
     StyleType_OnePlayerTwoSides,  // m_StyleType
     10,                           // m_iColsPerPlayer
     {
@@ -839,14 +839,14 @@ static const Style g_Style_Pump_Couple_Edit = {
     false,  // m_bLockDifficulties
 };
 
-static const Style g_Style_Pump_Routine = {
-    // STYLE_PUMP_ROUTINE
+static const Style g_Style_Pump_Couple = {
+    // STYLE_PUMP_COUPLE
     true,                             // m_bUsedForGameplay
     true,                             // m_bUsedForEdit
     false,                            // m_bUsedForDemonstration
     false,                            // m_bUsedForHowToPlay
-    "routine",                        // m_szName
-    StepsType_pump_routine,           // m_StepsType
+    "couple",                        // m_szName
+    StepsType_pump_couple,           // m_StepsType
     StyleType_TwoPlayersSharedSides,  // m_StyleType
     10,                               // m_iColsPerPlayer
     {
@@ -892,8 +892,8 @@ static const Style g_Style_Pump_Routine = {
 static const Style* g_apGame_Pump_Styles[] = {
     &g_Style_Pump_Single,     &g_Style_Pump_Versus,
     &g_Style_Pump_HalfDouble, &g_Style_Pump_Double,
-    &g_Style_Pump_Couple,     &g_Style_Pump_Couple_Edit,
-    &g_Style_Pump_Routine,    nullptr};
+    &g_Style_Pump_Routine,     &g_Style_Pump_Routine_Edit,
+    &g_Style_Pump_Couple,    nullptr};
 
 static const Game g_Game_Pump = {
     "pump",                // m_szName

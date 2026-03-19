@@ -106,7 +106,7 @@
 		<Function name='IsHome'/>
 		<Function name='IsNetConnected'/>
 		<Function name='IsNetSMOnline'/>
-		<Function name='IsRoutine'/>
+		<Function name='IsCouples'/>
 		<Function name='IsSMOnlineLoggedIn'/>
 		<Function name='IsUsingWideScreen'/>
 		<Function name='JsonDecode'/>
@@ -156,8 +156,8 @@
 		<Function name='ReadPrefFromFile'/>
 		<Function name='ReportStyle'/>
 		<Function name='ResolveRelativePath'/>
-		<Function name='RoutineSkinP1'/>
-		<Function name='RoutineSkinP2'/>
+		<Function name='CouplesSkinP1'/>
+		<Function name='CouplesSkinP2'/>
 		<Function name='Saturation'/>
 		<Function name='SaveProfileCustom'/>
 		<Function name='SaveScreenshot'/>

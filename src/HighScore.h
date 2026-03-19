@@ -65,7 +65,7 @@ struct HighScore {
    * disqualification.
    * @return true if the score would be disqualified, false otherwise. */
   bool GetDisqualified() const;
-  bool IsRoutine() const;
+  bool IsCouples() const;
 
   /**
    * @brief Set the name of the Player that earned the score.
@@ -88,7 +88,7 @@ struct HighScore {
   void SetRadarValues(const RadarValues& rv);
   void SetLifeRemainingSeconds(float f);
   void SetDisqualified(bool b);
-  void SetRoutine(bool b);
+  void SetShared(bool b);
 
   // Getters for player attributes
   std::string GetPlayerName(const PlayerNumber& pn) const;

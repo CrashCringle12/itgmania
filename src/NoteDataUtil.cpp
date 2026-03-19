@@ -501,7 +501,7 @@ void NoteDataUtil::SplitCompositeNoteData(
       TapNote tn = iter->second;
       /*
        XXX: This code is (hopefully) a temporary hack to make sure that
-       routine charts don't have any notes without players assigned to them.
+       couples charts don't have any notes without players assigned to them.
        I suspect this is due to a related bug that these problems were
        occuring to begin with, but at this time, I am unsure how to deal with
        it. Hopefully this hack can be removed soon. -- Jason "Wolfman2000" Felds
@@ -1425,7 +1425,7 @@ static void GetTrackMapping(
           iTakeFromTrack[8] = 1;
           iTakeFromTrack[9] = 0;
           break;
-        case StepsType_pump_couple:
+        case StepsType_pump_routine:
           iTakeFromTrack[0] = 9;
           iTakeFromTrack[1] = 8;
           iTakeFromTrack[2] = 7;
@@ -1479,7 +1479,7 @@ static void GetTrackMapping(
           iTakeFromTrack[8] = 9;
           iTakeFromTrack[9] = 8;
           break;
-        case StepsType_pump_couple:
+        case StepsType_pump_routine:
           iTakeFromTrack[0] = 1;
           iTakeFromTrack[1] = 0;
           iTakeFromTrack[3] = 4;
@@ -1499,8 +1499,8 @@ static void GetTrackMapping(
       switch (st) {
         case StepsType_dance_single:
         case StepsType_dance_double:
-        case StepsType_dance_couple:
         case StepsType_dance_routine:
+        case StepsType_dance_couple:
           iTakeFromTrack[0] = 2;
           iTakeFromTrack[1] = 0;
           iTakeFromTrack[2] = 3;
@@ -1519,7 +1519,7 @@ static void GetTrackMapping(
           iTakeFromTrack[5] = 2;
           break;
         case StepsType_pump_single:
-        case StepsType_pump_couple:
+        case StepsType_pump_routine:
           iTakeFromTrack[0] = 1;
           iTakeFromTrack[1] = 3;
           iTakeFromTrack[2] = 2;
@@ -1571,7 +1571,7 @@ static void GetTrackMapping(
       bool needsBackwards = true;
       switch (st) {
         case StepsType_pump_single:
-        case StepsType_pump_couple: {
+        case StepsType_pump_routine: {
           iTakeFromTrack[0] = 3;
           iTakeFromTrack[1] = 4;
           iTakeFromTrack[2] = 2;
@@ -1585,7 +1585,7 @@ static void GetTrackMapping(
           break;
         }
         case StepsType_pump_double:
-        case StepsType_pump_routine: {
+        case StepsType_pump_couple: {
           iTakeFromTrack[0] = 8;
           iTakeFromTrack[1] = 9;
           iTakeFromTrack[2] = 7;
@@ -1739,8 +1739,8 @@ static void GetTrackMapping(
               }
               break;
             case StepsType_dance_double:
-            case StepsType_dance_couple:
             case StepsType_dance_routine:
+            case StepsType_dance_couple:
               if (iRandChoice == 1) {
                 // left and right
                 iTakeFromTrack[0] = 3;
@@ -1766,7 +1766,7 @@ static void GetTrackMapping(
               iTakeFromTrack[5] = 2;
               break;
             case StepsType_pump_single:
-            case StepsType_pump_couple:
+            case StepsType_pump_routine:
               iTakeFromTrack[0] = 3;
               iTakeFromTrack[1] = 4;
               iTakeFromTrack[2] = 2;
@@ -1872,7 +1872,7 @@ static void GetTrackMapping(
     case NoteDataUtil::stomp:
       switch (st) {
         case StepsType_dance_single:
-        case StepsType_dance_couple:
+        case StepsType_dance_routine:
           iTakeFromTrack[0] = 3;
           iTakeFromTrack[1] = 2;
           iTakeFromTrack[2] = 1;
@@ -1883,7 +1883,7 @@ static void GetTrackMapping(
           iTakeFromTrack[7] = 4;
           break;
         case StepsType_dance_double:
-        case StepsType_dance_routine:
+        case StepsType_dance_couple:
           iTakeFromTrack[0] = 1;
           iTakeFromTrack[1] = 0;
           iTakeFromTrack[2] = 3;
@@ -1931,8 +1931,8 @@ static void GetTrackMapping(
       switch (st) {
         case StepsType_dance_single:
         case StepsType_dance_double:
-        case StepsType_dance_couple:
         case StepsType_dance_routine:
+        case StepsType_dance_couple:
           iTakeFromTrack[0] = 0;
           iTakeFromTrack[1] = 2;
           iTakeFromTrack[2] = 1;
@@ -1944,8 +1944,8 @@ static void GetTrackMapping(
           break;
         case StepsType_pump_single:
         case StepsType_pump_double:
-        case StepsType_pump_couple:
         case StepsType_pump_routine:
+        case StepsType_pump_couple:
           iTakeFromTrack[0] = 1;
           iTakeFromTrack[1] = 0;
           iTakeFromTrack[2] = 2;

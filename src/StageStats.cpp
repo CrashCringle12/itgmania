@@ -45,7 +45,7 @@ StageStats::StageStats() {
   m_fMusicRate = 1;
   FOREACH_PlayerNumber(pn) { m_player[pn].Init(pn); }
   FOREACH_MultiPlayer(pn) { m_multiPlayer[pn].Init(pn); }
-  m_RoutinePlayer.Init(GAMESTATE->GetMasterPlayerNumber());
+  m_SharedPlayer.Init(GAMESTATE->GetMasterPlayerNumber());
 }
 
 void StageStats::Init() { *this = StageStats(); }
@@ -95,33 +95,32 @@ void StageStats::AssertValid(MultiPlayer pn) const {
   ASSERT(m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size());
 }
 
-void StageStats::AssertValid(PlayerNumber pn, bool bRoutine) const {
+void StageStats::AssertValid(PlayerNumber pn, bool bCouple) const {
   ASSERT(m_vpPlayedSongs.size() != 0);
   ASSERT(m_vpPossibleSongs.size() != 0);
   if (m_vpPlayedSongs[0]) {
     CHECKPOINT_M(m_vpPlayedSongs[0]->GetTranslitFullTitle());
   }
-  ASSERT(m_RoutinePlayer.m_iStepsPlayed > 0);
-  ASSERT(m_RoutinePlayer.m_vpPossibleSteps.size() != 0);
-  ASSERT(m_RoutinePlayer.m_vpPossibleSteps[0] != nullptr);
+  ASSERT(m_SharedPlayer.m_iStepsPlayed > 0);
+  ASSERT(m_SharedPlayer.m_vpPossibleSteps.size() != 0);
+  ASSERT(m_SharedPlayer.m_vpPossibleSteps[0] != nullptr);
   ASSERT_M(m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode));
   ASSERT_M(
-      m_RoutinePlayer.m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty,
+      m_SharedPlayer.m_vpPossibleSteps[0]->GetDifficulty() < NUM_Difficulty,
       ssprintf(
           "Invalid Difficulty %i",
-          m_RoutinePlayer.m_vpPossibleSteps[0]->GetDifficulty()));
+          m_SharedPlayer.m_vpPossibleSteps[0]->GetDifficulty()));
   ASSERT_M(
-      (int)m_vpPlayedSongs.size() == m_RoutinePlayer.m_iStepsPlayed,
+      (int)m_vpPlayedSongs.size() == m_SharedPlayer.m_iStepsPlayed,
       ssprintf(
           "%i Songs Played != %i Steps Played for player %i",
-          (int)m_vpPlayedSongs.size(), (int)m_RoutinePlayer.m_iStepsPlayed,
-          pn));
+          (int)m_vpPlayedSongs.size(), (int)m_SharedPlayer.m_iStepsPlayed, pn));
   ASSERT_M(
-      m_vpPossibleSongs.size() == m_RoutinePlayer.m_vpPossibleSteps.size(),
+      m_vpPossibleSongs.size() == m_SharedPlayer.m_vpPossibleSteps.size(),
       ssprintf(
           "%i Possible Songs != %i Possible Steps for player %i",
           (int)m_vpPossibleSongs.size(),
-          (int)m_RoutinePlayer.m_vpPossibleSteps.size(), pn));
+          (int)m_SharedPlayer.m_vpPossibleSteps.size(), pn));
 }
 
 int StageStats::GetAverageMeter(PlayerNumber pn) const {
@@ -216,7 +215,7 @@ static HighScore FillInHighScore(
   return hs;
 }
 
-static HighScore FillInRoutineHighScore(
+static HighScore FillInSharedHighScore(
     const PlayerStageStats& pss, const PlayerState& ps,
     std::string sRankingToFillInMarker, std::vector<PlayerStageStats>& ppss,
     std::vector<std::string>& sPlayerGuids) {
@@ -245,7 +244,7 @@ static HighScore FillInRoutineHighScore(
 
   hs.SetDateTime(DateTime::GetNowDateTime());
   hs.SetPlayerGuid(sPlayerGuids[0]);  // just pick the first player's guid to
-                                      // represent the routine
+                                      // represent the couple
   hs.SetMachineGuid(PROFILEMAN->GetMachineProfile()->m_sGuid);
   hs.SetProductID(PREFSMAN->m_iProductID);
   FOREACH_ENUM(TapNoteScore, tns)
@@ -255,7 +254,7 @@ static HighScore FillInRoutineHighScore(
   hs.SetRadarValues(pss.m_radarActual);
   hs.SetLifeRemainingSeconds(pss.m_fLifeRemainingSeconds);
   hs.SetDisqualified(pss.IsDisqualified());
-  hs.SetRoutine(true);
+  hs.SetShared(true);
   FOREACH_HumanPlayer(pn) {
     hs.SetPlayerGrade(pn, ppss[pn].GetGrade());
     hs.SetPlayerScore(pn, ppss[pn].m_iScore);
@@ -305,7 +304,7 @@ void StageStats::FinalizeScores(bool bSummary) {
   StyleType styleType =
       GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())
           ->m_StyleType;
-  // If the stepstype is routine, fill high scores with each player
+  // If the stepstype is couple, fill high scores with each player
   if (styleType == StyleType_TwoPlayersSharedSides) {
     PlayerNumber p = GAMESTATE->GetMasterPlayerNumber();
     std::vector<PlayerStageStats> ppss(NUM_PLAYERS);
@@ -316,8 +315,8 @@ void StageStats::FinalizeScores(bool bSummary) {
                              ? PROFILEMAN->GetProfile(pn)->m_sGuid
                              : std::string("");
     }
-    m_player[p].m_HighScore = FillInRoutineHighScore(
-        m_RoutinePlayer, *GAMESTATE->m_pPlayerState[p],
+    m_player[p].m_HighScore = FillInSharedHighScore(
+        m_SharedPlayer, *GAMESTATE->m_pPlayerState[p],
         RANKING_TO_FILL_IN_MARKER[p], ppss, sPlayerGuids);
   } else {
     FOREACH_HumanPlayer(p) {
@@ -524,8 +523,8 @@ class LunaStageStats : public Luna<StageStats> {
     return 1;
   }
 
-  static int GetRoutineStageStats(T* p, lua_State* L) {
-    p->m_RoutinePlayer.PushSelf(L);
+  static int GetSharedPlayerStageStats(T* p, lua_State* L) {
+    p->m_SharedPlayer.PushSelf(L);
     return 1;
   }
 
@@ -543,7 +542,7 @@ class LunaStageStats : public Luna<StageStats> {
     ADD_METHOD(GetStepsSeconds);
     ADD_METHOD(PlayerHasHighScore);
     ADD_METHOD(GetEarnedExtraStage);
-    ADD_METHOD(GetRoutineStageStats);
+    ADD_METHOD(GetSharedPlayerStageStats);
   }
 };
 

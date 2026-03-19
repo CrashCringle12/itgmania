@@ -169,7 +169,7 @@ struct TapNote {
   /** @brief The result of hitting or missing the TapNote. */
   TapNoteResult result;
   /** @brief The Player that is supposed to hit this note. This is mainly for
-   * Routine Mode. */
+   * Couples Mode. */
   PlayerNumber pn;
 
   // used only if Type == attack:

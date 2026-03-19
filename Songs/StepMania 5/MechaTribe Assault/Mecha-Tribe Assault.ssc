@@ -6804,10 +6804,10 @@ M0000
 00000
 ;
 
-//---------------dance-couple - Simple Chart----------------
+//---------------dance-routine - Simple Chart----------------
 #NOTEDATA:;
 #CHARTNAME:Small Tribe;
-#STEPSTYPE:dance-couple;
+#STEPSTYPE:dance-routine;
 #DESCRIPTION:Simple Chart;
 #CHARTSTYLE:Pad;
 #DIFFICULTY:Easy;

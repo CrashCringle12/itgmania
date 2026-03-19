@@ -1358,22 +1358,22 @@ bool ScreenSelectMusic::MenuStart(const InputEventPlus& input) {
         bAllPlayersDoneSelectingSteps = true;
       }
 
-      /* TRICKY: if we have a Routine chart selected, we need to ensure
+      /* TRICKY: if we have a Couples chart selected, we need to ensure
        * the following:
-       * 1. Both players must select the same Routine steps.
-       * 2. If the other player picks non-Routine steps, this player
-       *    cannot pick Routine.
-       * 3. If the other player picked Routine steps, and we pick
-       *    non-Routine steps, the other player's steps must be unselected.
-       * 4. If time runs out, and both players don't have the same Routine
-       *    chart selected, we need to bump the player with a Routine
+       * 1. Both players must select the same Couples steps.
+       * 2. If the other player picks non-Couples steps, this player
+       *    cannot pick Couples.
+       * 3. If the other player picked Couples steps, and we pick
+       *    non-Couples steps, the other player's steps must be unselected.
+       * 4. If time runs out, and both players don't have the same Couples
+       *    chart selected, we need to bump the player with a Couples
        *    chart selection to a playable chart.
        *    (Right now, we bump them to Beginner... Can we come up with
        *    something better?)
        */
 
       if (!GAMESTATE->IsCourseMode() && GAMESTATE->GetNumSidesJoined() == 2) {
-        bool bSelectedRoutineSteps[NUM_PLAYERS], bAnySelectedRoutine = false;
+        bool bSelectedCouplesSteps[NUM_PLAYERS], bAnySelectedCouples = false;
         bool bSelectedSameSteps = GAMESTATE->m_pCurSteps[PLAYER_1] ==
                                   GAMESTATE->m_pCurSteps[PLAYER_2];
 
@@ -1382,14 +1382,14 @@ bool ScreenSelectMusic::MenuStart(const InputEventPlus& input) {
           const StepsTypeInfo& sti =
               GAMEMAN->GetStepsTypeInfo(pSteps->m_StepsType);
 
-          bSelectedRoutineSteps[p] =
-              sti.m_StepsTypeCategory == StepsTypeCategory_Routine;
-          bAnySelectedRoutine |= bSelectedRoutineSteps[p];
+          bSelectedCouplesSteps[p] =
+              sti.m_StepsTypeCategory == StepsTypeCategory_Couple;
+          bAnySelectedCouples |= bSelectedCouplesSteps[p];
         }
 
-        if (bAnySelectedRoutine) {
+        if (bAnySelectedCouples) {
           /* Timer ran out. If we haven't agreed on steps, move players with
-           * Routine steps down to Beginner. I'll admit that's annoying,
+           * Couples steps down to Beginner. I'll admit that's annoying,
            * but at least they won't lose more stages. */
           if (bInitiatedByMenuTimer && !bSelectedSameSteps) {
             /* Since m_vpSteps is sorted by Difficulty, the first
@@ -1398,7 +1398,7 @@ bool ScreenSelectMusic::MenuStart(const InputEventPlus& input) {
             Steps* pSteps = m_vpSteps[0];
 
             FOREACH_PlayerNumber(p) {
-              if (bSelectedRoutineSteps[p]) {
+              if (bSelectedCouplesSteps[p]) {
                 GAMESTATE->m_pCurSteps[p].Set(pSteps);
               }
             }
@@ -1412,9 +1412,9 @@ bool ScreenSelectMusic::MenuStart(const InputEventPlus& input) {
             const PlayerNumber other = OPPOSITE_PLAYER[pn];
 
             if (m_bStepsChosen[other]) {
-              /* Unready the other player if they selected Routine
+              /* Unready the other player if they selected Couples
                * steps, but we didn't. */
-              if (bSelectedRoutineSteps[other]) {
+              if (bSelectedCouplesSteps[other]) {
                 m_bStepsChosen[other] = false;
                 bAllPlayersDoneSelectingSteps =
                     false;  // if the timer ran out, we handled it earlier
@@ -1425,9 +1425,9 @@ bool ScreenSelectMusic::MenuStart(const InputEventPlus& input) {
                 event.pn = other;
 
                 this->Input(event);
-              } else if (bSelectedRoutineSteps[pn]) {
-                /* They selected non-Routine steps, so we can't
-                 * select Routine steps. */
+              } else if (bSelectedCouplesSteps[pn]) {
+                /* They selected non-Couples steps, so we can't
+                 * select Couples steps. */
                 return false;
               }
             }

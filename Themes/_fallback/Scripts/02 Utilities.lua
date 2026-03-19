@@ -213,7 +213,7 @@ function Center1Player()
 	if styleType == "StyleType_OnePlayerTwoSides" or styleType == "StyleType_TwoPlayersSharedSides" then
 		return true
 	-- only Center1P if Pref enabled and OnePlayerOneSide.
-	-- (implicitly excludes Rave, Battle, Versus, Routine)
+	-- (implicitly excludes Rave, Battle, Versus, Couple)
 	elseif PREFSMAN:GetPreference("Center1Player") then
 		return styleType == "StyleType_OnePlayerOneSide"
 	else
@@ -221,7 +221,7 @@ function Center1Player()
 	end
 end
 
-function IsRoutine()
+function IsCouples()
 	local style= GAMESTATE:GetCurrentStyle()
 	if style and style:GetStyleType() == "StyleType_TwoPlayersSharedSides" then
 		return true

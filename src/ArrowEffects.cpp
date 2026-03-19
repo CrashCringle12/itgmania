@@ -994,7 +994,7 @@ float ArrowEffects::GetXPos(
       case StyleType_OnePlayerTwoSides:
       case StyleType_TwoPlayersSharedSides: {
         // find the middle, and split based on iColNum
-        // it's unknown if this will work for routine.
+        // it's unknown if this will work for couple.
         const int iMiddleColumn = std::floor(pStyle->m_iColsPerPlayer / 2.0f);
         if (iColNum > iMiddleColumn - 1) {
           fPixelOffsetFromCenter +=
