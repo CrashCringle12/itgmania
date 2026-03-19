@@ -68,8 +68,8 @@ LuaDeclareType(RadarCategory);
 enum StepsTypeCategory {
   StepsTypeCategory_Single,  /**< One person plays on one side. */
   StepsTypeCategory_Double,  /**< One person plays on both sides. */
-  StepsTypeCategory_Routine,  /**< Two players play on their own side. */
-  StepsTypeCategory_Couple, /**< Two players share both sides together. */
+  StepsTypeCategory_Routine, /**< Two players play on their own side. */
+  StepsTypeCategory_Couple,  /**< Two players share both sides together. */
 };
 
 /** @brief The different steps types for playing. */

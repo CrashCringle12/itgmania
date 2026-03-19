@@ -279,8 +279,8 @@ static const Style g_Style_Dance_Routine = {
     false,                         // m_bUsedForEdit
     false,                         // m_bUsedForDemonstration
     false,                         // m_bUsedForHowToPlay
-    "routine",                      // m_szName
-    StepsType_dance_routine,        // m_StepsType
+    "routine",                     // m_szName
+    StepsType_dance_routine,       // m_StepsType
     StyleType_TwoPlayersTwoSides,  // m_StyleType
     4,                             // m_iColsPerPlayer
     {
@@ -355,8 +355,8 @@ static const Style g_Style_Dance_Routine_Edit = {
     true,                         // m_bUsedForEdit
     false,                        // m_bUsedForDemonstration
     false,                        // m_bUsedForHowToPlay
-    "routine-edit",                // m_szName
-    StepsType_dance_routine,       // m_StepsType
+    "routine-edit",               // m_szName
+    StepsType_dance_routine,      // m_StepsType
     StyleType_OnePlayerTwoSides,  // m_StyleType
     8,                            // m_iColsPerPlayer
     {
@@ -473,8 +473,8 @@ static const Style g_Style_Dance_Couple = {
     true,                             // m_bUsedForEdit
     false,                            // m_bUsedForDemonstration
     false,                            // m_bUsedForHowToPlay
-    "couple",                        // m_szName
-    StepsType_dance_couple,          // m_StepsType
+    "couple",                         // m_szName
+    StepsType_dance_couple,           // m_StepsType
     StyleType_TwoPlayersSharedSides,  // m_StyleType
     8,                                // m_iColsPerPlayer
     {
@@ -755,8 +755,8 @@ static const Style g_Style_Pump_Routine = {
     false,                         // m_bUsedForEdit
     false,                         // m_bUsedForDemonstration
     false,                         // m_bUsedForHowToPlay
-    "routine",                      // m_szName
-    StepsType_pump_routine,         // m_StepsType
+    "routine",                     // m_szName
+    StepsType_pump_routine,        // m_StepsType
     StyleType_TwoPlayersTwoSides,  // m_StyleType
     5,                             // m_iColsPerPlayer
     {
@@ -795,8 +795,8 @@ static const Style g_Style_Pump_Routine_Edit = {
     true,                         // m_bUsedForEdit
     false,                        // m_bUsedForDemonstration
     false,                        // m_bUsedForHowToPlay
-    "routine-edit",                // m_szName
-    StepsType_pump_routine,        // m_StepsType
+    "routine-edit",               // m_szName
+    StepsType_pump_routine,       // m_StepsType
     StyleType_OnePlayerTwoSides,  // m_StyleType
     10,                           // m_iColsPerPlayer
     {
@@ -845,8 +845,8 @@ static const Style g_Style_Pump_Couple = {
     true,                             // m_bUsedForEdit
     false,                            // m_bUsedForDemonstration
     false,                            // m_bUsedForHowToPlay
-    "couple",                        // m_szName
-    StepsType_pump_couple,           // m_StepsType
+    "couple",                         // m_szName
+    StepsType_pump_couple,            // m_StepsType
     StyleType_TwoPlayersSharedSides,  // m_StyleType
     10,                               // m_iColsPerPlayer
     {
@@ -892,8 +892,8 @@ static const Style g_Style_Pump_Couple = {
 static const Style* g_apGame_Pump_Styles[] = {
     &g_Style_Pump_Single,     &g_Style_Pump_Versus,
     &g_Style_Pump_HalfDouble, &g_Style_Pump_Double,
-    &g_Style_Pump_Routine,     &g_Style_Pump_Routine_Edit,
-    &g_Style_Pump_Couple,    nullptr};
+    &g_Style_Pump_Routine,    &g_Style_Pump_Routine_Edit,
+    &g_Style_Pump_Couple,     nullptr};
 
 static const Game g_Game_Pump = {
     "pump",                // m_szName
