@@ -95,8 +95,8 @@ Stops the music that is currently playing.  No argument.
 
 "style"
 The "style" command is used to set the style of the game.  The style of the game controls how many pads/players are used.  Acceptable args depend on the game type.
-For dance:  single, versus, double, couple, solo, couple-edit, threepanel, routine
-For pump:  single, versus, halfdouble, double, couple, couple-edit, routine
+For dance:  single, versus, double, couple, solo, routine-edit, threepanel, routine
+For pump:  single, versus, halfdouble, double, couple, routine-edit, routine
 For kb7:  single, versus
 For ez2:  single, real, versus, versusReal, double
 For para:  single, versus

@@ -293,8 +293,29 @@ void SetChartName(StepsTagInfo& info) {
   info.steps->SetChartName(name);
 }
 void SetStepsType(StepsTagInfo& info) {
-  info.steps->m_StepsType = GAMEMAN->StringToStepsType((*info.params)[1]);
-  info.steps->m_StepsTypeStr = (*info.params)[1];
+  std::string sStepsType = (*info.params)[1];
+
+  // HACK: In v0.84, routine and couple were swapped. Pre-0.84 files need the
+  // strings swapped before conversion to enum.
+  if (info.song->m_fVersion < VERSION_COUPLES_ROUTINE_SWAP) {
+    if (CompareNoCase(sStepsType, "dance-routine") == 0) {
+      sStepsType = "dance-couple";
+    } else if (CompareNoCase(sStepsType, "dance-couple") == 0) {
+      sStepsType = "dance-routine";
+    } else if (CompareNoCase(sStepsType, "pump-routine") == 0) {
+      sStepsType = "pump-couple";
+    } else if (CompareNoCase(sStepsType, "pump-couple") == 0) {
+      sStepsType = "pump-routine";
+    }
+    LOG->Info(
+        "Swapping steps type \"%s\" to \"%s\" because file version is %.2f < "
+        "%.2f",
+        (*info.params)[1].c_str(), sStepsType.c_str(), info.song->m_fVersion,
+        VERSION_COUPLES_ROUTINE_SWAP);
+  }
+
+  info.steps->m_StepsType = GAMEMAN->StringToStepsType(sStepsType);
+  info.steps->m_StepsTypeStr = sStepsType;
   info.ssc_format = true;
 }
 void SetChartStyle(StepsTagInfo& info) {
@@ -919,11 +940,25 @@ bool SSCLoader::LoadNoteDataFromSimfile(
             // checked before the tryingSteps condition. -Kyz
             storedVersion = StringToFloat(matcher);
             break;
-          case LNDID_stepstype:
-            if (out.m_StepsType != GAMEMAN->StringToStepsType(matcher)) {
+          case LNDID_stepstype: {
+            std::string sStepsType = matcher;
+            // Apply the same swap logic as SetStepsType
+            if (storedVersion < VERSION_COUPLES_ROUTINE_SWAP) {
+              if (CompareNoCase(sStepsType, "dance-routine") == 0) {
+                sStepsType = "dance-couple";
+              } else if (CompareNoCase(sStepsType, "dance-couple") == 0) {
+                sStepsType = "dance-routine";
+              } else if (CompareNoCase(sStepsType, "pump-routine") == 0) {
+                sStepsType = "pump-couple";
+              } else if (CompareNoCase(sStepsType, "pump-couple") == 0) {
+                sStepsType = "pump-routine";
+              }
+            }
+            if (out.m_StepsType != GAMEMAN->StringToStepsType(sStepsType)) {
               tryingSteps = false;
             }
             break;
+          }
           case LNDID_chartname:
             if (storedVersion >= VERSION_CHART_NAME_TAG &&
                 out.GetChartName() != matcher) {
@@ -1069,7 +1104,6 @@ bool SSCLoader::LoadFromSimfile(
       }
     }
   }
-  out.m_fVersion = STEPFILE_VERSION_NUMBER;
   TidyUpData(out, bFromCache);
   return true;
 }

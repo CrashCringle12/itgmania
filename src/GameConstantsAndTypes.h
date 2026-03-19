@@ -68,23 +68,23 @@ LuaDeclareType(RadarCategory);
 enum StepsTypeCategory {
   StepsTypeCategory_Single,  /**< One person plays on one side. */
   StepsTypeCategory_Double,  /**< One person plays on both sides. */
-  StepsTypeCategory_Couple,  /**< Two players play on their own side. */
-  StepsTypeCategory_Routine, /**< Two players share both sides together. */
+  StepsTypeCategory_Routine,  /**< Two players play on their own side. */
+  StepsTypeCategory_Couple, /**< Two players share both sides together. */
 };
 
 /** @brief The different steps types for playing. */
 enum StepsType {
   StepsType_dance_single = 0,
   StepsType_dance_double,
-  StepsType_dance_couple,
+  StepsType_dance_routine,
   StepsType_dance_solo,
   StepsType_dance_threepanel,
-  StepsType_dance_routine,
+  StepsType_dance_couple,
   StepsType_pump_single,
   StepsType_pump_halfdouble,
   StepsType_pump_double,
-  StepsType_pump_couple,
   StepsType_pump_routine,
+  StepsType_pump_couple,
   StepsType_kb7_single,
   StepsType_ez2_single,
   StepsType_ez2_double,
@@ -566,7 +566,7 @@ enum StyleType {
   StyleType_OnePlayerOneSide,      /**< Single style */
   StyleType_TwoPlayersTwoSides,    /**< Versus style */
   StyleType_OnePlayerTwoSides,     /**< Double style */
-  StyleType_TwoPlayersSharedSides, /**< Routine style */
+  StyleType_TwoPlayersSharedSides, /**< Couples style */
   NUM_StyleType,
   StyleType_Invalid
 };

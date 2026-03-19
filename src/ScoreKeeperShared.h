@@ -7,7 +7,7 @@
 #include "ScoreKeeper.h"
 #include "ScoreKeeperNormal.h"
 
-/** @brief ScoreKeeper for Routine mode. */
+/** @brief ScoreKeeper for Couples mode. */
 class ScoreKeeperShared : public ScoreKeeperNormal {
  public:
   ScoreKeeperShared(

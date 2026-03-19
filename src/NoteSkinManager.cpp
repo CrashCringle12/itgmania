@@ -421,15 +421,15 @@ void NoteSkinManager::FilterNoteSkinsByStyle(
           sNoteSkinName);  // this NoteSkin doesn't exist!
       const NoteSkinData& data = it->second;
 
-      std::string sIsRoutine;
-      if (!data.metrics.GetValue("Global", "IsRoutineNoteSkin", sIsRoutine)) {
+      std::string sIsCouples;
+      if (!data.metrics.GetValue("Global", "IsCouplesNoteSkin", sIsCouples)) {
         // If the metric doesn't exist, then it's not a TwoPlayersSharedSides
         // noteskin.
         iter = AddTo.erase(iter);
         continue;
       }
 
-      if (sIsRoutine.empty() || sIsRoutine != "true") {
+      if (sIsCouples.empty() || sIsCouples != "true") {
         // If the metric exists but isn't "true", then it's not a
         // TwoPlayersSharedSides noteskin.
         iter = AddTo.erase(iter);
@@ -450,9 +450,9 @@ void NoteSkinManager::FilterNoteSkinsByStyle(
           sNoteSkinName);  // this NoteSkin doesn't exist!
       const NoteSkinData& data = it->second;
 
-      std::string bIsRoutine;
-      if (data.metrics.GetValue("Global", "IsRoutineNoteSkin", bIsRoutine)) {
-        if (bIsRoutine == "true") {
+      std::string bIsCouples;
+      if (data.metrics.GetValue("Global", "IsCouplesNoteSkin", bIsCouples)) {
+        if (bIsCouples == "true") {
           // If the metric exists but isn't "true", then it's not a
           // TwoPlayersSharedSides noteskin.
           iter = AddTo.erase(iter);

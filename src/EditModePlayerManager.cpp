@@ -87,7 +87,7 @@ bool EditModePlayerManager::HandleGameplayInput(
     const int iCol =
         GAMESTATE->GetCurrentStyle(pn)->GameInputToColumn(input.GameI);
     if (iCol != -1) {
-      // Pass inputs for both players to Player 1 in routine style.
+      // Pass inputs for both players to Player 1 in couple style.
       if (GAMESTATE->GetCurrentStyle(GAMESTATE->GetMasterPlayerNumber())
               ->m_StyleType == StyleType_TwoPlayersSharedSides) {
         (*players_[PLAYER_1])

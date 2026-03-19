@@ -15,7 +15,7 @@
 #include "Style.h"
 #include "TimingData.h"
 
-/* In Routine, we have two Players, but the master one handles all of the
+/* In Couples, we have two Players, but the master one handles all of the
  * scoring.  The other one will just receive misses for everything, and
  * shouldn't do anything. */
 ScoreKeeperShared::ScoreKeeperShared(
@@ -34,7 +34,7 @@ void ScoreKeeperShared::Load(
     return;
   }
 
-  // Routine shared scoring receives judgments from both players. Recompute
+  // Couples shared scoring receives judgments from both players. Recompute
   // possible points using both composite parts so percentage stays bounded.
   int iTotalPossibleDancePoints = 0;
   int iTotalPossibleGradePoints = 0;

@@ -377,9 +377,9 @@ void Steps::CalculateRadarValues(float fMusicLengthSeconds) {
     }
   } else if (
       GAMEMAN->GetStepsTypeInfo(this->m_StepsType).m_StepsTypeCategory ==
-      StepsTypeCategory_Couple) {
+      StepsTypeCategory_Routine) {
     NoteData p1 = tempNoteData;
-    // XXX: Assumption that couple will always have an even number of notes.
+    // XXX: Assumption that routine will always have an even number of notes.
     const int tracks = tempNoteData.GetNumTracks() / 2;
     p1.SetNumTracks(tracks);
     NoteDataUtil::CalculateRadarValues(
@@ -456,10 +456,10 @@ void Steps::CalculateMeasureInfo() {
     }
   } else if (
       GAMEMAN->GetStepsTypeInfo(this->m_StepsType).m_StepsTypeCategory ==
-      StepsTypeCategory_Couple) {
+      StepsTypeCategory_Routine) {
     measureInfoPerPlayer.resize(NUM_PLAYERS);
     NoteData p1 = tempNoteData;
-    // XXX: Assumption that couple will always have an even number of notes.
+    // XXX: Assumption that routine will always have an even number of notes.
     const int tracks = tempNoteData.GetNumTracks() / 2;
     p1.SetNumTracks(tracks);
     MeasureInfo::CalculateMeasureInfo(
@@ -555,7 +555,7 @@ void Steps::Decompress() {
     // load from compressed
     bool bComposite =
         GAMEMAN->GetStepsTypeInfo(m_StepsType).m_StepsTypeCategory ==
-        StepsTypeCategory_Routine;
+        StepsTypeCategory_Couple;
     m_bNoteDataIsFilled = true;
     m_pNoteData->SetNumTracks(
         GAMEMAN->GetStepsTypeInfo(m_StepsType).iNumTracks);
@@ -987,7 +987,7 @@ std::string Steps::GenerateChartKey(NoteData& nd, TimingData* td) {
 
 std::vector<ColumnCue> Steps::GetColumnCues(float minDuration) {
   // TODO: Should we worry about getting the right steps per player?
-  // It seems like this is only necessary when dealing with Couples charts
+  // It seems like this is only necessary when dealing with Routines charts
 
   std::vector<ColumnCue> cues;
   NoteData noteData;

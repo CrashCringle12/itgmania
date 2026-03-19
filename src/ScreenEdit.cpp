@@ -1128,13 +1128,13 @@ static MenuDef g_AlterMenu(
         ScreenEdit::convert_to_attack, "Convert selection to attack", true,
         EditMode_Full, true, true, 0, nullptr),
     MenuRowDef(
-        ScreenEdit::routine_invert_notes, "Invert notes' player", true,
+        ScreenEdit::couples_invert_notes, "Invert notes' player", true,
         EditMode_Full, true, true, 0, nullptr),
     MenuRowDef(
-        ScreenEdit::routine_mirror_1_to_2, "Mirror Player 1 to 2", true,
+        ScreenEdit::couples_mirror_1_to_2, "Mirror Player 1 to 2", true,
         EditMode_Full, true, true, 0, nullptr),
     MenuRowDef(
-        ScreenEdit::routine_mirror_2_to_1, "Mirror Player 2 to 1", true,
+        ScreenEdit::couples_mirror_2_to_1, "Mirror Player 2 to 1", true,
         EditMode_Full, true, true, 0, nullptr));
 
 static MenuDef g_AreaMenu(
@@ -2143,7 +2143,7 @@ static LocalizedString SNAP_TO("ScreenEdit", "Snap to");
 static LocalizedString NOTES("ScreenEdit", "%s notes");
 static LocalizedString SELECTION_BEAT("ScreenEdit", "Selection beat");
 static LocalizedString DIFFICULTY("ScreenEdit", "Difficulty");
-static LocalizedString ROUTINE_PLAYER("ScreenEdit", "Routine Player");
+static LocalizedString COUPLES_PLAYER("ScreenEdit", "Couple Player");
 static LocalizedString CHART_NAME("ScreenEdit", "Chart Name");
 static LocalizedString DESCRIPTION("ScreenEdit", "Description");
 static LocalizedString CHART_STYLE("ScreenEdit", "Chart Style");
@@ -2181,8 +2181,8 @@ static ThemeMetric<std::string> SELECTION_BEAT_END_FORMAT(
     "ScreenEdit", "SelectionBeatEndFormat");
 static ThemeMetric<std::string> DIFFICULTY_FORMAT(
     "ScreenEdit", "DifficultyFormat");
-static ThemeMetric<std::string> ROUTINE_PLAYER_FORMAT(
-    "ScreenEdit", "RoutinePlayerFormat");
+static ThemeMetric<std::string> COUPLES_PLAYER_FORMAT(
+    "ScreenEdit", "CouplesPlayerFormat");
 static ThemeMetric<std::string> CHART_NAME_FORMAT(
     "ScreenEdit", "ChartNameFormat");
 static ThemeMetric<std::string> DESCRIPTION_FORMAT(
@@ -2303,8 +2303,8 @@ void ScreenEdit::UpdateTextInfo() {
         DifficultyToString(m_pSteps->GetDifficulty()).c_str());
     if (m_InputPlayerNumber != PLAYER_INVALID) {
       sText += ssprintf(
-          ROUTINE_PLAYER_FORMAT.GetValue().c_str(),
-          ROUTINE_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1);
+          COUPLES_PLAYER_FORMAT.GetValue().c_str(),
+          COUPLES_PLAYER.GetValue().c_str(), m_InputPlayerNumber + 1);
     }
     // sText += ssprintf( DESCRIPTION_FORMAT.GetValue(),
     // DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
@@ -2344,7 +2344,7 @@ void ScreenEdit::UpdateTextInfo() {
   GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
   const StepsTypeCategory& cat =
       GAMEMAN->GetStepsTypeInfo(m_pSteps->m_StepsType).m_StepsTypeCategory;
-  if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine) {
+  if (cat == StepsTypeCategory_Routine || cat == StepsTypeCategory_Couple) {
     std::pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
     sText += ssprintf(
         NUM_STEPS_FORMAT_TWO_PLAYER.GetValue().c_str(),
@@ -2855,10 +2855,10 @@ bool ScreenEdit::InputEdit(const InputEventPlus& input, EditButton EditB) {
         SCREENMAN->SystemMessage(ALTER_MENU_NO_SELECTION);
         SCREENMAN->PlayInvalidSound();
       } else {
-        bool isRoutine = (m_InputPlayerNumber != PLAYER_INVALID);
-        g_AlterMenu.rows[routine_invert_notes].bEnabled = isRoutine;
-        g_AlterMenu.rows[routine_mirror_1_to_2].bEnabled = isRoutine;
-        g_AlterMenu.rows[routine_mirror_2_to_1].bEnabled = isRoutine;
+        bool isCouples = (m_InputPlayerNumber != PLAYER_INVALID);
+        g_AlterMenu.rows[couples_invert_notes].bEnabled = isCouples;
+        g_AlterMenu.rows[couples_mirror_1_to_2].bEnabled = isCouples;
+        g_AlterMenu.rows[couples_mirror_2_to_1].bEnabled = isCouples;
         EditMiniMenu(&g_AlterMenu, SM_BackFromAlterMenu);
       }
       return true;
@@ -5294,7 +5294,7 @@ void ScreenEdit::HandleMainMenuChoice(
       Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
       const StepsTypeCategory& cat =
           GAMEMAN->GetStepsTypeInfo(pSteps->m_StepsType).m_StepsTypeCategory;
-      if (cat == StepsTypeCategory_Couple || cat == StepsTypeCategory_Routine) {
+      if (cat == StepsTypeCategory_Routine || cat == StepsTypeCategory_Couple) {
         std::pair<int, int> tmp = m_NoteDataEdit.GetNumTapNotesTwoPlayer();
         g_StepsData.rows[tap_notes].SetOneUnthemedChoice(
             ssprintf("%d / %d", tmp.first, tmp.second));
@@ -5912,7 +5912,7 @@ void ScreenEdit::HandleAlterMenuChoice(
       SetDirty(true);
       break;
     }
-    case routine_invert_notes: {
+    case couples_invert_notes: {
       NoteData& nd = this->m_NoteDataEdit;
       NoteField& nf = this->m_NoteFieldEdit;
       FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE(
@@ -5928,10 +5928,10 @@ void ScreenEdit::HandleAlterMenuChoice(
       }
       break;
     }
-    case routine_mirror_1_to_2:
-    case routine_mirror_2_to_1: {
-      PlayerNumber oPN = (c == routine_mirror_1_to_2 ? PLAYER_1 : PLAYER_2);
-      PlayerNumber nPN = (c == routine_mirror_1_to_2 ? PLAYER_2 : PLAYER_1);
+    case couples_mirror_1_to_2:
+    case couples_mirror_2_to_1: {
+      PlayerNumber oPN = (c == couples_mirror_1_to_2 ? PLAYER_1 : PLAYER_2);
+      PlayerNumber nPN = (c == couples_mirror_1_to_2 ? PLAYER_2 : PLAYER_1);
       int nTrack = -1;
       NoteData& nd = this->m_NoteDataEdit;
       NoteField& nf = this->m_NoteFieldEdit;
@@ -5945,9 +5945,9 @@ void ScreenEdit::HandleAlterMenuChoice(
             nTap.pn = nPN;
             StepsType curType = GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType;
             // TODO: Find a better way to do this.
-            if (curType == StepsType_dance_routine) {
+            if (curType == StepsType_dance_couple) {
               nTrack = tracks - t - 1;
-            } else if (curType == StepsType_pump_routine) {
+            } else if (curType == StepsType_pump_couple) {
               switch (t) {
                 case 0:
                   nTrack = 8;
@@ -5980,7 +5980,7 @@ void ScreenEdit::HandleAlterMenuChoice(
                   nTrack = 1;
                   break;
                 default:
-                  FAIL_M(ssprintf("Invalid column %d for pump-routine", t));
+                  FAIL_M(ssprintf("Invalid column %d for pump-couple", t));
                   break;
               }
             }
@@ -6935,7 +6935,7 @@ static const EditHelpLine g_EditHelpLines[] = {
         EDIT_BUTTON_CYCLE_TAP_RIGHT),
     EditHelpLine("Add to/remove from right half", EDIT_BUTTON_RIGHT_SIDE),
     EditHelpLine("Switch Timing", EDIT_BUTTON_SWITCH_TIMINGS),
-    EditHelpLine("Switch player (Routine only)", EDIT_BUTTON_SWITCH_PLAYERS),
+    EditHelpLine("Switch player (Couples only)", EDIT_BUTTON_SWITCH_PLAYERS),
 };
 
 static bool IsMapped(EditButton eb, const MapEditToDI& editmap) {
@@ -7077,7 +7077,7 @@ void ScreenEdit::DoHelp() {
     Replace(sButtons, "Alt", "Option");
 #endif
 
-    // TODO: Better way of hiding routine only key on non-routine.
+    // TODO: Better way of hiding couples only key on non-couples.
     if (hl.veb[0] == EDIT_BUTTON_SWITCH_PLAYERS &&
         m_InputPlayerNumber == PLAYER_INVALID) {
       continue;

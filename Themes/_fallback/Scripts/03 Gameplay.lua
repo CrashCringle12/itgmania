@@ -93,8 +93,8 @@ end
 -- [en] returns possible modes for ScreenSelectPlayMode
 function GameCompatibleModes()
 	local Modes = {
-		dance = "Single,Double,Solo,Versus,Couple",
-		pump = "Single,Double,HalfDouble,Versus,Couple,Routine",
+		dance = "Single,Double,Solo,Versus,Routine,Couple",
+		pump = "Single,Double,HalfDouble,Versus,Routine,Couple",
 		beat = "5Keys,7Keys,10Keys,14Keys,Versus5,Versus7",
 		kb7 = "KB7",
 		para = "Single",
@@ -118,9 +118,9 @@ function ScreenSelectStyleChoices()
 	for i, style in ipairs(styles) do
 		local name= style:GetName()
 		local cap_name= upper_first_letter(name)
-		-- couple-edit and threepanel don't seem like they should actually be
+		-- routine-edit and threepanel don't seem like they should actually be
 		-- selectable. -Kyz
-		if name ~= "couple-edit" and name ~= "threepanel" then
+		if name ~= "routine-edit" and name ~= "threepanel" then
 			choices[#choices+1]= "name," .. cap_name .. ";style," .. name ..
 				";text," .. cap_name .. ";screen," .. Branch.AfterSelectStyle()
 		end
@@ -264,26 +264,26 @@ function TwoPartSelection()
 	return GAMESTATE:GetCurrentGame():GetName() == "pump" and true or false 
 end 
 
-local RoutineSkins = {
-	dance	= { P1 = "midi-routine-p1", P2 = "midi-routine-p2" },
-	pump	= { P1 = "cmd-routine-p1", P2 = "cmd-routine-p2" },
+local CoupleSkins = {
+	dance	= { P1 = "midi-couple-p1", P2 = "midi-couple-p2" },
+	pump	= { P1 = "cmd-couple-p1", P2 = "cmd-couple-p2" },
 	kb7		= { P1 = "default", P2 = "retrobar" },
 	-------------------------------------------------------------
 	default	= { P1 = "default", P2 = "default" }
 }
 
-function RoutineSkinP1()
-	if RoutineSkins[CurGameName()] then
-		return RoutineSkins[CurGameName()].P1
+function CoupleSkinP1()
+	if CoupleSkins[CurGameName()] then
+		return CoupleSkins[CurGameName()].P1
 	end
-	return RoutineSkins["default"].P1
+	return CoupleSkins["default"].P1
 end
 
-function RoutineSkinP2()
-	if RoutineSkins[CurGameName()] then
-		return RoutineSkins[CurGameName()].P2
+function CoupleSkinP2()
+	if CoupleSkins[CurGameName()] then
+		return CoupleSkins[CurGameName()].P2
 	end
-	return RoutineSkins["default"].P2
+	return CoupleSkins["default"].P2
 end
 
 -- todo: use tables for some of these -aj
