@@ -295,8 +295,8 @@ void SMLoader::LoadFromTokens(
     sStepsType = "para-single";
   }
 
-  // HACK: In v0.84+, routine and couple were swapped. Pre-0.84 .SM files use
-  // the legacy naming, so we swap them when reading into engine.
+  // HACK: In SSC v0.84+, routine and couple were swapped
+  // .SM files use the legacy naming, so we swap them when reading into engine.
   if (CompareNoCase(sStepsType, "dance-couple") == 0) {
     sStepsType = "dance-routine";
   } else if (CompareNoCase(sStepsType, "dance-routine") == 0) {
