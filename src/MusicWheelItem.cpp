@@ -38,13 +38,15 @@ XToString(MusicWheelItemType);
 
 MusicWheelItemData::MusicWheelItemData(
     WheelItemDataType type, Song* pSong, std::string sSectionName,
-    Course* pCourse, Group* pGroup, RageColor color, int iSectionCount)
+    Course* pCourse, Group* pGroup, RageColor color, int iSectionCount,
+    std::string sParentSection)
     : WheelItemBaseData(type, sSectionName, color),
       m_pCourse(pCourse),
       m_pSong(pSong),
       m_pGroup(pGroup),
       m_Flags(WheelNotifyIcon::Flags()),
       m_iSectionCount(iSectionCount),
+      m_sParentSection(sParentSection),
       m_sLabel(""),
       m_pAction() {}
 
@@ -215,8 +217,12 @@ void MusicWheelItem::LoadFromWheelItemData(
       m_WheelNotifyIcon.SetVisible(true);
       RefreshGrades();
       break;
-    case WheelItemDataType_Section: {
-      if (pWID->m_pGroup == nullptr) {
+    case WheelItemDataType_Section:
+    case WheelItemDataType_Series: {
+      if (pWID->m_Type == WheelItemDataType_Series) {
+        sDisplayName = pWID->m_sLabel.empty() ? pWID->m_sText : pWID->m_sLabel;
+        sTranslitName = sDisplayName;
+      } else if (pWID->m_pGroup == nullptr) {
         sDisplayName = SONGMAN->ShortenGroupName(pWID->m_sText);
       } else {
         if (pWID->m_pGroup->GetSeries().empty()) {
@@ -233,7 +239,7 @@ void MusicWheelItem::LoadFromWheelItemData(
               SONGMAN->ShortenGroupName(pWID->m_pGroup->GetTranslitTitle());
         }
       }
-      if (GAMESTATE->sExpandedSectionName == pWID->m_sText) {
+      if (m_bExpanded) {
         type = MusicWheelItemType_SectionExpanded;
       } else {
         type = MusicWheelItemType_SectionCollapsed;
@@ -301,11 +307,17 @@ void MusicWheelItem::LoadFromWheelItemData(
     msg.SetParam("Course", pWID->m_pCourse);
     msg.SetParam("Index", iIndex);
     msg.SetParam("HasFocus", bHasFocus);
-    msg.SetParam("Text", pWID->m_sText);
+    const std::string textForTheme =
+        (pWID->m_Type == WheelItemDataType_Series && !pWID->m_sLabel.empty())
+            ? pWID->m_sLabel
+            : pWID->m_sText;
+    msg.SetParam("Text", textForTheme);
     msg.SetParam("DrawIndex", iDrawIndex);
     msg.SetParam("Type", MusicWheelItemTypeToString(type));
     msg.SetParam("Color", pWID->m_color);
     msg.SetParam("Label", pWID->m_sLabel);
+    msg.SetParam("ParentSection", pWID->m_sParentSection);
+    msg.SetParam("IsSeries", pWID->m_Type == WheelItemDataType_Series);
 
     this->HandleMessage(msg);
   }
@@ -411,7 +423,8 @@ void MusicWheelItem::HandleMessage(const Message& msg) {
         type = MusicWheelItemType_Song;
         break;
       case WheelItemDataType_Section:
-        if (GAMESTATE->sExpandedSectionName == pWID->m_sText) {
+      case WheelItemDataType_Series:
+        if (m_bExpanded) {
           type = MusicWheelItemType_SectionExpanded;
         } else {
           type = MusicWheelItemType_SectionCollapsed;
@@ -448,6 +461,8 @@ void MusicWheelItem::HandleMessage(const Message& msg) {
     setMsg.SetParam("Type", MusicWheelItemTypeToString(type));
     setMsg.SetParam("Color", pWID->m_color);
     setMsg.SetParam("Label", pWID->m_sLabel);
+    setMsg.SetParam("ParentSection", pWID->m_sParentSection);
+    setMsg.SetParam("IsSeries", pWID->m_Type == WheelItemDataType_Series);
     this->HandleMessage(setMsg);
 
     RefreshGrades();

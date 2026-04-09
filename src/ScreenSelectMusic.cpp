@@ -1007,9 +1007,7 @@ bool ScreenSelectMusic::DetectCodes(const InputEventPlus& input) {
         m_MusicWheel.WheelIsLocked() || m_MusicWheel.IsRouletting()) {
       m_soundLocked.Play(true);
     } else {
-      std::string sCurSection = m_MusicWheel.GetSelectedSection();
-      m_MusicWheel.SelectSection(sCurSection);
-      m_MusicWheel.SetOpenSection("");
+      m_MusicWheel.CloseOpenSectionOneLevel();
       AfterMusicChange();
     }
   } else {
@@ -1780,6 +1778,7 @@ void ScreenSelectMusic::AfterMusicChange() {
   SampleMusicPreviewMode pmode;
   switch (wtype) {
     case WheelItemDataType_Section:
+    case WheelItemDataType_Series:
     case WheelItemDataType_Sort:
     case WheelItemDataType_Roulette:
     case WheelItemDataType_Random:
@@ -1801,6 +1800,7 @@ void ScreenSelectMusic::AfterMusicChange() {
 
       switch (wtype) {
         case WheelItemDataType_Section:
+        case WheelItemDataType_Series:
           // reduce scope
           {
             SortOrder curSort = GAMESTATE->m_SortOrder;

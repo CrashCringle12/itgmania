@@ -14,6 +14,7 @@ struct WheelItemBaseData;
 enum WheelItemDataType {
   WheelItemDataType_Generic,  /**< A generic item on the Wheel. */
   WheelItemDataType_Section,  /**< A general section on the Wheel. */
+  WheelItemDataType_Series,   /**< A parent series section on the Wheel. */
   WheelItemDataType_Song,     /**< A Song on the Wheel. */
   WheelItemDataType_Roulette, /**< The roulette section on the Wheel. */
   WheelItemDataType_Random,   /**< The random section on the Wheel. */

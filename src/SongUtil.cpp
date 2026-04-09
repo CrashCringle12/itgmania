@@ -922,15 +922,32 @@ void SongUtil::SortSongPointerArrayBySectionName(
     std::vector<Song*>& vpSongsInOut, SortOrder so) {
   std::string sOther = SORT_OTHER.GetValue();
   for (unsigned i = 0; i < vpSongsInOut.size(); ++i) {
-    std::string val = GetSectionNameFromSongAndSort(vpSongsInOut[i], so);
+    std::string val;
 
-    // Make sure 0-9 comes first and OTHER comes last.
-    if (val == "0-9") {
-      val = "0";
-    } else if (val == sOther) {
-      val = "2";
+    if (so == SORT_GROUP) {
+      Group* pGroup = SONGMAN->GetGroup(vpSongsInOut[i]);
+      if (pGroup == nullptr) {
+        LOG->Warn(
+            "SongUtil::SortSongPointerArrayBySectionName: %s has no group",
+            vpSongsInOut[i]->GetSongDir().c_str());
+        val = "2";
+      } else {
+        const std::string sectionName = pGroup->GetSeries().empty()
+                                            ? pGroup->GetSortTitle()
+                                            : pGroup->GetSeries();
+        val = "1" + MakeSortString(sectionName);
+      }
     } else {
-      val = "1" + MakeSortString(val);
+      val = GetSectionNameFromSongAndSort(vpSongsInOut[i], so);
+
+      // Make sure 0-9 comes first and OTHER comes last.
+      if (val == "0-9") {
+        val = "0";
+      } else if (val == sOther) {
+        val = "2";
+      } else {
+        val = "1" + MakeSortString(val);
+      }
     }
 
     g_mapSongSortVal[vpSongsInOut[i]] = val;
