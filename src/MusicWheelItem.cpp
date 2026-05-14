@@ -201,6 +201,8 @@ void MusicWheelItem::LoadFromWheelItemData(
   // Fill these in below
   std::string sDisplayName, sTranslitName;
   MusicWheelItemType type = MusicWheelItemType_Invalid;
+  const bool isChildSection = pWID->m_Type == WheelItemDataType_Section &&
+                              !pWID->m_sParentSection.empty();
 
   switch (pWID->m_Type) {
     DEFAULT_FAIL(pWID->m_Type);
@@ -291,6 +293,23 @@ void MusicWheelItem::LoadFromWheelItemData(
     bt->SetText(sDisplayName, sTranslitName);
     bt->SetDiffuse(pWID->m_color);
     bt->SetVisible(true);
+    if (isChildSection) {
+      bt->SetX(THEME->GetMetricF("MusicWheelItem", "ParentSectionX"));
+      bt->SetY(THEME->GetMetricF("MusicWheelItem", "ParentSectionY"));
+    } else {
+      ActorUtil::SetXY(*bt, "MusicWheelItem");
+    }
+  }
+
+  if (m_pTextSectionCount) {
+    if (isChildSection) {
+      m_pTextSectionCount->SetX(
+          THEME->GetMetricF("MusicWheelItem", "ParentSectionCountX"));
+      m_pTextSectionCount->SetY(
+          THEME->GetMetricF("MusicWheelItem", "ParentSectionCountY"));
+    } else {
+      ActorUtil::SetXY(*m_pTextSectionCount, "MusicWheelItem");
+    }
   }
 
   FOREACH_ENUM(MusicWheelItemType, i) {
