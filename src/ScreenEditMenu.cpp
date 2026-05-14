@@ -26,7 +26,7 @@
 #include "SongUtil.h"
 #include "Steps.h"
 #include "ThemeManager.h"
-#include "global.h"
+#include "global.h" 
 
 static const std::string TEMP_FILE_NAME = "--temp--";
 

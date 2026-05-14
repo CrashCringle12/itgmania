@@ -307,11 +307,6 @@ void SetStepsType(StepsTagInfo& info) {
     } else if (CompareNoCase(sStepsType, "pump-couple") == 0) {
       sStepsType = "pump-routine";
     }
-    LOG->Info(
-        "Swapping steps type \"%s\" to \"%s\" because file version is %.2f < "
-        "%.2f",
-        (*info.params)[1].c_str(), sStepsType.c_str(), info.song->m_fVersion,
-        VERSION_COUPLES_ROUTINE_SWAP);
   }
 
   info.steps->m_StepsType = GAMEMAN->StringToStepsType(sStepsType);

@@ -155,7 +155,8 @@ AutoScreenMessage(SM_DoSaveAndExit);
 AutoScreenMessage(SM_DoExit);
 AutoScreenMessage(SM_AutoSaveSuccessful);
 AutoScreenMessage(SM_SaveSuccessful);
-AutoScreenMessage(SM_SaveSuccessNoSM);
+AutoScreenMessage(SM_SaveSuccessNoSplitTimingSM);
+AutoScreenMessage(SM_SaveSuccessNoCouplesSM);
 AutoScreenMessage(SM_SaveFailed);
 
 static const char* EditStateNames[] = {
@@ -4123,6 +4124,8 @@ static LocalizedString AUTOSAVE_SUCCESSFUL(
     "ScreenEdit", "Autosave successful.");
 static LocalizedString SAVE_SUCCESS_NO_SM_SPLIT_TIMING(
     "ScreenEdit", "save_success_no_sm_split_timing");
+static LocalizedString SAVE_SUCCESS_NO_SM_COUPLES(
+    "ScreenEdit", "save_success_no_sm_couples");
 
 static LocalizedString ADD_NEW_MOD("ScreenEdit", "Adding New Mod");
 static LocalizedString ADD_NEW_ATTACK("ScreenEdit", "Adding New Attack");
@@ -4752,15 +4755,19 @@ void ScreenEdit::HandleScreenMessage(const ScreenMessage SM) {
       case ANSWER_CANCEL:
         break;  // do nothing
     }
-  } else if (SM == SM_SaveSuccessful || SM == SM_SaveSuccessNoSM) {
+  } else if (
+      SM == SM_SaveSuccessful || SM == SM_SaveSuccessNoSplitTimingSM ||
+      SM == SM_SaveSuccessNoCouplesSM) {
     LOG->Trace("Save successful.");
     CopyToLastSave();
     SetDirty(false);
     SONGMAN->Invalidate(GAMESTATE->m_pCurSong);
 
     const LocalizedString* message = &SAVE_SUCCESSFUL;
-    if (SM == SM_SaveSuccessNoSM) {
+    if (SM == SM_SaveSuccessNoSplitTimingSM) {
       message = &SAVE_SUCCESS_NO_SM_SPLIT_TIMING;
+    } else if (SM == SM_SaveSuccessNoCouplesSM) {
+      message = &SAVE_SUCCESS_NO_SM_COUPLES;
     }
 
     if (m_CurrentAction == save_on_exit) {
@@ -4869,9 +4876,17 @@ void ScreenEdit::PerformSave(bool autosave) {
   // If one of the charts uses split timing, then it cannot be accurately
   // saved in the .sm format.  So saving the .sm is disabled.
   bool uses_split = m_pSong->AnyChartUsesSplitTiming();
-  const ScreenMessage save_message =
-      autosave ? SM_AutoSaveSuccessful
-               : (uses_split ? SM_SaveSuccessNoSM : SM_SaveSuccessful);
+  ScreenMessage SM;
+  if (autosave) {
+    SM = SM_AutoSaveSuccessful;
+  } else if (uses_split) {
+    SM = SM_SaveSuccessNoSplitTimingSM;
+  } else if (m_pSong->AnyChartIsRoutineOrCouples()) {
+    SM = SM_SaveSuccessNoCouplesSM;
+  } else {
+    SM = SM_SaveSuccessful;
+  }
+  const ScreenMessage save_message = SM;
 
   switch (EDIT_MODE.GetValue()) {
     DEFAULT_FAIL(EDIT_MODE.GetValue());

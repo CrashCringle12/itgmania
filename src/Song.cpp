@@ -1237,7 +1237,9 @@ void Song::Save(bool autosave) {
   SaveToCacheFile();
   // If one of the charts uses split timing, then it cannot be accurately
   // saved in the .sm format.  So saving the .sm is disabled.
-  if (!AnyChartUsesSplitTiming()) {
+  // If a chart is routine/couples, then only save the .sm file
+  // as the names have been swapped.
+  if (!AnyChartUsesSplitTiming() && !AnyChartIsRoutineOrCouples()) {
     SaveToSMFile();
   }
   // SaveToDWIFile();
@@ -1988,6 +1990,18 @@ bool Song::IsStepsUsingDifferentTiming(Steps* pSteps) const {
 bool Song::AnyChartUsesSplitTiming() const {
   for (Steps* s : m_vpSteps) {
     if (!s->m_Timing.empty()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Song::AnyChartIsRoutineOrCouples() const {
+  for (Steps* s : m_vpSteps) {
+    if (GAMEMAN->GetStepsTypeInfo(s->m_StepsType).m_StepsTypeCategory ==
+            StepsTypeCategory_Routine ||
+        GAMEMAN->GetStepsTypeInfo(s->m_StepsType).m_StepsTypeCategory ==
+            StepsTypeCategory_Couple) {
       return true;
     }
   }

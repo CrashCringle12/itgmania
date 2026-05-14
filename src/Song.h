@@ -475,6 +475,7 @@ class Song {
 
   bool IsStepsUsingDifferentTiming(Steps* pSteps) const;
   bool AnyChartUsesSplitTiming() const;
+  bool AnyChartIsRoutineOrCouples() const;
 
   /**
    * @brief An array of keysound file names (e.g. "beep.wav").
