@@ -30,8 +30,8 @@ class ScreenNFCLinkProfile : public ScreenWithMenuElements {
 
   std::string m_sProfileID;
   std::string m_sLastLinkedUID;
-  std::string m_sStatusOverride;
+  std::string m_sErrorStatus;
+  bool m_bTappedCard = false;
 };
 
 #endif
-

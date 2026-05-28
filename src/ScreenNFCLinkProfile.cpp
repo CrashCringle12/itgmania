@@ -116,10 +116,12 @@ void ScreenNFCLinkProfile::RefreshDisplay() {
   const bool bCardPresent = NFCMAN->IsCardPresent();
   const std::string sCurrentUID = NFCMAN->GetCurrentCardUID();
 
-  if (!m_sStatusOverride.empty()) {
-    m_textStatus.SetText(m_sStatusOverride);
+  if (!m_sErrorStatus.empty()) {
+    m_textStatus.SetText(m_sErrorStatus);
   } else if (bCardPresent) {
     m_textStatus.SetText(LINK_NFC_DETECTED.GetValue());
+  } else if (m_bTappedCard) {
+    m_textStatus.SetText(LINK_NFC_LINKED.GetValue());
   } else {
     m_textStatus.SetText(LINK_NFC_WAITING.GetValue());
   }
@@ -142,7 +144,7 @@ void ScreenNFCLinkProfile::RefreshDisplay() {
 }
 
 void ScreenNFCLinkProfile::LinkUIDToProfile(const std::string& sUID) {
-  m_sStatusOverride.clear();
+  m_sErrorStatus.clear();
 
   if (sUID.empty()) {
     return;
@@ -150,13 +152,16 @@ void ScreenNFCLinkProfile::LinkUIDToProfile(const std::string& sUID) {
 
   Profile* pProfile = PROFILEMAN->GetLocalProfile(m_sProfileID);
   if (pProfile == nullptr) {
-    m_sStatusOverride = LINK_NFC_FAILED.GetValue();
+    m_sErrorStatus = LINK_NFC_FAILED.GetValue();
     return;
   }
 
   pProfile->m_sNFCCardUID = sUID;
-  PROFILEMAN->SaveLocalProfile(m_sProfileID);
+  if (!PROFILEMAN->SaveLocalProfile(m_sProfileID)) {
+    m_sErrorStatus = LINK_NFC_FAILED.GetValue();
+    return;
+  }
 
+  m_bTappedCard = true;
   m_sLastLinkedUID = sUID;
-  m_sStatusOverride = LINK_NFC_LINKED.GetValue();
 }
