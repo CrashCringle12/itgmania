@@ -7,7 +7,7 @@
 #include "InputEventPlus.h"
 #include "ScreenWithMenuElements.h"
 
-class Message;
+struct Message;
 
 class ScreenNFCLinkProfile : public ScreenWithMenuElements {
  public:

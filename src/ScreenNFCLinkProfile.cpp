@@ -16,13 +16,17 @@
 REGISTER_SCREEN_CLASS(ScreenNFCLinkProfile);
 
 static LocalizedString LINK_NFC_TITLE("ScreenNFCLinkProfile", "Title");
-static LocalizedString LINK_NFC_WAITING("ScreenNFCLinkProfile", "WaitingForCardTap");
-static LocalizedString LINK_NFC_DETECTED("ScreenNFCLinkProfile", "CardDetected");
+static LocalizedString LINK_NFC_WAITING(
+    "ScreenNFCLinkProfile", "WaitingForCardTap");
+static LocalizedString LINK_NFC_DETECTED(
+    "ScreenNFCLinkProfile", "CardDetected");
 static LocalizedString LINK_NFC_LINKED("ScreenNFCLinkProfile", "CardLinked");
 static LocalizedString LINK_NFC_FAILED("ScreenNFCLinkProfile", "LinkFailed");
-static LocalizedString LINK_NFC_UNAVAILABLE("ScreenNFCLinkProfile", "NFCUnavailable");
+static LocalizedString LINK_NFC_UNAVAILABLE(
+    "ScreenNFCLinkProfile", "NFCUnavailable");
 static LocalizedString LINK_NFC_UID_LABEL("ScreenNFCLinkProfile", "UIDLabel");
-static LocalizedString LINK_NFC_READER_LABEL("ScreenNFCLinkProfile", "ReaderLabel");
+static LocalizedString LINK_NFC_READER_LABEL(
+    "ScreenNFCLinkProfile", "ReaderLabel");
 static LocalizedString LINK_NFC_READER_UNKNOWN(
     "ScreenNFCLinkProfile", "ReaderUnknown");
 static LocalizedString LINK_NFC_INSTRUCTIONS(
