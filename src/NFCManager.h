@@ -61,6 +61,22 @@ class NFCManager {
   /** @brief Return a list of reader names visible to the driver. */
   std::vector<std::string> GetReaderNames() const;
 
+  /** @brief True if the active driver can read/write small theme-managed data.
+   */
+  bool SupportsCardDataIO() const;
+
+  /** @brief Maximum payload size in bytes for WriteCardData. */
+  int GetMaxCardDataBytes() const;
+
+  /** @brief Read theme-managed data from the current card into sDataOut. */
+  bool ReadCardData(std::string& sDataOut);
+
+  /** @brief Write theme-managed data to the current card. */
+  bool WriteCardData(const std::string& sData);
+
+  /** @brief Error text from the most recent ReadCardData/WriteCardData call. */
+  std::string GetLastCardIOError() const;
+
   // Lua
   void PushSelf(lua_State* L);
 
@@ -78,6 +94,7 @@ class NFCManager {
   // Protected by m_Mutex
   std::string m_sCurrentCardUID;
   std::string m_sLastTappedUID;
+  std::string m_sLastCardIOError;
   bool m_bCardPresent;
 };
 

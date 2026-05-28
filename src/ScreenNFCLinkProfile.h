@@ -18,9 +18,19 @@ class ScreenNFCLinkProfile : public ScreenWithMenuElements {
   bool MenuStart(const InputEventPlus& input) override;
   bool MenuBack(const InputEventPlus& input) override;
 
+  bool HasPendingLink() const;
+  std::string GetPendingCardUID() const;
+  bool PendingLinkRequiresMove() const;
+  std::string GetPendingSourceProfileID() const;
+  std::string GetPendingSourceProfileName() const;
+  bool ConfirmPendingLink(bool bMoveExisting = true);
+  void CancelPendingLink();
+
  private:
   void RefreshDisplay();
-  void LinkUIDToProfile(const std::string& sUID);
+  void StageUIDForLink(const std::string& sUID);
+  bool LinkUIDToProfile(const std::string& sUID, bool bMoveExisting);
+  void ClearPendingLink();
 
   BitmapText m_textTitle;
   BitmapText m_textStatus;
@@ -31,7 +41,11 @@ class ScreenNFCLinkProfile : public ScreenWithMenuElements {
   std::string m_sProfileID;
   std::string m_sLastLinkedUID;
   std::string m_sErrorStatus;
+  std::string m_sPendingUID;
+  std::string m_sPendingSourceProfileID;
+  std::string m_sPendingSourceProfileName;
   bool m_bTappedCard = false;
+  bool m_bPendingMove = false;
 };
 
 #endif
