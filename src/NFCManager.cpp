@@ -9,7 +9,6 @@
 #include "MessageManager.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "RageMutex.h"
 #include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil.h"

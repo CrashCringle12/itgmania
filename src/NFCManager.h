@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "Preference.h"
-#include "RageMutex.h"
 #include "RageThreads.h"
 
 struct lua_State;
