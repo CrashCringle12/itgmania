@@ -1,7 +1,9 @@
 #include "NFCManager.h"
 
+#include <chrono>
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "LuaBinding.h"
@@ -127,7 +129,7 @@ void NFCManager::PollThread() {
     bWasPresentLastIteration = bNowPresent;
     sPrevUID = sUID;
 
-    usleep(static_cast<unsigned long>(fInterval * 1e6f));
+    std::this_thread::sleep_for(std::chrono::duration<float>(fInterval));
   }
 }
 
@@ -203,12 +205,6 @@ class LunaNFCManager : public Luna<NFCManager> {
 };
 
 LUA_REGISTER_CLASS(NFCManager)
-
-void NFCManager::PushSelf(lua_State* L) {
-  lua_pushlightuserdata(L, this);
-  luaL_getmetatable(L, "NFCManager");
-  lua_setmetatable(L, -2);
-}
 
 /*
  * (c) 2024 ITGmania contributors
