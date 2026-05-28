@@ -20,16 +20,13 @@
 // GET DATA APDU for reading the card UID (ISO 14443 / NFC).
 // Works on ACR122U and most other PC/SC NFC readers.
 static const BYTE kGetUIDApdu[] = {0xFF, 0xCA, 0x00, 0x00, 0x00};
-static const DWORD kGetUIDApduLen =
-    static_cast<DWORD>(sizeof(kGetUIDApdu));
+static const DWORD kGetUIDApduLen = static_cast<DWORD>(sizeof(kGetUIDApdu));
 
 // Maximum UID size in bytes (extended UIDs can be 10 bytes).
 static const size_t kMaxUIDBytes = 10;
 
 NFCDriver_PCSC::NFCDriver_PCSC()
-    : m_hContext(nullptr),
-      m_bCardPresent(false),
-      m_bInitialized(false) {}
+    : m_hContext(nullptr), m_bCardPresent(false), m_bInitialized(false) {}
 
 NFCDriver_PCSC::~NFCDriver_PCSC() {
   if (m_hContext != nullptr) {
@@ -135,12 +132,8 @@ bool NFCDriver_PCSC::ReadCardUID(std::string& sUIDOut) {
     DWORD dwActiveProtocol = 0;
 
     LONG rv = SCardConnect(
-        hCtx,
-        readerName.c_str(),
-        SCARD_SHARE_SHARED,
-        SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1,
-        &hCard,
-        &dwActiveProtocol);
+        hCtx, readerName.c_str(), SCARD_SHARE_SHARED,
+        SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwActiveProtocol);
 
     if (rv != SCARD_S_SUCCESS) {
       // No card in this reader – try the next one.
@@ -156,12 +149,7 @@ bool NFCDriver_PCSC::ReadCardUID(std::string& sUIDOut) {
     memset(recvBuf, 0, sizeof(recvBuf));
 
     rv = SCardTransmit(
-        hCard,
-        pioSendPCI,
-        kGetUIDApdu,
-        kGetUIDApduLen,
-        nullptr,
-        recvBuf,
+        hCard, pioSendPCI, kGetUIDApdu, kGetUIDApduLen, nullptr, recvBuf,
         &recvLen);
 
     SCardDisconnect(hCard, SCARD_LEAVE_CARD);
@@ -169,8 +157,7 @@ bool NFCDriver_PCSC::ReadCardUID(std::string& sUIDOut) {
     if (rv != SCARD_S_SUCCESS) {
       LOG->Warn(
           "NFCDriver_PCSC: SCardTransmit failed on '%s' (0x%08lX).",
-          readerName.c_str(),
-          static_cast<unsigned long>(rv));
+          readerName.c_str(), static_cast<unsigned long>(rv));
       continue;
     }
 
@@ -197,8 +184,8 @@ bool NFCDriver_PCSC::ReadCardUID(std::string& sUIDOut) {
   return false;
 }
 
-std::string NFCDriver_PCSC::BytesToHex(const unsigned char* pBytes,
-                                        size_t nBytes) {
+std::string NFCDriver_PCSC::BytesToHex(
+    const unsigned char* pBytes, size_t nBytes) {
   std::string result;
   result.reserve(nBytes * 2);
   static const char kHexChars[] = "0123456789ABCDEF";
@@ -217,9 +204,7 @@ std::string NFCDriver_PCSC::GetCurrentCardUID() const {
   return m_sCurrentCardUID;
 }
 
-bool NFCDriver_PCSC::IsCardPresent() const {
-  return m_bCardPresent;
-}
+bool NFCDriver_PCSC::IsCardPresent() const { return m_bCardPresent; }
 
 /*
  * (c) 2024 ITGmania contributors

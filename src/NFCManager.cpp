@@ -1,7 +1,5 @@
 #include "NFCManager.h"
 
-#include "global.h"
-
 #include <memory>
 #include <string>
 #include <vector>
@@ -15,6 +13,7 @@
 #include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil.h"
+#include "global.h"
 
 #if defined(WITH_NFC)
 #include "arch/NFC/NFCDriver_PCSC.h"
@@ -26,8 +25,7 @@ NFCManager* NFCMAN = nullptr;
 
 Preference<bool> NFCManager::m_bNFCEnabled("NFCEnabled", true);
 Preference<float> NFCManager::m_fPollIntervalSeconds(
-    "NFCPollIntervalSeconds",
-    0.25f);
+    "NFCPollIntervalSeconds", 0.25f);
 
 NFCManager::NFCManager()
     : m_Mutex("NFCManager"),
