@@ -42,6 +42,7 @@ enum ProfileAction {
   ProfileAction_SetDefaultP2,
   ProfileAction_Edit,
   ProfileAction_Rename,
+  ProfileAction_LinkNFCCard,
   ProfileAction_Delete,
   ProfileAction_Clear,
   ProfileAction_MergeToMachine,
@@ -56,7 +57,7 @@ enum ProfileAction {
   NUM_ProfileAction
 };
 static const char* ProfileActionNames[] = {
-    "SetDefaultP1", "SetDefaultP2", "Edit",           "Rename",
+    "SetDefaultP1", "SetDefaultP2", "Edit", "Rename", "LinkNFCCard",
     "Delete",       "Clear",        "MergeToMachine", "MergeToMachineSkipTotal",
     "MergeToP1",    "MergeToP2",    "ChangeToGuest",  "ChangeToNormal",
     "ChangeToTest", "MoveUp",       "MoveDown",
@@ -316,6 +317,10 @@ void ScreenOptionsManageProfiles::HandleScreenMessage(const ScreenMessage SM) {
               SM_BackFromRename, ENTER_PROFILE_NAME, pProfile->m_sDisplayName,
               PROFILE_MAX_DISPLAY_NAME_LENGTH, ValidateLocalProfileName);
         } break;
+        case ProfileAction_LinkNFCCard: {
+          GAMESTATE->m_sEditLocalProfileID.Set(GetLocalProfileIDWithFocus());
+          SCREENMAN->SetNewScreen("ScreenNFCLinkProfile");
+        } break;
         case ProfileAction_Delete: {
           std::string sTitle = pProfile->m_sDisplayName;
           std::string sMessage = ssprintf(
@@ -433,10 +438,12 @@ void ScreenOptionsManageProfiles::ProcessMenuStart(const InputEventPlus&) {
     ADD_ACTION(ProfileAction_SetDefaultP2);
     if (PROFILEMAN->FixedProfiles()) {
       ADD_ACTION(ProfileAction_Rename);
+      ADD_ACTION(ProfileAction_LinkNFCCard);
       ADD_ACTION(ProfileAction_Clear);
     } else {
       ADD_ACTION(ProfileAction_Edit);
       ADD_ACTION(ProfileAction_Rename);
+      ADD_ACTION(ProfileAction_LinkNFCCard);
       ADD_ACTION(ProfileAction_Delete);
       ADD_ACTION(ProfileAction_MergeToMachine);
       ADD_ACTION(ProfileAction_MergeToMachineSkipTotal);
