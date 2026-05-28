@@ -76,7 +76,7 @@ typedef int pid_t;
 #cmakedefine WITH_LOGGING_TIMING_DATA 1
 
 /* Defined to 1 if NFC card reader support (PC/SC) is compiled in. */
-#cmakedefine WITH_NFC 1
+#cmakedefine HAS_NFC 1
 
 #if defined(__GNUC__)
 /** @brief Define a macro to tell the compiler that a function has printf()

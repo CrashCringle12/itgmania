@@ -1,5 +1,6 @@
 #include "NFCDriver_PCSC.h"
 
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 
@@ -26,12 +27,12 @@ static const DWORD kGetUIDApduLen = static_cast<DWORD>(sizeof(kGetUIDApdu));
 static const size_t kMaxUIDBytes = 10;
 
 NFCDriver_PCSC::NFCDriver_PCSC()
-    : m_hContext(nullptr), m_bCardPresent(false), m_bInitialized(false) {}
+    : m_hContext(0), m_bCardPresent(false), m_bInitialized(false) {}
 
 NFCDriver_PCSC::~NFCDriver_PCSC() {
-  if (m_hContext != nullptr) {
-    SCardReleaseContext(reinterpret_cast<SCARDCONTEXT>(m_hContext));
-    m_hContext = nullptr;
+  if (m_hContext != 0) {
+    SCardReleaseContext(static_cast<SCARDCONTEXT>(m_hContext));
+    m_hContext = 0;
   }
 }
 
@@ -45,7 +46,7 @@ bool NFCDriver_PCSC::Init() {
         static_cast<unsigned long>(rv));
     return false;
   }
-  m_hContext = reinterpret_cast<void*>(hCtx);
+  m_hContext = static_cast<uintptr_t>(hCtx);
   m_bInitialized = true;
 
   RefreshReaders();
@@ -64,13 +65,12 @@ bool NFCDriver_PCSC::RefreshReaders() {
     return false;
   }
 
-  SCARDCONTEXT hCtx = reinterpret_cast<SCARDCONTEXT>(m_hContext);
-  DWORD dwReaders = SCARD_AUTOALLOCATE;
-  LPSTR pReaders = nullptr;
+  SCARDCONTEXT hCtx = static_cast<SCARDCONTEXT>(m_hContext);
+  DWORD dwReaders = 0;
 
-  LONG rv = SCardListReaders(
-      hCtx, nullptr, reinterpret_cast<LPSTR>(&pReaders), &dwReaders);
-  if (rv == SCARD_E_NO_READERS_AVAILABLE || rv == SCARD_E_READER_UNAVAILABLE) {
+  LONG rv = SCardListReaders(hCtx, nullptr, nullptr, &dwReaders);
+  if (rv == static_cast<LONG>(SCARD_E_NO_READERS_AVAILABLE) ||
+      rv == static_cast<LONG>(SCARD_E_READER_UNAVAILABLE)) {
     std::vector<std::string> empty;
     bool changed = (m_vReaderNames != empty);
     m_vReaderNames.clear();
@@ -83,13 +83,22 @@ bool NFCDriver_PCSC::RefreshReaders() {
     return false;
   }
 
+  std::vector<char> readersBuffer(dwReaders);
+  LPSTR pReaders = readersBuffer.data();
+  rv = SCardListReaders(hCtx, nullptr, pReaders, &dwReaders);
+  if (rv != SCARD_S_SUCCESS) {
+    LOG->Warn(
+        "NFCDriver_PCSC: SCardListReaders (data) failed (0x%08lX).",
+        static_cast<unsigned long>(rv));
+    return false;
+  }
+
   std::vector<std::string> readers;
   LPSTR p = pReaders;
   while (p && *p != '\0') {
     readers.emplace_back(p);
     p += strlen(p) + 1;
   }
-  SCardFreeMemory(hCtx, pReaders);
 
   bool changed = (readers != m_vReaderNames);
   m_vReaderNames = std::move(readers);
@@ -125,7 +134,7 @@ void NFCDriver_PCSC::Poll() {
 }
 
 bool NFCDriver_PCSC::ReadCardUID(std::string& sUIDOut) {
-  SCARDCONTEXT hCtx = reinterpret_cast<SCARDCONTEXT>(m_hContext);
+  SCARDCONTEXT hCtx = static_cast<SCARDCONTEXT>(m_hContext);
 
   for (const auto& readerName : m_vReaderNames) {
     SCARDHANDLE hCard = 0;

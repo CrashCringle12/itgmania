@@ -1,6 +1,7 @@
 #ifndef NFC_DRIVER_PCSC_H
 #define NFC_DRIVER_PCSC_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -34,7 +35,7 @@ class NFCDriver_PCSC : public NFCDriver {
   /** @brief Convert a byte buffer to an uppercase hex string. */
   static std::string BytesToHex(const unsigned char* pBytes, size_t nBytes);
 
-  void* m_hContext;  // SCARDCONTEXT (opaque to avoid platform headers here)
+  uintptr_t m_hContext;  // SCARDCONTEXT stored without platform headers here
   std::vector<std::string> m_vReaderNames;
   std::string m_sCurrentCardUID;
   bool m_bCardPresent;

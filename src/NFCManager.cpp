@@ -16,7 +16,7 @@
 #include "RageUtil.h"
 #include "global.h"
 
-#if defined(WITH_NFC)
+#if defined(HAS_NFC)
 #include "arch/NFC/NFCDriver_PCSC.h"
 #else
 #include "arch/NFC/NFCDriver_Null.h"
@@ -38,7 +38,7 @@ NFCManager::NFCManager()
     return;
   }
 
-#if defined(WITH_NFC)
+#if defined(HAS_NFC)
   m_pDriver = std::make_unique<NFCDriver_PCSC>();
 #else
   m_pDriver = std::make_unique<NFCDriver_Null>();
