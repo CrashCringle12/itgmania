@@ -9,6 +9,7 @@
 #include "LuaManager.h"
 #include "MemoryCardManager.h"
 #include "MessageManager.h"
+#include "NFCManager.h"
 #include "PlayerNumber.h"
 #include "ProfileManager.h"
 #include "Screen.h"
@@ -25,6 +26,11 @@ void ScreenSelectProfile::Init() {
   }
   m_TrackingRepeatingInput = GameButton_Invalid;
   ScreenWithMenuElements::Init();
+
+  // Subscribe to NFC card events so we can auto-login profiles.
+  if (NFCMAN != nullptr && NFCMAN->IsEnabled()) {
+    SubscribeToMessage(Message_NFCCardTapped);
+  }
 }
 
 bool ScreenSelectProfile::Input(const InputEventPlus& input) {
@@ -247,6 +253,58 @@ bool ScreenSelectProfile::Finish() {
 
   StartTransitioningScreen(SM_GoToNextScreen);
   return true;
+}
+
+void ScreenSelectProfile::HandleMessage(const Message& msg) {
+  if (msg.GetName() == MessageIDToString(Message_NFCCardTapped)) {
+    // Attempt to find a local profile linked to the tapped card UID.
+    std::string sUID;
+    if (!msg.GetParam("UID", sUID) || sUID.empty()) {
+      ScreenWithMenuElements::HandleMessage(msg);
+      return;
+    }
+
+    int iProfileIndex = PROFILEMAN->GetLocalProfileIndexByNFCUID(sUID);
+    if (iProfileIndex < 0) {
+      // No profile linked to this card – broadcast so themes can handle it.
+      ScreenWithMenuElements::HandleMessage(msg);
+      return;
+    }
+
+    // The SetProfileIndex API uses 1-based indices for local profiles.
+    // Find the first human player that has not yet selected a profile.
+    FOREACH_PlayerNumber(pn) {
+      if (!GAMESTATE->IsHumanPlayer(pn)) {
+        continue;
+      }
+      if (m_iSelectedProfiles[pn] != -1) {
+        continue;
+      }
+      // Select the profile (1-based index).
+      SetProfileIndex(pn, iProfileIndex + 1);
+      // Broadcast so themes can reflect the selection change.
+      Message selMsg("NFCProfileSelected");
+      selMsg.SetParam("Player", pn);
+      selMsg.SetParam("ProfileIndex", iProfileIndex + 1);
+      selMsg.SetParam("UID", sUID);
+      MESSAGEMAN->Broadcast(selMsg);
+
+      // If all human players have made a selection, proceed automatically.
+      bool bAllSelected = true;
+      FOREACH_PlayerNumber(p2) {
+        if (GAMESTATE->IsHumanPlayer(p2) && m_iSelectedProfiles[p2] == -1) {
+          bAllSelected = false;
+          break;
+        }
+      }
+      if (bAllSelected) {
+        Finish();
+      }
+      break;
+    }
+  }
+
+  ScreenWithMenuElements::HandleMessage(msg);
 }
 
 void ScreenSelectProfile::HandleScreenMessage(const ScreenMessage SM) {

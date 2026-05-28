@@ -966,6 +966,7 @@ void Profile::swap(Profile& other) {
   SWAP_GENERAL(m_BirthYear);
   SWAP_GENERAL(m_IgnoreStepCountCalories);
   SWAP_GENERAL(m_IsMale);
+  SWAP_STR_MEMBER(m_sNFCCardUID);
   SWAP_STR_MEMBER(m_sGuid);
   SWAP_GENERAL(m_iCurrentCombo);
   SWAP_GENERAL(m_iTotalSessions);
@@ -1546,6 +1547,7 @@ void Profile::SaveEditableDataToDir(std::string sDir) const {
   ini.SetValue(
       "Editable", "IgnoreStepCountCalories", m_IgnoreStepCountCalories);
   ini.SetValue("Editable", "IsMale", m_IsMale);
+  ini.SetValue("Editable", "NFCCardUID", m_sNFCCardUID);
 
   ini.WriteFile(sDir + EDITABLE_INI);
 }
@@ -1752,6 +1754,7 @@ ProfileLoadResult Profile::LoadEditableDataFromDir(std::string sDir) {
   ini.GetValue(
       "Editable", "IgnoreStepCountCalories", m_IgnoreStepCountCalories);
   ini.GetValue("Editable", "IsMale", m_IsMale);
+  ini.GetValue("Editable", "NFCCardUID", m_sNFCCardUID);
 
   // This is data that the user can change, so we have to validate it.
   std::wstring wstr = RStringToWstring(m_sDisplayName);
@@ -2972,6 +2975,11 @@ class LunaProfile : public Luna<Profile> {
     return 1;
   }
   DEFINE_METHOD(GetGUID, m_sGuid);
+  DEFINE_METHOD(GetNFCCardUID, m_sNFCCardUID);
+  static int SetNFCCardUID(T* p, lua_State* L) {
+    p->m_sNFCCardUID = SArg(1);
+    return 0;
+  }
   static int get_songs(T* p, lua_State* L) {
     lua_createtable(L, p->m_songs.size(), 0);
     int song_tab = lua_gettop(L);
@@ -3049,6 +3057,8 @@ class LunaProfile : public Luna<Profile> {
     ADD_METHOD(GetLastPlayedSong);
     ADD_METHOD(GetLastPlayedCourse);
     ADD_METHOD(GetGUID);
+    ADD_METHOD(GetNFCCardUID);
+    ADD_METHOD(SetNFCCardUID);
     ADD_METHOD(get_songs);
   }
 };
