@@ -96,9 +96,8 @@ Useful Lua methods include:
 - `NFCMAN:SupportsCardDataWrite()`
 - `NFCMAN:GetMaxCardDataBytes()`
 - `NFCMAN:ReadCardData()`
+- `NFCMAN:WriteCardData(payloadString)`
 - `NFCMAN:HasCardData()`
-- `NFCMAN:ReadGrooveStatsCardData()`
-- `NFCMAN:WriteGrooveStatsCardData(apiKey, username[, isPadPlayer])`
 - `NFCMAN:GetLastCardIOError()`
 
 Themes can also subscribe to these broadcast messages:
@@ -127,21 +126,3 @@ the `ITGN` format.
 Data written by generic NFC phone tools (for example NDEF text records) usually
 does not match this structure, so ITGmania will not surface it through
 `ReadCardData()`.
-
-## GrooveStats payload writes from Lua
-
-Lua write access is intentionally restricted to a GrooveStats payload, not a
-generic card key-value API. Use:
-
-- `NFCMAN:HasCardData()`
-- `NFCMAN:ReadGrooveStatsCardData()`
-- `NFCMAN:WriteGrooveStatsCardData(apiKey, username[, isPadPlayer])`
-
-Payload format written to the card:
-
-```ini
-[GrooveStats]
-ApiKey=<64-character key>
-IsPadPlayer=<0 or 1>
-Username=<name>
-```

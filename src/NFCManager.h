@@ -79,24 +79,6 @@ class NFCManager {
   /** @brief True if the current card has an ITGmania payload header/data. */
   bool HasCardData();
 
-  /**
-   * @brief Read GrooveStats card values from the current card payload.
-   *
-   * Expected payload format is:
-   * [GrooveStats]
-   * ApiKey=<64 char key>
-   * IsPadPlayer=<0|1>
-   * Username=<name>
-   */
-  bool ReadGrooveStatsCardData(
-      std::string& sApiKeyOut, std::string& sUsernameOut,
-      bool& bIsPadPlayerOut);
-
-  /** @brief Write GrooveStats card values to the current card payload. */
-  bool WriteGrooveStatsCardData(
-      const std::string& sApiKey, const std::string& sUsername,
-      bool bIsPadPlayer);
-
   /** @brief Error text from the most recent NFC card data read/write call. */
   std::string GetLastCardIOError() const;
 

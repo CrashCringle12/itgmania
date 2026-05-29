@@ -2,7 +2,6 @@
 
 #include <chrono>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -25,11 +24,6 @@
 
 namespace {
 const size_t kLogCardDataPreviewBytes = 64;
-const char* kGrooveStatsSection = "[GrooveStats]";
-const char* kGrooveStatsApiKeyName = "ApiKey";
-const char* kGrooveStatsUsernameName = "Username";
-const char* kGrooveStatsIsPadPlayerName = "IsPadPlayer";
-const size_t kGrooveStatsApiKeyBytes = 64;
 
 std::string HexPreview(const std::string& sData) {
   static const char kHexChars[] = "0123456789ABCDEF";
@@ -54,95 +48,6 @@ std::string HexPreview(const std::string& sData) {
   }
 
   return out;
-}
-
-bool ParseGrooveStatsCardData(
-    const std::string& sData, std::string& sApiKeyOut,
-    std::string& sUsernameOut, bool& bIsPadPlayerOut, std::string& sErrorOut) {
-  sApiKeyOut.clear();
-  sUsernameOut.clear();
-  bIsPadPlayerOut = false;
-  sErrorOut.clear();
-
-  if (sData.empty()) {
-    sErrorOut = "Card has no stored data.";
-    return false;
-  }
-
-  std::istringstream stream(sData);
-  std::string line;
-  bool bInGrooveStatsSection = false;
-
-  while (std::getline(stream, line)) {
-    Trim(line);
-    if (line.empty() || line[0] == ';' || line[0] == '#') {
-      continue;
-    }
-
-    if (line.front() == '[' && line.back() == ']') {
-      bInGrooveStatsSection = (line == kGrooveStatsSection);
-      continue;
-    }
-
-    if (!bInGrooveStatsSection) {
-      continue;
-    }
-
-    const std::string::size_type iEquals = line.find('=');
-    if (iEquals == std::string::npos) {
-      continue;
-    }
-
-    std::string sKey = line.substr(0, iEquals);
-    std::string sValue = line.substr(iEquals + 1);
-    Trim(sKey);
-    Trim(sValue);
-
-    if (sKey == kGrooveStatsApiKeyName) {
-      sApiKeyOut = sValue;
-    } else if (sKey == kGrooveStatsUsernameName) {
-      sUsernameOut = sValue;
-    } else if (sKey == kGrooveStatsIsPadPlayerName) {
-      bIsPadPlayerOut = (sValue == "1");
-    }
-  }
-
-  if (sApiKeyOut.size() != kGrooveStatsApiKeyBytes) {
-    sErrorOut = "GrooveStats ApiKey is missing or invalid.";
-    return false;
-  }
-
-  sErrorOut.clear();
-  return true;
-}
-
-bool SerializeGrooveStatsCardData(
-    const std::string& sApiKey, const std::string& sUsername,
-    bool bIsPadPlayer, std::string& sDataOut, std::string& sErrorOut) {
-  sDataOut.clear();
-  sErrorOut.clear();
-
-  if (sApiKey.size() != kGrooveStatsApiKeyBytes) {
-    sErrorOut = "GrooveStats ApiKey must be exactly 64 characters.";
-    return false;
-  }
-
-  if (sApiKey.find('\n') != std::string::npos ||
-      sApiKey.find('\r') != std::string::npos) {
-    sErrorOut = "GrooveStats ApiKey contains invalid line breaks.";
-    return false;
-  }
-
-  if (sUsername.find('\n') != std::string::npos ||
-      sUsername.find('\r') != std::string::npos) {
-    sErrorOut = "GrooveStats Username contains invalid line breaks.";
-    return false;
-  }
-
-  sDataOut = ssprintf(
-      "[GrooveStats]\nApiKey=%s\nIsPadPlayer=%d\nUsername=%s\n",
-      sApiKey.c_str(), bIsPadPlayer ? 1 : 0, sUsername.c_str());
-  return true;
 }
 }  // namespace
 
@@ -355,62 +260,6 @@ bool NFCManager::HasCardData() {
   return !sData.empty();
 }
 
-bool NFCManager::ReadGrooveStatsCardData(
-    std::string& sApiKeyOut, std::string& sUsernameOut,
-    bool& bIsPadPlayerOut) {
-  sApiKeyOut.clear();
-  sUsernameOut.clear();
-  bIsPadPlayerOut = false;
-
-  std::string sError;
-  std::string sData;
-  if (!ReadCardData(sData)) {
-    return false;
-  }
-
-  if (!ParseGrooveStatsCardData(
-          sData, sApiKeyOut, sUsernameOut, bIsPadPlayerOut, sError)) {
-    LockMut(m_Mutex);
-    m_sLastCardIOError = sError;
-    return false;
-  }
-
-  LockMut(m_Mutex);
-  m_sLastCardIOError.clear();
-  return true;
-}
-
-bool NFCManager::WriteGrooveStatsCardData(
-    const std::string& sApiKey, const std::string& sUsername,
-    bool bIsPadPlayer) {
-  std::string sError;
-  std::string sSerializedData;
-  if (!SerializeGrooveStatsCardData(
-          sApiKey, sUsername, bIsPadPlayer, sSerializedData, sError)) {
-    LockMut(m_Mutex);
-    m_sLastCardIOError = sError;
-    return false;
-  }
-
-  if (static_cast<int>(sSerializedData.size()) > GetMaxCardDataBytes()) {
-    LockMut(m_Mutex);
-    m_sLastCardIOError =
-        "GrooveStats payload exceeds maximum NFC card data size.";
-    return false;
-  }
-
-  if (!WriteCardData(sSerializedData)) {
-    return false;
-  }
-
-  {
-    LockMut(m_Mutex);
-    m_sLastCardIOError.clear();
-  }
-
-  return true;
-}
-
 std::string NFCManager::GetLastCardIOError() const {
   LockMut(m_Mutex);
   return m_sLastCardIOError;
@@ -477,6 +326,18 @@ class LunaNFCManager : public Luna<NFCManager> {
     return 1;
   }
 
+  static int WriteCardData(T* p, lua_State* L) {
+    std::string sData;
+    size_t iLength = 0;
+    const char* pData = luaL_checklstring(L, 1, &iLength);
+    if (pData != nullptr && iLength > 0) {
+      sData.assign(pData, iLength);
+    }
+
+    LuaHelpers::Push(L, p->WriteCardData(sData));
+    return 1;
+  }
+
   static int GetLastCardIOError(T* p, lua_State* L) {
     LuaHelpers::Push(L, p->GetLastCardIOError());
     return 1;
@@ -484,35 +345,6 @@ class LunaNFCManager : public Luna<NFCManager> {
 
   static int HasCardData(T* p, lua_State* L) {
     LuaHelpers::Push(L, p->HasCardData());
-    return 1;
-  }
-
-  static int ReadGrooveStatsCardData(T* p, lua_State* L) {
-    std::string sApiKey;
-    std::string sUsername;
-    bool bIsPadPlayer = false;
-    if (!p->ReadGrooveStatsCardData(sApiKey, sUsername, bIsPadPlayer)) {
-      lua_pushnil(L);
-      return 1;
-    }
-
-    lua_newtable(L);
-    LuaHelpers::Push(L, sApiKey);
-    lua_setfield(L, -2, "ApiKey");
-    LuaHelpers::Push(L, sUsername);
-    lua_setfield(L, -2, "Username");
-    LuaHelpers::Push(L, bIsPadPlayer);
-    lua_setfield(L, -2, "IsPadPlayer");
-    return 1;
-  }
-
-  static int WriteGrooveStatsCardData(T* p, lua_State* L) {
-    const std::string sApiKey = SArg(1);
-    const std::string sUsername = SArg(2);
-    const bool bIsPadPlayer = (lua_gettop(L) >= 3) ? BArg(3) : true;
-
-    LuaHelpers::Push(
-        L, p->WriteGrooveStatsCardData(sApiKey, sUsername, bIsPadPlayer));
     return 1;
   }
 
@@ -526,9 +358,8 @@ class LunaNFCManager : public Luna<NFCManager> {
     ADD_METHOD(SupportsCardDataWrite);
     ADD_METHOD(GetMaxCardDataBytes);
     ADD_METHOD(ReadCardData);
+    ADD_METHOD(WriteCardData);
     ADD_METHOD(HasCardData);
-    ADD_METHOD(ReadGrooveStatsCardData);
-    ADD_METHOD(WriteGrooveStatsCardData);
     ADD_METHOD(GetLastCardIOError);
   }
 };
