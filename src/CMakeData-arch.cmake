@@ -354,6 +354,20 @@ source_group("Arch Specific\\\\Arch Hooks"
              ${SMDATA_ARCH_HOOKS_SRC}
              ${SMDATA_ARCH_HOOKS_HPP})
 
+list(APPEND SMDATA_ARCH_NFC_HPP
+            "arch/NFC/NFCDriver.h"
+            "arch/NFC/NFCDriver_Null.h")
+
+if(HAS_NFC)
+  list(APPEND SMDATA_ARCH_NFC_SRC "arch/NFC/NFCDriver_PCSC.cpp")
+  list(APPEND SMDATA_ARCH_NFC_HPP "arch/NFC/NFCDriver_PCSC.h")
+endif()
+
+source_group("Arch Specific\\\\NFC"
+             FILES
+             ${SMDATA_ARCH_NFC_SRC}
+             ${SMDATA_ARCH_NFC_HPP})
+
 list(APPEND SMDATA_ALL_ARCH_SRC
             ${SMDATA_ARCH_SRC}
             ${SMDATA_ARCH_DIALOG_SRC}
@@ -364,6 +378,7 @@ list(APPEND SMDATA_ALL_ARCH_SRC
             ${SMDATA_ARCH_LOWLEVEL_SRC}
             ${SMDATA_ARCH_MEMORY_SRC}
             ${SMDATA_ARCH_MOVIE_TEXTURE_SRC}
+            ${SMDATA_ARCH_NFC_SRC}
             ${SMDATA_ARCH_SOUND_SRC}
             ${SMDATA_ARCH_THREADS_SRC})
 list(APPEND SMDATA_ALL_ARCH_HPP
@@ -376,5 +391,6 @@ list(APPEND SMDATA_ALL_ARCH_HPP
             ${SMDATA_ARCH_LOWLEVEL_HPP}
             ${SMDATA_ARCH_MEMORY_HPP}
             ${SMDATA_ARCH_MOVIE_TEXTURE_HPP}
+            ${SMDATA_ARCH_NFC_HPP}
             ${SMDATA_ARCH_SOUND_HPP}
             ${SMDATA_ARCH_THREADS_HPP})

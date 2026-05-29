@@ -1330,6 +1330,19 @@ int ProfileManager::GetNumLocalProfiles() const {
   return g_vLocalProfile.size();
 }
 
+int ProfileManager::GetLocalProfileIndexByNFCUID(
+    const std::string& sNFCCardUID) const {
+  if (sNFCCardUID.empty()) {
+    return -1;
+  }
+  for (size_t i = 0; i < g_vLocalProfile.size(); ++i) {
+    if (g_vLocalProfile[i].profile.m_sNFCCardUID == sNFCCardUID) {
+      return static_cast<int>(i);
+    }
+  }
+  return -1;
+}
+
 void ProfileManager::SetStatsPrefix(const std::string& prefix) {
   m_stats_prefix = prefix;
   for (size_t i = 0; i < g_vLocalProfile.size(); ++i) {
@@ -1418,6 +1431,10 @@ class LunaProfileManager : public Luna<ProfileManager> {
     lua_pushnumber(L, p->GetNumLocalProfiles());
     return 1;
   }
+  static int GetLocalProfileIndexByNFCUID(T* p, lua_State* L) {
+    lua_pushnumber(L, p->GetLocalProfileIndexByNFCUID(SArg(1)));
+    return 1;
+  }
   static int GetProfileDir(T* p, lua_State* L) {
     lua_pushstring(L, p->GetProfileDir(Enum::Check<ProfileSlot>(L, 1)).c_str());
     return 1;
@@ -1491,6 +1508,7 @@ class LunaProfileManager : public Luna<ProfileManager> {
     ADD_METHOD(GetLocalProfileIDFromIndex);
     ADD_METHOD(GetLocalProfileIndexFromID);
     ADD_METHOD(GetNumLocalProfiles);
+    ADD_METHOD(GetLocalProfileIndexByNFCUID);
     ADD_METHOD(GetProfileDir);
     ADD_METHOD(IsSongNew);
     ADD_METHOD(ProfileWasLoadedFromMemoryCard);
