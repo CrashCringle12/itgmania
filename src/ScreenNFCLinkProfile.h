@@ -14,7 +14,7 @@ class ScreenNFCLinkProfile : public ScreenWithMenuElements {
   void Init() override;
   void Update(float fDeltaTime) override;
   void HandleMessage(const Message& msg) override;
-  virtual void PushSelf(lua_State* L);
+  void PushSelf(lua_State* L) override;
 
   bool MenuStart(const InputEventPlus& input) override;
   bool MenuBack(const InputEventPlus& input) override;
