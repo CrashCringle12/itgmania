@@ -61,20 +61,16 @@ class NFCManager {
   /** @brief Return a list of reader names visible to the driver. */
   std::vector<std::string> GetReaderNames() const;
 
-  /** @brief True if the active driver can read/write small theme-managed data.
-   */
+  /** @brief True if the active driver can read theme-managed card data. */
   bool SupportsCardDataIO() const;
 
-  /** @brief Maximum payload size in bytes for WriteCardData. */
+  /** @brief Maximum payload size in bytes for the readable card payload. */
   int GetMaxCardDataBytes() const;
 
   /** @brief Read theme-managed data from the current card into sDataOut. */
   bool ReadCardData(std::string& sDataOut);
 
-  /** @brief Write theme-managed data to the current card. */
-  bool WriteCardData(const std::string& sData);
-
-  /** @brief Error text from the most recent ReadCardData/WriteCardData call. */
+  /** @brief Error text from the most recent ReadCardData call. */
   std::string GetLastCardIOError() const;
 
   // Lua

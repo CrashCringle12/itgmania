@@ -1,8 +1,6 @@
 #include "NFCDriver_PCSC.h"
 
-#include <algorithm>
 #include <cstdint>
-#include <cstdio>
 #include <cstring>
 
 #include "RageLog.h"
@@ -28,7 +26,6 @@ static const DWORD kGetUIDApduLen = static_cast<DWORD>(sizeof(kGetUIDApdu));
 // Maximum UID size in bytes (extended UIDs can be 10 bytes).
 static const size_t kMaxUIDBytes = 10;
 static const unsigned char kReadPageCommand = 0x30;
-static const unsigned char kWritePageCommand = 0xA2;
 static const unsigned char kDataMagic[4] = {'I', 'T', 'G', 'N'};
 static const unsigned char kDataVersion = 1;
 static const unsigned char kHeaderPage = 4;
@@ -321,25 +318,6 @@ bool NFCDriver_PCSC::ReadUserPages(
   return true;
 }
 
-bool NFCDriver_PCSC::WriteUserPage(
-    uintptr_t hCard, unsigned long dwProtocol, unsigned char iPage,
-    const unsigned char* pData, std::string& sErrorOut) {
-  const unsigned char cmd[] = {kWritePageCommand, iPage,    pData[0],
-                               pData[1],          pData[2], pData[3]};
-  std::vector<unsigned char> vResponse;
-  if (!TransmitCardCommand(
-          hCard, dwProtocol, cmd, sizeof(cmd), vResponse, sErrorOut)) {
-    return false;
-  }
-
-  if (!vResponse.empty()) {
-    LOG->Trace(
-        "NFCDriver_PCSC: write page %u returned %zu data bytes.",
-        static_cast<unsigned>(iPage), vResponse.size());
-  }
-  return true;
-}
-
 bool NFCDriver_PCSC::ReadCardData(
     std::string& sDataOut, std::string& sErrorOut) {
   sDataOut.clear();
@@ -399,67 +377,6 @@ bool NFCDriver_PCSC::ReadCardData(
     }
 
     sDataOut.assign(vPayload.begin(), vPayload.begin() + iPayloadSize);
-    sErrorOut.clear();
-    bSuccess = true;
-  } while (false);
-
-  SCardDisconnect(hCardHandle, SCARD_LEAVE_CARD);
-  return bSuccess;
-}
-
-bool NFCDriver_PCSC::WriteCardData(
-    const std::string& sData, std::string& sErrorOut) {
-  if (static_cast<int>(sData.size()) > kCardPayloadBytes) {
-    sErrorOut = ssprintf(
-        "NFC card data exceeds the %d-byte payload limit.", kCardPayloadBytes);
-    return false;
-  }
-
-  uintptr_t hCard = 0;
-  unsigned long dwProtocol = 0;
-  std::string sReaderName;
-  if (!ConnectToCard(m_hContext, hCard, dwProtocol, sReaderName, sErrorOut)) {
-    return false;
-  }
-  (void)sReaderName;
-
-  SCARDHANDLE hCardHandle = static_cast<SCARDHANDLE>(hCard);
-  bool bSuccess = false;
-
-  do {
-    const size_t iPageCount = (sData.size() + 3) / 4;
-    for (size_t i = 0; i < iPageCount; ++i) {
-      unsigned char pPageData[4] = {0, 0, 0, 0};
-      const size_t iOffset = i * 4;
-      const size_t iChunkSize = std::min<size_t>(4, sData.size() - iOffset);
-      if (iChunkSize > 0) {
-        memcpy(pPageData, sData.data() + iOffset, iChunkSize);
-      }
-
-      const unsigned char iPage =
-          static_cast<unsigned char>(kPayloadStartPage + i);
-      if (!WriteUserPage(hCard, dwProtocol, iPage, pPageData, sErrorOut)) {
-        break;
-      }
-    }
-    if (!sErrorOut.empty()) {
-      break;
-    }
-
-    const unsigned char pHeaderPage4[4] = {
-        kDataMagic[0], kDataMagic[1], kDataMagic[2], kDataMagic[3]};
-    const unsigned char pHeaderPage5[4] = {
-        kDataVersion, 0, static_cast<unsigned char>((sData.size() >> 8) & 0xFF),
-        static_cast<unsigned char>(sData.size() & 0xFF)};
-
-    if (!WriteUserPage(
-            hCard, dwProtocol, kHeaderPage, pHeaderPage4, sErrorOut) ||
-        !WriteUserPage(
-            hCard, dwProtocol, static_cast<unsigned char>(kHeaderPage + 1),
-            pHeaderPage5, sErrorOut)) {
-      break;
-    }
-
     sErrorOut.clear();
     bSuccess = true;
   } while (false);

@@ -40,20 +40,14 @@ class NFCDriver {
    */
   virtual bool IsCardPresent() const = 0;
 
-  /** @brief True if the driver supports theme-managed card data I/O. */
+  /** @brief True if the driver supports theme-managed card data reads. */
   virtual bool SupportsCardDataIO() const { return false; }
 
-  /** @brief Maximum payload bytes supported by WriteCardData. */
+  /** @brief Maximum payload bytes supported by ReadCardData. */
   virtual int GetMaxCardDataBytes() const { return 0; }
 
   /** @brief Read theme-managed payload data from the current card. */
   virtual bool ReadCardData(std::string&, std::string& sErrorOut) {
-    sErrorOut = "Card data I/O is unavailable.";
-    return false;
-  }
-
-  /** @brief Write theme-managed payload data to the current card. */
-  virtual bool WriteCardData(const std::string&, std::string& sErrorOut) {
     sErrorOut = "Card data I/O is unavailable.";
     return false;
   }
