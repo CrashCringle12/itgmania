@@ -1376,7 +1376,7 @@ void Profile::LoadTypeFromDir(std::string dir) {
         // Backward compatibility for profiles created before CreationTime
         // existed in Type.ini.
         if (m_CreationTime == DateTime()) {
-          m_CreationTime = m_LastPlayedDate; 
+          m_CreationTime = m_LastPlayedDate;
         }
       }
     }

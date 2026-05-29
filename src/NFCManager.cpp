@@ -159,6 +159,41 @@ std::vector<std::string> NFCManager::GetReaderNames() const {
   return m_pDriver->GetReaderNames();
 }
 
+bool NFCManager::SupportsCardDataIO() const {
+  return m_bEnabled && m_pDriver != nullptr && m_pDriver->SupportsCardDataIO();
+}
+
+int NFCManager::GetMaxCardDataBytes() const {
+  if (!SupportsCardDataIO()) {
+    return 0;
+  }
+  return m_pDriver->GetMaxCardDataBytes();
+}
+
+bool NFCManager::ReadCardData(std::string& sDataOut) {
+  sDataOut.clear();
+
+  std::string sError;
+  if (!SupportsCardDataIO()) {
+    sError = "Card data I/O is unavailable.";
+  } else if (!m_pDriver->ReadCardData(sDataOut, sError)) {
+    if (sError.empty()) {
+      sError = "Failed to read NFC card data.";
+    }
+  }
+
+  {
+    LockMut(m_Mutex);
+    m_sLastCardIOError = sError;
+  }
+  return sError.empty();
+}
+
+std::string NFCManager::GetLastCardIOError() const {
+  LockMut(m_Mutex);
+  return m_sLastCardIOError;
+}
+
 // ---------------------------------------------------------------------------
 // Lua bindings
 // ---------------------------------------------------------------------------
@@ -195,12 +230,41 @@ class LunaNFCManager : public Luna<NFCManager> {
     return 1;
   }
 
+  static int SupportsCardDataIO(T* p, lua_State* L) {
+    LuaHelpers::Push(L, p->SupportsCardDataIO());
+    return 1;
+  }
+
+  static int GetMaxCardDataBytes(T* p, lua_State* L) {
+    lua_pushnumber(L, p->GetMaxCardDataBytes());
+    return 1;
+  }
+
+  static int ReadCardData(T* p, lua_State* L) {
+    std::string sData;
+    if (!p->ReadCardData(sData)) {
+      lua_pushnil(L);
+      return 1;
+    }
+    lua_pushlstring(L, sData.data(), sData.size());
+    return 1;
+  }
+
+  static int GetLastCardIOError(T* p, lua_State* L) {
+    LuaHelpers::Push(L, p->GetLastCardIOError());
+    return 1;
+  }
+
   LunaNFCManager() {
     ADD_METHOD(IsEnabled);
     ADD_METHOD(IsCardPresent);
     ADD_METHOD(GetCurrentCardUID);
     ADD_METHOD(GetLastTappedUID);
     ADD_METHOD(GetReaderNames);
+    ADD_METHOD(SupportsCardDataIO);
+    ADD_METHOD(GetMaxCardDataBytes);
+    ADD_METHOD(ReadCardData);
+    ADD_METHOD(GetLastCardIOError);
   }
 };
 
