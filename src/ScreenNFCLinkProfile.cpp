@@ -178,8 +178,8 @@ void ScreenNFCLinkProfile::RefreshDisplay() {
   // tapped with "Last Tapped" label, or "----" if neither is known.
   if (bCardPresent && !sCurrentUID.empty()) {
     m_textUID.SetText(
-        LINK_NFC_UID_LABEL.GetValue() + " (" +
-        LINK_NFC_UID_CURRENT.GetValue() + "): " + sCurrentUID);
+        LINK_NFC_UID_LABEL.GetValue() + " (" + LINK_NFC_UID_CURRENT.GetValue() +
+        "): " + sCurrentUID);
   } else if (!sLastTappedUID.empty()) {
     m_textUID.SetText(
         LINK_NFC_UID_LABEL.GetValue() + " (" +
