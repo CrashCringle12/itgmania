@@ -25,11 +25,9 @@ class NFCDriver_PCSC : public NFCDriver {
   std::string GetCurrentCardUID() const override;
   bool IsCardPresent() const override;
   bool SupportsCardDataIO() const override { return true; }
-  bool SupportsCardDataWrite() const override { return true; }
   int GetMaxCardDataBytes() const override;
   bool ReadCardData(std::string& sDataOut, std::string& sErrorOut) override;
-  bool WriteCardData(
-      const std::string& sDataIn, std::string& sErrorOut) override;
+  bool WriteCardData(const std::string& sData, std::string& sErrorOut) override;
 
  private:
   /** @brief Re-enumerate PC/SC readers. Returns true if the list changed. */
@@ -53,7 +51,7 @@ class NFCDriver_PCSC : public NFCDriver {
       std::vector<unsigned char>& vDataOut, std::string& sErrorOut);
   bool WriteUserPage(
       uintptr_t hCard, unsigned long dwProtocol, unsigned char iPage,
-      const unsigned char* pData4, std::string& sErrorOut);
+      const unsigned char* pData, std::string& sErrorOut);
 
   uintptr_t m_hContext;  // SCARDCONTEXT stored without platform headers here
   std::vector<std::string> m_vReaderNames;

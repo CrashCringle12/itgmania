@@ -205,10 +205,6 @@ bool NFCManager::SupportsCardDataIO() const {
   return m_bEnabled && m_pDriver != nullptr && m_pDriver->SupportsCardDataIO();
 }
 
-bool NFCManager::SupportsCardDataWrite() const {
-  return m_bEnabled && m_pDriver != nullptr && m_pDriver->SupportsCardDataWrite();
-}
-
 int NFCManager::GetMaxCardDataBytes() const {
   if (!SupportsCardDataIO()) {
     return 0;
@@ -235,11 +231,11 @@ bool NFCManager::ReadCardData(std::string& sDataOut) {
   return sError.empty();
 }
 
-bool NFCManager::WriteCardData(const std::string& sDataIn) {
+bool NFCManager::WriteCardData(const std::string& sData) {
   std::string sError;
-  if (!SupportsCardDataWrite()) {
-    sError = "Card data writing is unavailable.";
-  } else if (!m_pDriver->WriteCardData(sDataIn, sError)) {
+  if (!SupportsCardDataIO()) {
+    sError = "Card data I/O is unavailable.";
+  } else if (!m_pDriver->WriteCardData(sData, sError)) {
     if (sError.empty()) {
       sError = "Failed to write NFC card data.";
     }
@@ -250,14 +246,6 @@ bool NFCManager::WriteCardData(const std::string& sDataIn) {
     m_sLastCardIOError = sError;
   }
   return sError.empty();
-}
-
-bool NFCManager::HasCardData() {
-  std::string sData;
-  if (!ReadCardData(sData)) {
-    return false;
-  }
-  return !sData.empty();
 }
 
 std::string NFCManager::GetLastCardIOError() const {
@@ -306,11 +294,6 @@ class LunaNFCManager : public Luna<NFCManager> {
     return 1;
   }
 
-  static int SupportsCardDataWrite(T* p, lua_State* L) {
-    LuaHelpers::Push(L, p->SupportsCardDataWrite());
-    return 1;
-  }
-
   static int GetMaxCardDataBytes(T* p, lua_State* L) {
     lua_pushnumber(L, p->GetMaxCardDataBytes());
     return 1;
@@ -327,24 +310,14 @@ class LunaNFCManager : public Luna<NFCManager> {
   }
 
   static int WriteCardData(T* p, lua_State* L) {
-    std::string sData;
-    size_t iLength = 0;
-    const char* pData = luaL_checklstring(L, 1, &iLength);
-    if (pData != nullptr && iLength > 0) {
-      sData.assign(pData, iLength);
-    }
-
-    LuaHelpers::Push(L, p->WriteCardData(sData));
+    size_t iLen = 0;
+    const char* pData = luaL_checklstring(L, 1, &iLen);
+    LuaHelpers::Push(L, p->WriteCardData(std::string(pData, iLen)));
     return 1;
   }
 
   static int GetLastCardIOError(T* p, lua_State* L) {
     LuaHelpers::Push(L, p->GetLastCardIOError());
-    return 1;
-  }
-
-  static int HasCardData(T* p, lua_State* L) {
-    LuaHelpers::Push(L, p->HasCardData());
     return 1;
   }
 
@@ -355,11 +328,9 @@ class LunaNFCManager : public Luna<NFCManager> {
     ADD_METHOD(GetLastTappedUID);
     ADD_METHOD(GetReaderNames);
     ADD_METHOD(SupportsCardDataIO);
-    ADD_METHOD(SupportsCardDataWrite);
     ADD_METHOD(GetMaxCardDataBytes);
     ADD_METHOD(ReadCardData);
     ADD_METHOD(WriteCardData);
-    ADD_METHOD(HasCardData);
     ADD_METHOD(GetLastCardIOError);
   }
 };
