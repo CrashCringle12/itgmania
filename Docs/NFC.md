@@ -44,8 +44,8 @@ WITH_NFC
 ```
 
 If the required PC/SC support is available for your platform, ITGmania builds
-with NFC enabled and defines the internal `WITH_NFC` support path automatically.
-If the dependency is missing, the build falls back to NFC-disabled behavior.
+with NFC support enabled. If the dependency is missing, the build falls back to
+NFC-disabled behavior.
 
 ## Runtime requirements
 
