@@ -1,0 +1,1 @@
+cmd='/usr/local/bin/cmake;-DCMAKE_INSTALL_PREFIX=/tmp/workspace/CrashCringle12/itgmania/build/libjpeg-turbo-install;-DCMAKE_INSTALL_LIBDIR=/tmp/workspace/CrashCringle12/itgmania/build/libjpeg-turbo-install/lib;-DENABLE_SHARED=OFF;-DENABLE_STATIC=ON;-GUnix Makefiles;-S;<SOURCE_DIR><SOURCE_SUBDIR>;-B;<BINARY_DIR>'
