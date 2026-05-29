@@ -22,6 +22,35 @@
 #include "arch/NFC/NFCDriver_Null.h"
 #endif
 
+namespace {
+const size_t kLogCardDataPreviewBytes = 64;
+
+std::string HexPreview(const std::string& sData) {
+  static const char kHexChars[] = "0123456789ABCDEF";
+  if (sData.empty()) {
+    return "<empty>";
+  }
+
+  const size_t iPreviewBytes = (sData.size() > kLogCardDataPreviewBytes)
+                                   ? kLogCardDataPreviewBytes
+                                   : sData.size();
+  std::string out;
+  out.reserve(iPreviewBytes * 2 + 24);
+
+  for (size_t i = 0; i < iPreviewBytes; ++i) {
+    const unsigned char c = static_cast<unsigned char>(sData[i]);
+    out.push_back(kHexChars[(c >> 4) & 0xF]);
+    out.push_back(kHexChars[c & 0xF]);
+  }
+
+  if (iPreviewBytes < sData.size()) {
+    out += ssprintf("...(%zu bytes total)", sData.size());
+  }
+
+  return out;
+}
+}  // namespace
+
 NFCManager* NFCMAN = nullptr;
 
 Preference<bool> NFCManager::m_bNFCEnabled("NFCEnabled", true);
@@ -114,6 +143,19 @@ void NFCManager::PollThread() {
         m_sLastTappedUID = sUID;
       }
       LOG->Info("NFCManager: Card tapped – UID %s", sUID.c_str());
+
+      std::string sCardData;
+      if (ReadCardData(sCardData)) {
+        LOG->Info(
+            "NFCManager: Card data read success (%zu bytes): %s",
+            sCardData.size(), HexPreview(sCardData).c_str());
+      } else {
+        const std::string sError = GetLastCardIOError();
+        LOG->Warn(
+            "NFCManager: Card data read failed for UID %s: %s", sUID.c_str(),
+            sError.empty() ? "Unknown read error." : sError.c_str());
+      }
+
       Message msg(MessageIDToString(Message_NFCCardTapped));
       msg.SetParam("UID", sUID);
       MESSAGEMAN->Broadcast(msg);
