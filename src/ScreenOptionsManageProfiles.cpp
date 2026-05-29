@@ -57,10 +57,12 @@ enum ProfileAction {
   NUM_ProfileAction
 };
 static const char* ProfileActionNames[] = {
-    "SetDefaultP1", "SetDefaultP2", "Edit", "Rename", "LinkNFCCard",
-    "Delete",       "Clear",        "MergeToMachine", "MergeToMachineSkipTotal",
-    "MergeToP1",    "MergeToP2",    "ChangeToGuest",  "ChangeToNormal",
-    "ChangeToTest", "MoveUp",       "MoveDown",
+    "SetDefaultP1",   "SetDefaultP2",   "Edit",
+    "Rename",         "LinkNFCCard",    "Delete",
+    "Clear",          "MergeToMachine", "MergeToMachineSkipTotal",
+    "MergeToP1",      "MergeToP2",      "ChangeToGuest",
+    "ChangeToNormal", "ChangeToTest",   "MoveUp",
+    "MoveDown",
 };
 XToString(ProfileAction);
 XToLocalizedString(ProfileAction);
