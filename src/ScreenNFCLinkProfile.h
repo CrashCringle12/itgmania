@@ -14,7 +14,7 @@ class ScreenNFCLinkProfile : public ScreenWithMenuElements {
   void Init() override;
   void Update(float fDeltaTime) override;
   void HandleMessage(const Message& msg) override;
-  virtual void PushSelf(lua_State* L);
+  void PushSelf(lua_State* L) override;
 
   bool MenuStart(const InputEventPlus& input) override;
   bool MenuBack(const InputEventPlus& input) override;
@@ -26,6 +26,8 @@ class ScreenNFCLinkProfile : public ScreenWithMenuElements {
   std::string GetPendingSourceProfileName() const;
   bool ConfirmPendingLink(bool bMoveExisting = true);
   void CancelPendingLink();
+  std::string GetLinkedCardUID() const;
+  bool IsCardLinked() const;
 
  private:
   void RefreshDisplay();
@@ -36,6 +38,7 @@ class ScreenNFCLinkProfile : public ScreenWithMenuElements {
   BitmapText m_textTitle;
   BitmapText m_textStatus;
   BitmapText m_textUID;
+  BitmapText m_textLinkedCard;
   BitmapText m_textReader;
   BitmapText m_textInstructions;
 
