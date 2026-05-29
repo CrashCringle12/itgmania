@@ -22,6 +22,35 @@
 #include "arch/NFC/NFCDriver_Null.h"
 #endif
 
+namespace {
+const size_t kLogCardDataPreviewBytes = 64;
+
+std::string HexPreview(const std::string& sData) {
+  static const char kHexChars[] = "0123456789ABCDEF";
+  if (sData.empty()) {
+    return "<empty>";
+  }
+
+  const size_t iPreviewBytes = (sData.size() > kLogCardDataPreviewBytes)
+                                   ? kLogCardDataPreviewBytes
+                                   : sData.size();
+  std::string out;
+  out.reserve(iPreviewBytes * 2 + 24);
+
+  for (size_t i = 0; i < iPreviewBytes; ++i) {
+    const unsigned char c = static_cast<unsigned char>(sData[i]);
+    out.push_back(kHexChars[(c >> 4) & 0xF]);
+    out.push_back(kHexChars[c & 0xF]);
+  }
+
+  if (iPreviewBytes < sData.size()) {
+    out += ssprintf("...(%zu bytes total)", sData.size());
+  }
+
+  return out;
+}
+}  // namespace
+
 NFCManager* NFCMAN = nullptr;
 
 Preference<bool> NFCManager::m_bNFCEnabled("NFCEnabled", true);
@@ -114,6 +143,19 @@ void NFCManager::PollThread() {
         m_sLastTappedUID = sUID;
       }
       LOG->Info("NFCManager: Card tapped – UID %s", sUID.c_str());
+
+      std::string sCardData;
+      if (ReadCardData(sCardData)) {
+        LOG->Info(
+            "NFCManager: Card data read success (%zu bytes): %s",
+            sCardData.size(), HexPreview(sCardData).c_str());
+      } else {
+        const std::string sError = GetLastCardIOError();
+        LOG->Warn(
+            "NFCManager: Card data read failed for UID %s: %s", sUID.c_str(),
+            sError.empty() ? "Unknown read error." : sError.c_str());
+      }
+
       Message msg(MessageIDToString(Message_NFCCardTapped));
       msg.SetParam("UID", sUID);
       MESSAGEMAN->Broadcast(msg);
@@ -189,6 +231,23 @@ bool NFCManager::ReadCardData(std::string& sDataOut) {
   return sError.empty();
 }
 
+bool NFCManager::WriteCardData(const std::string& sData) {
+  std::string sError;
+  if (!SupportsCardDataIO()) {
+    sError = "Card data I/O is unavailable.";
+  } else if (!m_pDriver->WriteCardData(sData, sError)) {
+    if (sError.empty()) {
+      sError = "Failed to write NFC card data.";
+    }
+  }
+
+  {
+    LockMut(m_Mutex);
+    m_sLastCardIOError = sError;
+  }
+  return sError.empty();
+}
+
 std::string NFCManager::GetLastCardIOError() const {
   LockMut(m_Mutex);
   return m_sLastCardIOError;
@@ -250,6 +309,13 @@ class LunaNFCManager : public Luna<NFCManager> {
     return 1;
   }
 
+  static int WriteCardData(T* p, lua_State* L) {
+    size_t iLen = 0;
+    const char* pData = luaL_checklstring(L, 1, &iLen);
+    LuaHelpers::Push(L, p->WriteCardData(std::string(pData, iLen)));
+    return 1;
+  }
+
   static int GetLastCardIOError(T* p, lua_State* L) {
     LuaHelpers::Push(L, p->GetLastCardIOError());
     return 1;
@@ -264,6 +330,7 @@ class LunaNFCManager : public Luna<NFCManager> {
     ADD_METHOD(SupportsCardDataIO);
     ADD_METHOD(GetMaxCardDataBytes);
     ADD_METHOD(ReadCardData);
+    ADD_METHOD(WriteCardData);
     ADD_METHOD(GetLastCardIOError);
   }
 };
