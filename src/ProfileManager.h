@@ -54,6 +54,7 @@ class ProfileManager {
       std::vector<std::string>& vsProfileDisplayNamesOut) const;
   int GetLocalProfileIndexFromID(std::string sProfileID) const;
   int GetNumLocalProfiles() const;
+  int GetLocalProfileIndexByNFCUID(const std::string& sNFCCardUID) const;
 
   std::string GetStatsPrefix() { return m_stats_prefix; }
   void SetStatsPrefix(const std::string& prefix);

@@ -6,6 +6,7 @@
 
 #include "GameInput.h"
 #include "InputQueue.h"
+#include "MessageManager.h"
 #include "PlayerNumber.h"
 #include "ScreenMessage.h"
 #include "ScreenWithMenuElements.h"
@@ -19,6 +20,7 @@ class ScreenSelectProfile : public ScreenWithMenuElements {
   virtual bool MenuUp(const InputEventPlus& input);
   virtual bool MenuDown(const InputEventPlus& input);
   virtual void HandleScreenMessage(const ScreenMessage SM);
+  virtual void HandleMessage(const Message& msg);
 
   GameButton m_TrackingRepeatingInput;
 

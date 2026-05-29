@@ -103,6 +103,7 @@ class Profile {
         m_BirthYear(0),
         m_IgnoreStepCountCalories(false),
         m_IsMale(true),
+        m_sNFCCardUID(""),
         m_sGuid(MakeGuid()),
         m_sDefaultModifiers(),
         m_SortOrder(SortOrder_Invalid),
@@ -232,6 +233,13 @@ class Profile {
   bool m_IgnoreStepCountCalories;
   bool m_IsMale;  // Used solely for calculating calories from heart rate.
   // std::string m_sProfileImageName;	// todo: add a default image -aj
+  /**
+   * @brief NFC card UID linked to this profile.
+   *
+   * Stored as an uppercase hex string (e.g. "A1B2C3D4").  When a card with
+   * this UID is tapped on a reader, the profile is automatically selected on
+   * the profile-select screen.  Empty string means no card is linked. */
+  std::string m_sNFCCardUID;
 
   // General data
   static std::string MakeGuid();
