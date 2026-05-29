@@ -86,6 +86,8 @@ enum MessageID {
   Message_MiddleClick,
   Message_MouseWheelUp,
   Message_MouseWheelDown,
+  Message_NFCCardTapped,
+  Message_NFCCardRemoved,
   NUM_MessageID,  // leave this at the end
   MessageID_Invalid
 };

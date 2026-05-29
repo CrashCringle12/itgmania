@@ -88,6 +88,8 @@ static const char* MessageIDNames[] = {
     "MiddleClick",
     "MouseWheelUp",
     "MouseWheelDown",
+    "NFCCardTapped",
+    "NFCCardRemoved",
 };
 XToString(MessageID);
 

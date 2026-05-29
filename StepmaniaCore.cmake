@@ -345,6 +345,40 @@ elseif(LINUX OR BSD)
   find_package(udev REQUIRED)
 endif(WIN32) # LINUX OR BSD, APPLE
 
+# NFC reader support via PC/SC.
+set(HAS_NFC FALSE)
+if(WITH_NFC)
+  if(WIN32)
+    # WinSCard ships with the Windows SDK.
+    list(APPEND SMDATA_LINK_LIB "WinSCard")
+    set(HAS_NFC TRUE)
+    message(STATUS "NFC: Using built-in WinSCard (Windows).")
+  elseif(APPLE)
+    find_library(PCSC_FRAMEWORK PCSC)
+    if(PCSC_FRAMEWORK)
+      list(APPEND SMDATA_LINK_LIB "${PCSC_FRAMEWORK}")
+      set(HAS_NFC TRUE)
+      message(STATUS "NFC: Using built-in PCSC framework (macOS).")
+    else()
+      message(WARNING "NFC: PCSC framework not found on macOS. NFC support disabled.")
+    endif()
+  else()
+    find_package(PCSCLite)
+    if(PCSCLITE_FOUND)
+      list(APPEND SMDATA_LINK_LIB "${PCSCLITE_LIBRARY}")
+      list(APPEND SMDATA_INCLUDE_DIRS "${PCSCLITE_INCLUDE_DIR}")
+      set(HAS_NFC TRUE)
+      message(STATUS "NFC: Using pcsclite (Linux/BSD). Install libpcsclite-dev and pcscd.")
+    else()
+      message(WARNING "NFC: pcsclite not found. Install libpcsclite-dev to enable NFC support.")
+    endif()
+  endif()
+endif()
+
+if(HAS_NFC)
+  add_definitions(-DWITH_NFC=1)
+endif()
+
 configure_file("${SM_SRC_DIR}/config.hpp.in"
                "${SM_GENERATED_SRC_DIR}/config.hpp")
 configure_file("${SM_SRC_DIR}/verstub.cpp.in"

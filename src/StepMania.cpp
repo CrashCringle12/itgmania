@@ -69,6 +69,7 @@
 #include "MemoryCardManager.h"
 #include "MessageManager.h"
 #include "ModelManager.h"
+#include "NFCManager.h"
 #include "NetworkManager.h"
 #include "NoteSkinManager.h"
 #include "PrefsManager.h"
@@ -288,6 +289,7 @@ void ShutdownGame() {
   RageUtil::SafeDelete(UNLOCKMAN);
   RageUtil::SafeDelete(CRYPTMAN);
   RageUtil::SafeDelete(MEMCARDMAN);
+  RageUtil::SafeDelete(NFCMAN);
   RageUtil::SafeDelete(SONGMAN);
   RageUtil::SafeDelete(IMAGECACHE);
   RageUtil::SafeDelete(SONGINDEX);
@@ -937,6 +939,7 @@ int sm_main(int argc, char* argv[]) {
     CRYPTMAN->GenerateGlobalKeys();
   }
   MEMCARDMAN = new MemoryCardManager;
+  NFCMAN = new NFCManager;
   CHARMAN = new CharacterManager;
   PROFILEMAN = new ProfileManager;
   PROFILEMAN->Init();  // must load after SONGMAN
