@@ -1,11 +1,8 @@
 #include "NFCManager.h"
 
 #include <chrono>
-#include <cctype>
-#include <cstdint>
-#include <cstring>
-#include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <thread>
 #include <vector>
@@ -28,10 +25,11 @@
 
 namespace {
 const size_t kLogCardDataPreviewBytes = 64;
-const char kCardKVFormatMagic[] = {'K', 'V', '0', '1'};
-const size_t kCardKVFormatMagicBytes = 4;
-const size_t kCardKVHeaderBytes = 5;
-const size_t kCardKVMaxNamespaceOrKeyBytes = 32;
+const char* kGrooveStatsSection = "[GrooveStats]";
+const char* kGrooveStatsApiKeyName = "ApiKey";
+const char* kGrooveStatsUsernameName = "Username";
+const char* kGrooveStatsIsPadPlayerName = "IsPadPlayer";
+const size_t kGrooveStatsApiKeyBytes = 64;
 
 std::string HexPreview(const std::string& sData) {
   static const char kHexChars[] = "0123456789ABCDEF";
@@ -58,127 +56,92 @@ std::string HexPreview(const std::string& sData) {
   return out;
 }
 
-bool IsValidCardKVToken(const std::string& sToken) {
-  if (sToken.empty() || sToken.size() > kCardKVMaxNamespaceOrKeyBytes) {
-    return false;
-  }
-
-  for (char c : sToken) {
-    const unsigned char uc = static_cast<unsigned char>(c);
-    if (std::isalnum(uc) || c == '_' || c == '-' || c == '.') {
-      continue;
-    }
-    return false;
-  }
-  return true;
-}
-
-using CardKVKey = std::pair<std::string, std::string>;
-using CardKVStore = std::map<CardKVKey, std::string>;
-
-bool ParseCardKVStore(
-    const std::string& sData, CardKVStore& mStoreOut, std::string& sErrorOut) {
-  mStoreOut.clear();
+bool ParseGrooveStatsCardData(
+    const std::string& sData, std::string& sApiKeyOut,
+    std::string& sUsernameOut, bool& bIsPadPlayerOut, std::string& sErrorOut) {
+  sApiKeyOut.clear();
+  sUsernameOut.clear();
+  bIsPadPlayerOut = false;
   sErrorOut.clear();
 
   if (sData.empty()) {
-    return true;
-  }
-
-  if (sData.size() < kCardKVHeaderBytes ||
-      memcmp(sData.data(), kCardKVFormatMagic, kCardKVFormatMagicBytes) != 0) {
-    sErrorOut = "Card payload is not in ITG key-value format.";
+    sErrorOut = "Card has no stored data.";
     return false;
   }
 
-  size_t iPos = kCardKVFormatMagicBytes;
-  const size_t iEntryCount = static_cast<unsigned char>(sData[iPos++]);
-  for (size_t i = 0; i < iEntryCount; ++i) {
-    if (iPos + 4 > sData.size()) {
-      sErrorOut = "Card payload key-value data is truncated.";
-      return false;
+  std::istringstream stream(sData);
+  std::string line;
+  bool bInGrooveStatsSection = false;
+
+  while (std::getline(stream, line)) {
+    Trim(line);
+    if (line.empty() || line[0] == ';' || line[0] == '#') {
+      continue;
     }
 
-    const size_t iNamespaceSize = static_cast<unsigned char>(sData[iPos++]);
-    const size_t iKeySize = static_cast<unsigned char>(sData[iPos++]);
-    const size_t iValueSize =
-        (static_cast<size_t>(static_cast<unsigned char>(sData[iPos])) << 8) |
-        static_cast<size_t>(static_cast<unsigned char>(sData[iPos + 1]));
-    iPos += 2;
-
-    if (iNamespaceSize == 0 || iKeySize == 0 ||
-        iNamespaceSize > kCardKVMaxNamespaceOrKeyBytes ||
-        iKeySize > kCardKVMaxNamespaceOrKeyBytes) {
-      sErrorOut = "Card payload has an invalid key-value entry.";
-      return false;
+    if (line.front() == '[' && line.back() == ']') {
+      bInGrooveStatsSection = (line == kGrooveStatsSection);
+      continue;
     }
 
-    if (iPos + iNamespaceSize + iKeySize + iValueSize > sData.size()) {
-      sErrorOut = "Card payload key-value data is truncated.";
-      return false;
+    if (!bInGrooveStatsSection) {
+      continue;
     }
 
-    const std::string sNamespace(sData.data() + iPos, iNamespaceSize);
-    iPos += iNamespaceSize;
-    const std::string sKey(sData.data() + iPos, iKeySize);
-    iPos += iKeySize;
-    const std::string sValue(sData.data() + iPos, iValueSize);
-    iPos += iValueSize;
-
-    if (!IsValidCardKVToken(sNamespace) || !IsValidCardKVToken(sKey)) {
-      sErrorOut = "Card payload contains an invalid namespace or key.";
-      return false;
+    const std::string::size_type iEquals = line.find('=');
+    if (iEquals == std::string::npos) {
+      continue;
     }
 
-    mStoreOut[CardKVKey(sNamespace, sKey)] = sValue;
+    std::string sKey = line.substr(0, iEquals);
+    std::string sValue = line.substr(iEquals + 1);
+    Trim(sKey);
+    Trim(sValue);
+
+    if (sKey == kGrooveStatsApiKeyName) {
+      sApiKeyOut = sValue;
+    } else if (sKey == kGrooveStatsUsernameName) {
+      sUsernameOut = sValue;
+    } else if (sKey == kGrooveStatsIsPadPlayerName) {
+      bIsPadPlayerOut = (sValue == "1");
+    }
   }
 
-  if (iPos != sData.size()) {
-    sErrorOut = "Card payload key-value data has unexpected trailing bytes.";
+  if (sApiKeyOut.size() != kGrooveStatsApiKeyBytes) {
+    sErrorOut = "GrooveStats ApiKey is missing or invalid.";
     return false;
   }
 
+  sErrorOut.clear();
   return true;
 }
 
-bool SerializeCardKVStore(
-    const CardKVStore& mStore, std::string& sDataOut, std::string& sErrorOut) {
+bool SerializeGrooveStatsCardData(
+    const std::string& sApiKey, const std::string& sUsername,
+    bool bIsPadPlayer, std::string& sDataOut, std::string& sErrorOut) {
   sDataOut.clear();
   sErrorOut.clear();
 
-  if (mStore.size() > 255) {
-    sErrorOut = "Too many key-value pairs for NFC card storage.";
+  if (sApiKey.size() != kGrooveStatsApiKeyBytes) {
+    sErrorOut = "GrooveStats ApiKey must be exactly 64 characters.";
     return false;
   }
 
-  sDataOut.reserve(kCardKVHeaderBytes + mStore.size() * 8);
-  sDataOut.append(kCardKVFormatMagic, kCardKVFormatMagicBytes);
-  sDataOut.push_back(static_cast<char>(mStore.size()));
-
-  for (const auto& entry : mStore) {
-    const std::string& sNamespace = entry.first.first;
-    const std::string& sKey = entry.first.second;
-    const std::string& sValue = entry.second;
-
-    if (!IsValidCardKVToken(sNamespace) || !IsValidCardKVToken(sKey)) {
-      sErrorOut = "Namespace or key contains invalid characters.";
-      return false;
-    }
-
-    if (sValue.size() > 0xFFFF) {
-      sErrorOut = "Value is too large for NFC key-value storage.";
-      return false;
-    }
-
-    sDataOut.push_back(static_cast<char>(sNamespace.size()));
-    sDataOut.push_back(static_cast<char>(sKey.size()));
-    sDataOut.push_back(static_cast<char>((sValue.size() >> 8) & 0xFF));
-    sDataOut.push_back(static_cast<char>(sValue.size() & 0xFF));
-    sDataOut.append(sNamespace);
-    sDataOut.append(sKey);
-    sDataOut.append(sValue);
+  if (sApiKey.find('\n') != std::string::npos ||
+      sApiKey.find('\r') != std::string::npos) {
+    sErrorOut = "GrooveStats ApiKey contains invalid line breaks.";
+    return false;
   }
 
+  if (sUsername.find('\n') != std::string::npos ||
+      sUsername.find('\r') != std::string::npos) {
+    sErrorOut = "GrooveStats Username contains invalid line breaks.";
+    return false;
+  }
+
+  sDataOut = ssprintf(
+      "[GrooveStats]\nApiKey=%s\nIsPadPlayer=%d\nUsername=%s\n",
+      sApiKey.c_str(), bIsPadPlayer ? 1 : 0, sUsername.c_str());
   return true;
 }
 }  // namespace
@@ -384,78 +347,68 @@ bool NFCManager::WriteCardData(const std::string& sDataIn) {
   return sError.empty();
 }
 
-bool NFCManager::ReadCardKeyValue(
-    const std::string& sNamespace, const std::string& sKey,
-    std::string& sValueOut) {
-  sValueOut.clear();
-
-  std::string sError;
-  if (!IsValidCardKVToken(sNamespace) || !IsValidCardKVToken(sKey)) {
-    sError =
-        "Namespace and key must be 1-32 characters in [A-Za-z0-9_.-].";
-  } else {
-    std::string sData;
-    if (!ReadCardData(sData)) {
-      return false;
-    }
-
-    CardKVStore mStore;
-    if (!ParseCardKVStore(sData, mStore, sError)) {
-      // parse error already set
-    } else {
-      auto it = mStore.find(CardKVKey(sNamespace, sKey));
-      if (it == mStore.end()) {
-        sError = "Requested card key-value pair was not found.";
-      } else {
-        sValueOut = it->second;
-      }
-    }
+bool NFCManager::HasCardData() {
+  std::string sData;
+  if (!ReadCardData(sData)) {
+    return false;
   }
-
-  {
-    LockMut(m_Mutex);
-    m_sLastCardIOError = sError;
-  }
-
-  return sError.empty();
+  return !sData.empty();
 }
 
-bool NFCManager::WriteCardKeyValue(
-    const std::string& sNamespace, const std::string& sKey,
-    const std::string& sValue) {
+bool NFCManager::ReadGrooveStatsCardData(
+    std::string& sApiKeyOut, std::string& sUsernameOut,
+    bool& bIsPadPlayerOut) {
+  sApiKeyOut.clear();
+  sUsernameOut.clear();
+  bIsPadPlayerOut = false;
+
   std::string sError;
-  if (!IsValidCardKVToken(sNamespace) || !IsValidCardKVToken(sKey)) {
-    sError =
-        "Namespace and key must be 1-32 characters in [A-Za-z0-9_.-].";
-  } else {
-    std::string sData;
-    if (!ReadCardData(sData)) {
-      return false;
-    }
+  std::string sData;
+  if (!ReadCardData(sData)) {
+    return false;
+  }
 
-    CardKVStore mStore;
-    if (!ParseCardKVStore(sData, mStore, sError)) {
-      // parse error already set
-    } else {
-      mStore[CardKVKey(sNamespace, sKey)] = sValue;
+  if (!ParseGrooveStatsCardData(
+          sData, sApiKeyOut, sUsernameOut, bIsPadPlayerOut, sError)) {
+    LockMut(m_Mutex);
+    m_sLastCardIOError = sError;
+    return false;
+  }
 
-      std::string sSerialized;
-      if (!SerializeCardKVStore(mStore, sSerialized, sError)) {
-        // serialize error already set
-      } else if (static_cast<int>(sSerialized.size()) > GetMaxCardDataBytes()) {
-        sError = "Card key-value payload exceeds maximum card data size.";
-      } else if (!WriteCardData(sSerialized)) {
-        return false;
-      }
-    }
+  LockMut(m_Mutex);
+  m_sLastCardIOError.clear();
+  return true;
+}
+
+bool NFCManager::WriteGrooveStatsCardData(
+    const std::string& sApiKey, const std::string& sUsername,
+    bool bIsPadPlayer) {
+  std::string sError;
+  std::string sSerializedData;
+  if (!SerializeGrooveStatsCardData(
+          sApiKey, sUsername, bIsPadPlayer, sSerializedData, sError)) {
+    LockMut(m_Mutex);
+    m_sLastCardIOError = sError;
+    return false;
+  }
+
+  if (static_cast<int>(sSerializedData.size()) > GetMaxCardDataBytes()) {
+    LockMut(m_Mutex);
+    m_sLastCardIOError =
+        "GrooveStats payload exceeds maximum NFC card data size.";
+    return false;
+  }
+
+  if (!WriteCardData(sSerializedData)) {
+    return false;
   }
 
   {
     LockMut(m_Mutex);
-    m_sLastCardIOError = sError;
+    m_sLastCardIOError.clear();
   }
 
-  return sError.empty();
+  return true;
 }
 
 std::string NFCManager::GetLastCardIOError() const {
@@ -529,27 +482,37 @@ class LunaNFCManager : public Luna<NFCManager> {
     return 1;
   }
 
-  static int ReadCardKeyValue(T* p, lua_State* L) {
-    const std::string sNamespace = SArg(1);
-    const std::string sKey = SArg(2);
-
-    std::string sValue;
-    if (!p->ReadCardKeyValue(sNamespace, sKey, sValue)) {
-      lua_pushnil(L);
-      return 1;
-    }
-    lua_pushlstring(L, sValue.data(), sValue.size());
+  static int HasCardData(T* p, lua_State* L) {
+    LuaHelpers::Push(L, p->HasCardData());
     return 1;
   }
 
-  static int WriteCardKeyValue(T* p, lua_State* L) {
-    const std::string sNamespace = SArg(1);
-    const std::string sKey = SArg(2);
-    size_t iValueLen = 0;
-    const char* pValue = luaL_checklstring(L, 3, &iValueLen);
-    const std::string sValue(pValue, iValueLen);
+  static int ReadGrooveStatsCardData(T* p, lua_State* L) {
+    std::string sApiKey;
+    std::string sUsername;
+    bool bIsPadPlayer = false;
+    if (!p->ReadGrooveStatsCardData(sApiKey, sUsername, bIsPadPlayer)) {
+      lua_pushnil(L);
+      return 1;
+    }
 
-    LuaHelpers::Push(L, p->WriteCardKeyValue(sNamespace, sKey, sValue));
+    lua_newtable(L);
+    LuaHelpers::Push(L, sApiKey);
+    lua_setfield(L, -2, "ApiKey");
+    LuaHelpers::Push(L, sUsername);
+    lua_setfield(L, -2, "Username");
+    LuaHelpers::Push(L, bIsPadPlayer);
+    lua_setfield(L, -2, "IsPadPlayer");
+    return 1;
+  }
+
+  static int WriteGrooveStatsCardData(T* p, lua_State* L) {
+    const std::string sApiKey = SArg(1);
+    const std::string sUsername = SArg(2);
+    const bool bIsPadPlayer = (lua_gettop(L) >= 3) ? BArg(3) : true;
+
+    LuaHelpers::Push(
+        L, p->WriteGrooveStatsCardData(sApiKey, sUsername, bIsPadPlayer));
     return 1;
   }
 
@@ -563,8 +526,9 @@ class LunaNFCManager : public Luna<NFCManager> {
     ADD_METHOD(SupportsCardDataWrite);
     ADD_METHOD(GetMaxCardDataBytes);
     ADD_METHOD(ReadCardData);
-    ADD_METHOD(ReadCardKeyValue);
-    ADD_METHOD(WriteCardKeyValue);
+    ADD_METHOD(HasCardData);
+    ADD_METHOD(ReadGrooveStatsCardData);
+    ADD_METHOD(WriteGrooveStatsCardData);
     ADD_METHOD(GetLastCardIOError);
   }
 };

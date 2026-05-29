@@ -76,19 +76,26 @@ class NFCManager {
   /** @brief Write theme-managed data to the current card. */
   bool WriteCardData(const std::string& sDataIn);
 
-  /**
-   * @brief Read a UTF-8 value from the card's ITG namespace/key-value store.
-   */
-  bool ReadCardKeyValue(
-      const std::string& sNamespace, const std::string& sKey,
-      std::string& sValueOut);
+  /** @brief True if the current card has an ITGmania payload header/data. */
+  bool HasCardData();
 
   /**
-   * @brief Write a UTF-8 value to the card's ITG namespace/key-value store.
+   * @brief Read GrooveStats card values from the current card payload.
+   *
+   * Expected payload format is:
+   * [GrooveStats]
+   * ApiKey=<64 char key>
+   * IsPadPlayer=<0|1>
+   * Username=<name>
    */
-  bool WriteCardKeyValue(
-      const std::string& sNamespace, const std::string& sKey,
-      const std::string& sValue);
+  bool ReadGrooveStatsCardData(
+      std::string& sApiKeyOut, std::string& sUsernameOut,
+      bool& bIsPadPlayerOut);
+
+  /** @brief Write GrooveStats card values to the current card payload. */
+  bool WriteGrooveStatsCardData(
+      const std::string& sApiKey, const std::string& sUsername,
+      bool bIsPadPlayer);
 
   /** @brief Error text from the most recent NFC card data read/write call. */
   std::string GetLastCardIOError() const;

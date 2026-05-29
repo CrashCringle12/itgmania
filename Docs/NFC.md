@@ -96,8 +96,9 @@ Useful Lua methods include:
 - `NFCMAN:SupportsCardDataWrite()`
 - `NFCMAN:GetMaxCardDataBytes()`
 - `NFCMAN:ReadCardData()`
-- `NFCMAN:ReadCardKeyValue(namespace, key)`
-- `NFCMAN:WriteCardKeyValue(namespace, key, value)`
+- `NFCMAN:HasCardData()`
+- `NFCMAN:ReadGrooveStatsCardData()`
+- `NFCMAN:WriteGrooveStatsCardData(apiKey, username[, isPadPlayer])`
 - `NFCMAN:GetLastCardIOError()`
 
 Themes can also subscribe to these broadcast messages:
@@ -127,16 +128,20 @@ Data written by generic NFC phone tools (for example NDEF text records) usually
 does not match this structure, so ITGmania will not surface it through
 `ReadCardData()`.
 
-## Key-value writes from Lua
+## GrooveStats payload writes from Lua
 
-Lua write access is intentionally restricted to namespaced key-value entries,
-not arbitrary raw page writes. Use:
+Lua write access is intentionally restricted to a GrooveStats payload, not a
+generic card key-value API. Use:
 
-- `NFCMAN:ReadCardKeyValue(namespace, key)`
-- `NFCMAN:WriteCardKeyValue(namespace, key, value)`
+- `NFCMAN:HasCardData()`
+- `NFCMAN:ReadGrooveStatsCardData()`
+- `NFCMAN:WriteGrooveStatsCardData(apiKey, username[, isPadPlayer])`
 
-Restrictions:
+Payload format written to the card:
 
-- namespace and key must be 1-32 characters
-- allowed characters: `A-Z`, `a-z`, `0-9`, `_`, `-`, `.`
-- values are stored as bytes and must fit the card payload capacity
+```ini
+[GrooveStats]
+ApiKey=<64-character key>
+IsPadPlayer=<0 or 1>
+Username=<name>
+```
