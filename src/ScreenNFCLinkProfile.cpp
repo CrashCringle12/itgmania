@@ -39,6 +39,14 @@ static LocalizedString LINK_NFC_PENDING_CANCELLED(
     "ScreenNFCLinkProfile", "LinkCancelled");
 static LocalizedString LINK_NFC_INSTRUCTIONS(
     "ScreenNFCLinkProfile", "PressStartBack");
+static LocalizedString LINK_NFC_UID_CURRENT(
+    "ScreenNFCLinkProfile", "UIDCurrent");
+static LocalizedString LINK_NFC_UID_LAST_TAPPED(
+    "ScreenNFCLinkProfile", "UIDLastTapped");
+static LocalizedString LINK_NFC_LINKED_CARD_LABEL(
+    "ScreenNFCLinkProfile", "LinkedCardLabel");
+static LocalizedString LINK_NFC_NO_LINKED_CARD(
+    "ScreenNFCLinkProfile", "NoLinkedCard");
 
 void ScreenNFCLinkProfile::Init() {
   ScreenWithMenuElements::Init();
@@ -67,6 +75,12 @@ void ScreenNFCLinkProfile::Init() {
   m_textUID.SetText("");
   LOAD_ALL_COMMANDS_AND_SET_XY(m_textUID);
   AddChild(&m_textUID);
+
+  m_textLinkedCard.SetName("LinkedCard");
+  m_textLinkedCard.LoadFromFont(THEME->GetPathF("Common", "normal"));
+  m_textLinkedCard.SetText("");
+  LOAD_ALL_COMMANDS_AND_SET_XY(m_textLinkedCard);
+  AddChild(&m_textLinkedCard);
 
   m_textReader.SetName("Reader");
   m_textReader.LoadFromFont(THEME->GetPathF("Common", "normal"));
@@ -126,6 +140,9 @@ void ScreenNFCLinkProfile::RefreshDisplay() {
   if (NFCMAN == nullptr || !NFCMAN->IsEnabled()) {
     m_textStatus.SetText(LINK_NFC_UNAVAILABLE.GetValue());
     m_textUID.SetText(LINK_NFC_UID_LABEL.GetValue() + ": ----");
+    m_textLinkedCard.SetText(
+        LINK_NFC_LINKED_CARD_LABEL.GetValue() + ": " +
+        LINK_NFC_NO_LINKED_CARD.GetValue());
     m_textReader.SetText(
         LINK_NFC_READER_LABEL.GetValue() + ": " +
         LINK_NFC_READER_UNKNOWN.GetValue());
@@ -134,6 +151,7 @@ void ScreenNFCLinkProfile::RefreshDisplay() {
 
   const bool bCardPresent = NFCMAN->IsCardPresent();
   const std::string sCurrentUID = NFCMAN->GetCurrentCardUID();
+  const std::string sLastTappedUID = NFCMAN->GetLastTappedUID();
 
   if (!m_sErrorStatus.empty()) {
     m_textStatus.SetText(m_sErrorStatus);
@@ -156,14 +174,32 @@ void ScreenNFCLinkProfile::RefreshDisplay() {
     m_textStatus.SetText(LINK_NFC_WAITING.GetValue());
   }
 
-  std::string sUIDToShow = sCurrentUID;
-  if (sUIDToShow.empty()) {
-    sUIDToShow = m_sLastLinkedUID;
+  // UID display: show current card with "Current" label, fall back to last
+  // tapped with "Last Tapped" label, or "----" if neither is known.
+  if (bCardPresent && !sCurrentUID.empty()) {
+    m_textUID.SetText(
+        LINK_NFC_UID_LABEL.GetValue() + " (" +
+        LINK_NFC_UID_CURRENT.GetValue() + "): " + sCurrentUID);
+  } else if (!sLastTappedUID.empty()) {
+    m_textUID.SetText(
+        LINK_NFC_UID_LABEL.GetValue() + " (" +
+        LINK_NFC_UID_LAST_TAPPED.GetValue() + "): " + sLastTappedUID);
+  } else {
+    m_textUID.SetText(LINK_NFC_UID_LABEL.GetValue() + ": ----");
   }
-  if (sUIDToShow.empty()) {
-    sUIDToShow = "----";
+
+  // Show the card already linked to this profile, if any.
+  const Profile* pProfile = PROFILEMAN->GetLocalProfile(m_sProfileID);
+  const std::string sLinkedUID =
+      (pProfile != nullptr) ? pProfile->m_sNFCCardUID : "";
+  if (!sLinkedUID.empty()) {
+    m_textLinkedCard.SetText(
+        LINK_NFC_LINKED_CARD_LABEL.GetValue() + ": " + sLinkedUID);
+  } else {
+    m_textLinkedCard.SetText(
+        LINK_NFC_LINKED_CARD_LABEL.GetValue() + ": " +
+        LINK_NFC_NO_LINKED_CARD.GetValue());
   }
-  m_textUID.SetText(LINK_NFC_UID_LABEL.GetValue() + ": " + sUIDToShow);
 
   std::vector<std::string> vsReaders = NFCMAN->GetReaderNames();
   std::string sReaderName = LINK_NFC_READER_UNKNOWN.GetValue();
@@ -307,6 +343,18 @@ bool ScreenNFCLinkProfile::LinkUIDToProfile(
   return true;
 }
 
+std::string ScreenNFCLinkProfile::GetLinkedCardUID() const {
+  const Profile* pProfile = PROFILEMAN->GetLocalProfile(m_sProfileID);
+  if (pProfile == nullptr) {
+    return "";
+  }
+  return pProfile->m_sNFCCardUID;
+}
+
+bool ScreenNFCLinkProfile::IsCardLinked() const {
+  return !GetLinkedCardUID().empty();
+}
+
 class LunaScreenNFCLinkProfile : public Luna<ScreenNFCLinkProfile> {
  public:
   static int HasPendingLink(T* p, lua_State* L) {
@@ -360,6 +408,21 @@ class LunaScreenNFCLinkProfile : public Luna<ScreenNFCLinkProfile> {
     COMMON_RETURN_SELF;
   }
 
+  static int GetLinkedCardUID(T* p, lua_State* L) {
+    const std::string sUID = p->GetLinkedCardUID();
+    if (sUID.empty()) {
+      lua_pushnil(L);
+    } else {
+      lua_pushstring(L, sUID.c_str());
+    }
+    return 1;
+  }
+
+  static int IsCardLinked(T* p, lua_State* L) {
+    LuaHelpers::Push(L, p->IsCardLinked());
+    return 1;
+  }
+
   LunaScreenNFCLinkProfile() {
     ADD_METHOD(HasPendingLink);
     ADD_METHOD(GetPendingCardUID);
@@ -368,6 +431,8 @@ class LunaScreenNFCLinkProfile : public Luna<ScreenNFCLinkProfile> {
     ADD_METHOD(GetPendingSourceProfileName);
     ADD_METHOD(ConfirmPendingLink);
     ADD_METHOD(CancelPendingLink);
+    ADD_METHOD(GetLinkedCardUID);
+    ADD_METHOD(IsCardLinked);
   }
 };
 
