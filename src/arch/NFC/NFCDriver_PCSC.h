@@ -24,6 +24,9 @@ class NFCDriver_PCSC : public NFCDriver {
   std::vector<std::string> GetReaderNames() const override;
   std::string GetCurrentCardUID() const override;
   bool IsCardPresent() const override;
+  bool SupportsCardDataIO() const override { return true; }
+  int GetMaxCardDataBytes() const override;
+  bool ReadCardData(std::string& sDataOut, std::string& sErrorOut) override;
 
  private:
   /** @brief Re-enumerate PC/SC readers. Returns true if the list changed. */
@@ -34,6 +37,17 @@ class NFCDriver_PCSC : public NFCDriver {
 
   /** @brief Convert a byte buffer to an uppercase hex string. */
   static std::string BytesToHex(const unsigned char* pBytes, size_t nBytes);
+
+  bool ConnectToCard(
+      uintptr_t hContext, uintptr_t& hCardOut, unsigned long& dwProtocolOut,
+      std::string& sReaderNameOut, std::string& sErrorOut);
+  bool TransmitCardCommand(
+      uintptr_t hCard, unsigned long dwProtocol, const unsigned char* pCommand,
+      size_t iCommandSize, std::vector<unsigned char>& vPayloadOut,
+      std::string& sErrorOut);
+  bool ReadUserPages(
+      uintptr_t hCard, unsigned long dwProtocol, unsigned char iStartPage,
+      std::vector<unsigned char>& vDataOut, std::string& sErrorOut);
 
   uintptr_t m_hContext;  // SCARDCONTEXT stored without platform headers here
   std::vector<std::string> m_vReaderNames;
