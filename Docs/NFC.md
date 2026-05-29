@@ -93,8 +93,11 @@ Useful Lua methods include:
 - `NFCMAN:GetLastTappedUID()`
 - `NFCMAN:GetReaderNames()`
 - `NFCMAN:SupportsCardDataIO()`
+- `NFCMAN:SupportsCardDataWrite()`
 - `NFCMAN:GetMaxCardDataBytes()`
 - `NFCMAN:ReadCardData()`
+- `NFCMAN:ReadCardKeyValue(namespace, key)`
+- `NFCMAN:WriteCardKeyValue(namespace, key, value)`
 - `NFCMAN:GetLastCardIOError()`
 
 Themes can also subscribe to these broadcast messages:
@@ -106,10 +109,34 @@ Themes can also subscribe to these broadcast messages:
 it possible to build custom login or card-reactive theme flows without polling
 Lua every frame.
 
-## Card data reads
+## Card data storage format
 
-The PC/SC NFC driver can read theme-managed card payload data when the active
-reader supports it. The current implementation reads data blocks from the card
-and returns them to Lua through `NFCMAN:ReadCardData()`.
+The PC/SC NFC driver reads and writes raw NTAG-style user memory pages, using an
+ITG-specific envelope:
 
-At the moment, the in-tree NFC API only exposes card data reads, not writes.
+- Header starts at page 4
+- Header bytes 0-3 must be the magic `ITGN`
+- Header byte 4 is the format version (`1`)
+- Header bytes 6-7 store payload length (big-endian)
+- Payload bytes are stored in pages 6 through 129 (max 496 bytes)
+
+`NFCMAN:ReadCardData()` returns this stored payload only when the header matches
+the `ITGN` format.
+
+Data written by generic NFC phone tools (for example NDEF text records) usually
+does not match this structure, so ITGmania will not surface it through
+`ReadCardData()`.
+
+## Key-value writes from Lua
+
+Lua write access is intentionally restricted to namespaced key-value entries,
+not arbitrary raw page writes. Use:
+
+- `NFCMAN:ReadCardKeyValue(namespace, key)`
+- `NFCMAN:WriteCardKeyValue(namespace, key, value)`
+
+Restrictions:
+
+- namespace and key must be 1-32 characters
+- allowed characters: `A-Z`, `a-z`, `0-9`, `_`, `-`, `.`
+- values are stored as bytes and must fit the card payload capacity

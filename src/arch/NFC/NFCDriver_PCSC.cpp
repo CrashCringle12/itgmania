@@ -26,6 +26,7 @@ static const DWORD kGetUIDApduLen = static_cast<DWORD>(sizeof(kGetUIDApdu));
 // Maximum UID size in bytes (extended UIDs can be 10 bytes).
 static const size_t kMaxUIDBytes = 10;
 static const unsigned char kReadPageCommand = 0x30;
+static const unsigned char kWritePageCommand = 0xA2;
 static const unsigned char kPcscEscapeCommand = 0xFF;
 static const unsigned char kPn532HostToPn532 = 0xD4;
 static const unsigned char kPn532InDataExchange = 0x40;
@@ -369,6 +370,24 @@ bool NFCDriver_PCSC::ReadUserPages(
   return true;
 }
 
+bool NFCDriver_PCSC::WriteUserPage(
+    uintptr_t hCard, unsigned long dwProtocol, unsigned char iPage,
+    const unsigned char* pData4, std::string& sErrorOut) {
+  const unsigned char cmd[] = {
+      kWritePageCommand, iPage, pData4[0], pData4[1], pData4[2], pData4[3]};
+
+  std::vector<unsigned char> vPayloadOut;
+  if (!TransmitCardCommand(
+          hCard, dwProtocol, cmd, sizeof(cmd), vPayloadOut, sErrorOut)) {
+    return false;
+  }
+
+  LOG->Info(
+      "NFCDriver_PCSC: Wrote page %u with data %s",
+      static_cast<unsigned int>(iPage), HexPreview(pData4, 4).c_str());
+  return true;
+}
+
 bool NFCDriver_PCSC::ReadCardData(
     std::string& sDataOut, std::string& sErrorOut) {
   sDataOut.clear();
@@ -476,6 +495,74 @@ bool NFCDriver_PCSC::ReadCardData(
 
   if (!bSuccess && !sErrorOut.empty()) {
     LOG->Warn("NFCDriver_PCSC: ReadCardData failed: %s", sErrorOut.c_str());
+  }
+
+  return bSuccess;
+}
+
+bool NFCDriver_PCSC::WriteCardData(
+    const std::string& sDataIn, std::string& sErrorOut) {
+  if (static_cast<int>(sDataIn.size()) > kCardPayloadBytes) {
+    sErrorOut = ssprintf(
+        "NFC payload is too large (%zu bytes, max %d).", sDataIn.size(),
+        kCardPayloadBytes);
+    return false;
+  }
+
+  uintptr_t hCard = 0;
+  unsigned long dwProtocol = 0;
+  std::string sReaderName;
+  if (!ConnectToCard(m_hContext, hCard, dwProtocol, sReaderName, sErrorOut)) {
+    LOG->Info(
+        "NFCDriver_PCSC: WriteCardData could not connect to a card: %s",
+        sErrorOut.c_str());
+    return false;
+  }
+
+  LOG->Info(
+      "NFCDriver_PCSC: Writing card data on reader '%s' with protocol 0x%08lX.",
+      sReaderName.c_str(), dwProtocol);
+
+  SCARDHANDLE hCardHandle = static_cast<SCARDHANDLE>(hCard);
+  bool bSuccess = false;
+
+  do {
+    std::vector<unsigned char> vPayload(
+        sDataIn.begin(), sDataIn.end());
+    vPayload.resize(kCardPayloadBytes, 0);
+
+    unsigned char header[8] = {
+        kDataMagic[0], kDataMagic[1], kDataMagic[2], kDataMagic[3], kDataVersion,
+        0x00, static_cast<unsigned char>((sDataIn.size() >> 8) & 0xFF),
+        static_cast<unsigned char>(sDataIn.size() & 0xFF)};
+
+    if (!WriteUserPage(hCard, dwProtocol, kHeaderPage, &header[0], sErrorOut) ||
+        !WriteUserPage(
+            hCard, dwProtocol, static_cast<unsigned char>(kHeaderPage + 1),
+            &header[4], sErrorOut)) {
+      break;
+    }
+
+    for (unsigned char iPage = kPayloadStartPage; iPage <= kLastPayloadPage;
+         iPage = static_cast<unsigned char>(iPage + 1)) {
+      const size_t iOffset = static_cast<size_t>(iPage - kPayloadStartPage) * 4;
+      if (!WriteUserPage(
+              hCard, dwProtocol, iPage, &vPayload[iOffset], sErrorOut)) {
+        break;
+      }
+    }
+    if (!sErrorOut.empty()) {
+      break;
+    }
+
+    sErrorOut.clear();
+    bSuccess = true;
+  } while (false);
+
+  SCardDisconnect(hCardHandle, SCARD_LEAVE_CARD);
+
+  if (!bSuccess && !sErrorOut.empty()) {
+    LOG->Warn("NFCDriver_PCSC: WriteCardData failed: %s", sErrorOut.c_str());
   }
 
   return bSuccess;
