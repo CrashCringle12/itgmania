@@ -1,10 +1,10 @@
 #include "NFCDriver_LibNFC.h"
 
+#include <nfc/nfc.h>
+
 #include <algorithm>
 #include <cstring>
 #include <vector>
-
-#include <nfc/nfc.h>
 
 #include "RageLog.h"
 #include "RageUtil.h"
@@ -20,7 +20,7 @@ static const unsigned char kPayloadStartPage = 6;
 static const unsigned char kLastPayloadPage = 129;
 static const int kCardPayloadBytes =
     (kLastPayloadPage - kPayloadStartPage + 1) * 4;
-}
+}  // namespace
 
 NFCDriver_LibNFC::NFCDriver_LibNFC()
     : m_pContext(nullptr),
@@ -79,7 +79,9 @@ std::vector<std::string> NFCDriver_LibNFC::GetReaderNames() const {
   return m_vReaderNames;
 }
 
-std::string NFCDriver_LibNFC::GetCurrentCardUID() const { return m_sCurrentCardUID; }
+std::string NFCDriver_LibNFC::GetCurrentCardUID() const {
+  return m_sCurrentCardUID;
+}
 
 bool NFCDriver_LibNFC::IsCardPresent() const { return m_bCardPresent; }
 
@@ -149,7 +151,8 @@ bool NFCDriver_LibNFC::EnsureOpenDevice(std::string& sErrorOut) {
 
   m_pDevice = nfc_open(m_pContext, m_vReaderNames[0].c_str());
   if (m_pDevice == nullptr) {
-    sErrorOut = ssprintf("Could not open reader '%s'.", m_vReaderNames[0].c_str());
+    sErrorOut =
+        ssprintf("Could not open reader '%s'.", m_vReaderNames[0].c_str());
     return false;
   }
 
@@ -169,7 +172,8 @@ bool NFCDriver_LibNFC::EnsureOpenDevice(std::string& sErrorOut) {
   return true;
 }
 
-std::string NFCDriver_LibNFC::BytesToHex(const unsigned char* pBytes, size_t nBytes) {
+std::string NFCDriver_LibNFC::BytesToHex(
+    const unsigned char* pBytes, size_t nBytes) {
   static const char kHex[] = "0123456789ABCDEF";
   std::string out;
   out.reserve(nBytes * 2);
@@ -201,7 +205,8 @@ bool NFCDriver_LibNFC::ReadCardUID(std::string& sUIDOut) {
   }
 
   const size_t uidLen = std::min(
-      static_cast<size_t>(nt.nti.nai.szUidLen), static_cast<size_t>(kMaxUIDBytes));
+      static_cast<size_t>(nt.nti.nai.szUidLen),
+      static_cast<size_t>(kMaxUIDBytes));
   if (uidLen == 0) {
     nfc_initiator_deselect_target(m_pDevice);
     return false;
@@ -242,7 +247,8 @@ bool NFCDriver_LibNFC::TransmitCardCommand(
   nfc_initiator_deselect_target(m_pDevice);
 
   if (rv < 0) {
-    sErrorOut = ssprintf("nfc_initiator_transceive_bytes failed: %s", nfc_strerror(m_pDevice));
+    sErrorOut = ssprintf(
+        "nfc_initiator_transceive_bytes failed: %s", nfc_strerror(m_pDevice));
     return false;
   }
 
@@ -367,9 +373,9 @@ bool NFCDriver_LibNFC::WriteCardData(
   }
 
   const unsigned short iSize = static_cast<unsigned short>(sData.size());
-  unsigned char vHeaderPage5[4] = {kDataVersion, 0,
-                                   static_cast<unsigned char>((iSize >> 8) & 0xFF),
-                                   static_cast<unsigned char>(iSize & 0xFF)};
+  unsigned char vHeaderPage5[4] = {
+      kDataVersion, 0, static_cast<unsigned char>((iSize >> 8) & 0xFF),
+      static_cast<unsigned char>(iSize & 0xFF)};
   if (!WriteUserPage(kHeaderPage + 1, vHeaderPage5, sErrorOut)) {
     return false;
   }

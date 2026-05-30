@@ -93,11 +93,9 @@ Useful Lua methods include:
 - `NFCMAN:GetLastTappedUID()`
 - `NFCMAN:GetReaderNames()`
 - `NFCMAN:SupportsCardDataIO()`
-- `NFCMAN:SupportsCardDataWrite()`
 - `NFCMAN:GetMaxCardDataBytes()`
 - `NFCMAN:ReadCardData()`
 - `NFCMAN:WriteCardData(payloadString)`
-- `NFCMAN:HasCardData()`
 - `NFCMAN:GetLastCardIOError()`
 
 Themes can also subscribe to these broadcast messages:

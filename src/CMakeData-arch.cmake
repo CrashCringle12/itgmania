@@ -365,7 +365,6 @@ if(HAS_NFC_LIBNFC)
   list(APPEND SMDATA_ARCH_NFC_SRC "arch/NFC/NFCDriver_LibNFC.cpp")
   list(APPEND SMDATA_ARCH_NFC_HPP "arch/NFC/NFCDriver_LibNFC.h")
 endif()
-
 source_group("Arch Specific\\\\NFC"
              FILES
              ${SMDATA_ARCH_NFC_SRC}

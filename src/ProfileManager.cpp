@@ -1,6 +1,7 @@
 #include "ProfileManager.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cstddef>
 #include <map>
 #include <string>
@@ -72,15 +73,14 @@ static std::string LocalProfileIDToDir(const std::string& sProfileID) {
 static const size_t MAX_DISPLAY_NAME_IN_DIR = 32;
 static std::string SanitizeForDirName(const std::string& name) {
   std::string result;
+
   result.reserve(name.size());
   for (unsigned char c : name) {
-    // Yoink all potentially illegal characters/symbols to avoid OS issues.
-    // Replace them with underscores
-    if (c < 32 || c == '\\' || c == '/' || c == ':' || c == '*' || c == '?' ||
-        c == '"' || c == '<' || c == '>' || c == '|' || c == ' ' || c == '.') {
-      result += '_';
-    } else {
+    // Allow only alphanumeric characters, underscore, and dash.
+    if (std::isalnum(c) || c == '_' || c == '-') {
       result += static_cast<char>(c);
+    } else {
+      result += '_';
     }
   }
   // Cap length.
@@ -487,6 +487,9 @@ void ProfileManager::RefreshLocalProfilesFromDisk() {
     case ProfileSortOrder_Recent:
       LoadLocalProfilesByRecent();
       break;
+    case ProfileSortOrder_CreationTime:
+      LoadLocalProfilesByCreationTime();
+      break;
     default:
       LoadLocalProfilesByPriority();
       break;
@@ -667,6 +670,62 @@ void ProfileManager::LoadLocalProfilesByRecent() {
   }
 }
 
+// This function is used within RefreshLocalProfilesFromDisk() to sort the
+// profiles by creation time.
+void ProfileManager::LoadLocalProfilesByCreationTime() {
+  std::vector<std::string> profile_ids;
+  GetDirListing(USER_PROFILES_DIR + "*", profile_ids, true, true);
+
+  std::vector<DirAndProfile> guestProfiles;
+  std::vector<DirAndProfile> normalProfiles;
+  std::vector<DirAndProfile> testProfiles;
+
+  for (const std::string& id : profile_ids) {
+    DirAndProfile derp;
+    derp.sDir = id + "/";
+    derp.profile.LoadTypeFromDir(derp.sDir);
+    switch (derp.profile.m_Type) {
+      case ProfileType_Guest:
+        guestProfiles.push_back(derp);
+        break;
+      case ProfileType_Normal:
+        normalProfiles.push_back(derp);
+        break;
+      case ProfileType_Test:
+        testProfiles.push_back(derp);
+        break;
+      default:
+        break;
+    }
+  }
+
+  if (PREFSMAN->m_bProfileSortOrderAscending) {
+    auto creationAscending = [](const DirAndProfile& a,
+                                const DirAndProfile& b) {
+      return a.profile.m_CreationTime > b.profile.m_CreationTime;
+    };
+    std::sort(guestProfiles.begin(), guestProfiles.end(), creationAscending);
+    std::sort(normalProfiles.begin(), normalProfiles.end(), creationAscending);
+    std::sort(testProfiles.begin(), testProfiles.end(), creationAscending);
+  } else {
+    auto creationDescending = [](const DirAndProfile& a,
+                                 const DirAndProfile& b) {
+      return a.profile.m_CreationTime < b.profile.m_CreationTime;
+    };
+    std::sort(guestProfiles.begin(), guestProfiles.end(), creationDescending);
+    std::sort(normalProfiles.begin(), normalProfiles.end(), creationDescending);
+    std::sort(testProfiles.begin(), testProfiles.end(), creationDescending);
+  }
+
+  add_category_to_global_list(guestProfiles);
+  add_category_to_global_list(normalProfiles);
+  add_category_to_global_list(testProfiles);
+
+  for (DirAndProfile& curr : g_vLocalProfile) {
+    curr.profile.LoadAllFromDir(curr.sDir, PREFSMAN->m_bSignProfileData);
+  }
+}
+
 const Profile* ProfileManager::GetLocalProfile(
     const std::string& sProfileID) const {
   std::string sDir = LocalProfileIDToDir(sProfileID);
@@ -684,44 +743,48 @@ bool ProfileManager::CreateLocalProfile(
     std::string sName, std::string& sProfileIDOut) {
   ASSERT(!sName.empty());
 
-  // Find a directory directory name that's a number greater than all
-  // existing numbers.  This preserves the "order by create date".
-  // Profile IDs are actually the directory names, so they can be any string,
-  // and we have to handle the case where the user renames one.
-  // Since the user can rename them, they might have any number, wrapping our
-  // counter or setting it to a ridiculous value.  That case must also be
-  // handled. -Kyz
-  int max_profile_number = -1;
-  int first_free_number = 0;
   std::vector<std::string> profile_ids;
   GetLocalProfileIDs(profile_ids);
+
+  std::string base = SanitizeForDirName(sName);
+  if (base.empty()) {
+    base = "Profile";
+  }
+
+  std::string profile_id = base;
+  bool base_exists = false;
   for (std::vector<std::string>::const_iterator id = profile_ids.begin();
        id != profile_ids.end(); ++id) {
-    int tmp = 0;
-    if ((*id) >> tmp) {
-      // The profile ids are already in order, so we don't have to handle the
-      // case where 5 is encountered before 3.
-      if (tmp == first_free_number) {
-        ++first_free_number;
-      }
-      max_profile_number = std::max(tmp, max_profile_number);
+    if (CompareNoCase(*id, base) == 0) {
+      base_exists = true;
+      break;
     }
   }
 
-  int profile_number = max_profile_number + 1;
-  // Prevent profiles from going over the 8 digit limit.
-  if (profile_number > MAX_ID || profile_number < 0) {
-    profile_number = first_free_number;
+  // If a profile with the same name already exists..
+  // attempt to append an incrementing number until we find a name that doesn't
+  // exist.
+  if (base_exists) {
+    int suffix = 1;
+    while (true) {
+      std::string candidate = ssprintf("%s_%d", base.c_str(), suffix);
+      bool candidate_exists = false;
+      for (std::vector<std::string>::const_iterator id = profile_ids.begin();
+           id != profile_ids.end(); ++id) {
+        if (CompareNoCase(*id, candidate) == 0) {
+          candidate_exists = true;
+          break;
+        }
+      }
+
+      if (!candidate_exists) {
+        profile_id = candidate;
+        break;
+      }
+
+      ++suffix;
+    }
   }
-  ASSERT_M(
-      profile_number >= 0 && profile_number <= MAX_ID,
-      "Too many profiles, cannot assign ID to new profile.");
-  std::string sanitized_name = SanitizeForDirName(sName);
-  std::string profile_id =
-      sanitized_name.empty() ? ssprintf("%0" ID_DIGITS_STR "d", profile_number)
-                             : ssprintf(
-                                   "%0" ID_DIGITS_STR "d_%s", profile_number,
-                                   sanitized_name.c_str());
 
   // make sure this id doesn't already exist
   ASSERT_M(
@@ -734,6 +797,7 @@ bool ProfileManager::CreateLocalProfile(
   Profile* pProfile = new Profile;
   pProfile->m_sDisplayName = sName;
   pProfile->m_sCharacterID = CHARMAN->GetRandomCharacter()->m_sCharacterID;
+  pProfile->m_CreationTime = DateTime::GetNowDateTime();
 
   // Save it to disk.
   std::string sProfileDir = LocalProfileIDToDir(profile_id);
