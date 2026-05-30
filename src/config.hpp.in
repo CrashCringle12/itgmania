@@ -78,6 +78,12 @@ typedef int pid_t;
 /* Defined to 1 if NFC card reader support (PC/SC) is compiled in. */
 #cmakedefine HAS_NFC 1
 
+/* Defined to 1 if the PC/SC NFC backend is compiled in. */
+#cmakedefine HAS_NFC_PCSC 1
+
+/* Defined to 1 if the libnfc NFC backend is compiled in. */
+#cmakedefine HAS_NFC_LIBNFC 1
+
 #if defined(__GNUC__)
 /** @brief Define a macro to tell the compiler that a function has printf()
  * semantics, to aid warning output. */

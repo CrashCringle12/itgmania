@@ -75,4 +75,6 @@ endif()
 # NFC reader support (ACR122U and other PC/SC readers).
 # Requires pcsclite on Linux/BSD, uses built-in PCSC on Windows and macOS.
 option(WITH_NFC "Build with NFC card reader support (PC/SC)." ON)
-
+option(WITH_NFC_LIBNFC
+       "Build with libnfc NFC reader support (PN53x direct mode)."
+       ON)

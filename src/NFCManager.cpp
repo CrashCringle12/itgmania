@@ -17,8 +17,14 @@
 #include "global.h"
 
 #if defined(HAS_NFC)
+#if defined(HAS_NFC_PCSC)
 #include "arch/NFC/NFCDriver_PCSC.h"
-#else
+#endif
+#if defined(HAS_NFC_LIBNFC)
+#include "arch/NFC/NFCDriver_LibNFC.h"
+#endif
+#endif
+#if !defined(HAS_NFC)
 #include "arch/NFC/NFCDriver_Null.h"
 #endif
 
@@ -67,13 +73,29 @@ NFCManager::NFCManager()
     return;
   }
 
-#if defined(HAS_NFC)
+  bool bDriverInitialized = false;
+
+#if defined(HAS_NFC_PCSC)
   m_pDriver = std::make_unique<NFCDriver_PCSC>();
+  bDriverInitialized = m_pDriver->Init();
+  if (!bDriverInitialized) {
+#if defined(HAS_NFC_LIBNFC)
+    LOG->Warn("NFCManager: PC/SC NFC driver failed; trying libnfc fallback.");
+    m_pDriver = std::make_unique<NFCDriver_LibNFC>();
+    bDriverInitialized = m_pDriver->Init();
 #else
+    m_pDriver.reset();
+#endif
+  }
+#elif defined(HAS_NFC_LIBNFC)
+  m_pDriver = std::make_unique<NFCDriver_LibNFC>();
+  bDriverInitialized = m_pDriver->Init();
+#elif !defined(HAS_NFC)
   m_pDriver = std::make_unique<NFCDriver_Null>();
+  bDriverInitialized = m_pDriver->Init();
 #endif
 
-  if (!m_pDriver->Init()) {
+  if (!m_pDriver || !bDriverInitialized) {
     LOG->Warn(
         "NFCManager: Driver failed to initialize. "
         "NFC card login will be unavailable.");
