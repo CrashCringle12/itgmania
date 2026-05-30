@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - beta
+      - psu-cabby-itgmania
       - release
 
 name: Release
