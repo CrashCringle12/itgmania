@@ -347,10 +347,6 @@ void ScreenOptionsManageProfiles::HandleScreenMessage(const ScreenMessage SM) {
           GAMESTATE->m_sEditLocalProfileID.Set(GetLocalProfileIDWithFocus());
           SCREENMAN->SetNewScreen("ScreenNFCLinkProfile");
         } break;
-        case ProfileAction_LinkNFCCard: {
-          GAMESTATE->m_sEditLocalProfileID.Set(GetLocalProfileIDWithFocus());
-          SCREENMAN->SetNewScreen("ScreenNFCLinkProfile");
-        } break;
         case ProfileAction_Delete: {
           std::string sTitle = pProfile->m_sDisplayName;
           std::string sMessage = ssprintf(
