@@ -43,6 +43,76 @@ static const int kCardPayloadBytes =
     (kLastPayloadPage - kPayloadStartPage + 1) * 4;
 static const size_t kLogPreviewBytes = 64;
 
+static const char* PcscStatusName(LONG rv) {
+  switch (rv) {
+    case SCARD_S_SUCCESS:
+      return "SCARD_S_SUCCESS";
+#ifdef SCARD_E_NO_SMARTCARD
+    case SCARD_E_NO_SMARTCARD:
+      return "SCARD_E_NO_SMARTCARD";
+#endif
+#ifdef SCARD_W_REMOVED_CARD
+    case SCARD_W_REMOVED_CARD:
+      return "SCARD_W_REMOVED_CARD";
+#endif
+#ifdef SCARD_E_READER_UNAVAILABLE
+    case SCARD_E_READER_UNAVAILABLE:
+      return "SCARD_E_READER_UNAVAILABLE";
+#endif
+#ifdef SCARD_E_NO_READERS_AVAILABLE
+    case SCARD_E_NO_READERS_AVAILABLE:
+      return "SCARD_E_NO_READERS_AVAILABLE";
+#endif
+#ifdef SCARD_E_SHARING_VIOLATION
+    case SCARD_E_SHARING_VIOLATION:
+      return "SCARD_E_SHARING_VIOLATION";
+#endif
+#ifdef SCARD_E_NOT_TRANSACTED
+    case SCARD_E_NOT_TRANSACTED:
+      return "SCARD_E_NOT_TRANSACTED";
+#endif
+#ifdef SCARD_W_RESET_CARD
+    case SCARD_W_RESET_CARD:
+      return "SCARD_W_RESET_CARD";
+#endif
+    default:
+      return "SCARD_UNKNOWN_STATUS";
+  }
+}
+
+static bool IsExpectedNoCardStatus(LONG rv) {
+#ifdef SCARD_E_NO_SMARTCARD
+  if (rv == SCARD_E_NO_SMARTCARD) {
+    return true;
+  }
+#endif
+#ifdef SCARD_W_REMOVED_CARD
+  if (rv == SCARD_W_REMOVED_CARD) {
+    return true;
+  }
+#endif
+  return false;
+}
+
+static void LogPcscConnectStatus(
+    const char* pFlowStep, const std::string& sReaderName, LONG rv) {
+  if (rv == SCARD_S_SUCCESS) {
+    return;
+  }
+
+  if (IsExpectedNoCardStatus(rv)) {
+    LOG->Trace(
+        "NFCDriver_PCSC: %s reader '%s' returned %s (0x%08lX).",
+        pFlowStep, sReaderName.c_str(), PcscStatusName(rv),
+        static_cast<unsigned long>(rv));
+    return;
+  }
+
+  LOG->Warn(
+      "NFCDriver_PCSC: %s reader '%s' failed with %s (0x%08lX).", pFlowStep,
+      sReaderName.c_str(), PcscStatusName(rv), static_cast<unsigned long>(rv));
+}
+
 static std::string HexPreview(const unsigned char* pBytes, size_t nBytes) {
   static const char kHexChars[] = "0123456789ABCDEF";
   if (pBytes == nullptr || nBytes == 0) {
@@ -76,17 +146,20 @@ NFCDriver_PCSC::~NFCDriver_PCSC() {
 }
 
 bool NFCDriver_PCSC::Init() {
+  LOG->Info("NFCDriver_PCSC: Establishing PC/SC context.");
   SCARDCONTEXT hCtx = 0;
   LONG rv = SCardEstablishContext(SCARD_SCOPE_SYSTEM, nullptr, nullptr, &hCtx);
   if (rv != SCARD_S_SUCCESS) {
     LOG->Warn(
-        "NFCDriver_PCSC: SCardEstablishContext failed (0x%08lX). "
+        "NFCDriver_PCSC: SCardEstablishContext failed with %s (0x%08lX). "
         "NFC card support will be unavailable.",
+        PcscStatusName(rv),
         static_cast<unsigned long>(rv));
     return false;
   }
   m_hContext = static_cast<uintptr_t>(hCtx);
   m_bInitialized = true;
+  LOG->Info("NFCDriver_PCSC: PC/SC context established successfully.");
 
   RefreshReaders();
   if (m_vReaderNames.empty()) {
@@ -110,6 +183,10 @@ bool NFCDriver_PCSC::RefreshReaders() {
   LONG rv = SCardListReaders(hCtx, nullptr, nullptr, &dwReaders);
   if (rv == static_cast<LONG>(SCARD_E_NO_READERS_AVAILABLE) ||
       rv == static_cast<LONG>(SCARD_E_READER_UNAVAILABLE)) {
+    LOG->Info(
+        "NFCDriver_PCSC: SCardListReaders reports no available readers (%s, "
+        "0x%08lX).",
+        PcscStatusName(rv), static_cast<unsigned long>(rv));
     std::vector<std::string> empty;
     bool changed = (m_vReaderNames != empty);
     m_vReaderNames.clear();
@@ -117,7 +194,8 @@ bool NFCDriver_PCSC::RefreshReaders() {
   }
   if (rv != SCARD_S_SUCCESS) {
     LOG->Warn(
-        "NFCDriver_PCSC: SCardListReaders failed (0x%08lX).",
+        "NFCDriver_PCSC: SCardListReaders failed with %s (0x%08lX).",
+        PcscStatusName(rv),
         static_cast<unsigned long>(rv));
     return false;
   }
@@ -127,7 +205,8 @@ bool NFCDriver_PCSC::RefreshReaders() {
   rv = SCardListReaders(hCtx, nullptr, pReaders, &dwReaders);
   if (rv != SCARD_S_SUCCESS) {
     LOG->Warn(
-        "NFCDriver_PCSC: SCardListReaders (data) failed (0x%08lX).",
+        "NFCDriver_PCSC: SCardListReaders (data) failed with %s (0x%08lX).",
+        PcscStatusName(rv),
         static_cast<unsigned long>(rv));
     return false;
   }
@@ -141,6 +220,12 @@ bool NFCDriver_PCSC::RefreshReaders() {
 
   bool changed = (readers != m_vReaderNames);
   m_vReaderNames = std::move(readers);
+  if (changed) {
+    LOG->Info(
+        "NFCDriver_PCSC: Reader list changed; %zu reader(s) currently "
+        "available.",
+        m_vReaderNames.size());
+  }
   return changed;
 }
 
@@ -176,6 +261,8 @@ bool NFCDriver_PCSC::ReadCardUID(std::string& sUIDOut) {
   SCARDCONTEXT hCtx = static_cast<SCARDCONTEXT>(m_hContext);
 
   for (const auto& readerName : m_vReaderNames) {
+    LOG->Trace(
+        "NFCDriver_PCSC: Polling UID via reader '%s'.", readerName.c_str());
     SCARDHANDLE hCard = 0;
     DWORD dwActiveProtocol = 0;
 
@@ -184,7 +271,7 @@ bool NFCDriver_PCSC::ReadCardUID(std::string& sUIDOut) {
         SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwActiveProtocol);
 
     if (rv != SCARD_S_SUCCESS) {
-      // No card in this reader – try the next one.
+      LogPcscConnectStatus("ReadCardUID connect", readerName, rv);
       continue;
     }
 
@@ -204,8 +291,9 @@ bool NFCDriver_PCSC::ReadCardUID(std::string& sUIDOut) {
 
     if (rv != SCARD_S_SUCCESS) {
       LOG->Warn(
-          "NFCDriver_PCSC: SCardTransmit failed on '%s' (0x%08lX).",
-          readerName.c_str(), static_cast<unsigned long>(rv));
+          "NFCDriver_PCSC: SCardTransmit failed on '%s' with %s (0x%08lX).",
+          readerName.c_str(), PcscStatusName(rv),
+          static_cast<unsigned long>(rv));
       continue;
     }
 
@@ -254,15 +342,22 @@ bool NFCDriver_PCSC::ConnectToCard(
   LONG rv = SCARD_E_UNKNOWN_READER;
 
   for (const auto& readerName : m_vReaderNames) {
+    LOG->Info(
+        "NFCDriver_PCSC: Attempting card data connect on reader '%s'.",
+        readerName.c_str());
     SCARDHANDLE hCard = 0;
     DWORD dwActiveProtocol = 0;
     rv = SCardConnect(
         hCtx, readerName.c_str(), SCARD_SHARE_SHARED,
         SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &hCard, &dwActiveProtocol);
     if (rv != SCARD_S_SUCCESS) {
+      LogPcscConnectStatus("ConnectToCard", readerName, rv);
       continue;
     }
 
+    LOG->Info(
+        "NFCDriver_PCSC: Connected to reader '%s' with protocol 0x%08lX.",
+        readerName.c_str(), static_cast<unsigned long>(dwActiveProtocol));
     hCardOut = static_cast<uintptr_t>(hCard);
     dwProtocolOut = static_cast<unsigned long>(dwActiveProtocol);
     sReaderNameOut = readerName;
@@ -271,8 +366,8 @@ bool NFCDriver_PCSC::ConnectToCard(
   }
 
   sErrorOut = ssprintf(
-      "No NFC card is available for data access (0x%08lX).",
-      static_cast<unsigned long>(rv));
+      "No NFC card is available for data access (%s, 0x%08lX).",
+      PcscStatusName(rv), static_cast<unsigned long>(rv));
   return false;
 }
 
