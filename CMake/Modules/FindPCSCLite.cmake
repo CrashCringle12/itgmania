@@ -17,8 +17,14 @@ if(NOT WIN32 AND NOT APPLE)
   if(PCSCLITE_FOUND)
     set(PCSCLITE_LIBRARY ${PCSCLITE_LIBRARIES}
         CACHE FILEPATH "Path to the pcsclite library")
-    set(PCSCLITE_INCLUDE_DIR ${PCSCLITE_INCLUDEDIR}
-        CACHE PATH "Path to the pcsclite includes")
+    if(PCSCLITE_INCLUDE_DIRS)
+      list(GET PCSCLITE_INCLUDE_DIRS 0 PCSCLITE_PKGCONFIG_INCLUDE_DIR)
+      set(PCSCLITE_INCLUDE_DIR ${PCSCLITE_PKGCONFIG_INCLUDE_DIR}
+          CACHE PATH "Path to the pcsclite includes")
+    elseif(PCSCLITE_INCLUDEDIR)
+      set(PCSCLITE_INCLUDE_DIR ${PCSCLITE_INCLUDEDIR}
+          CACHE PATH "Path to the pcsclite includes")
+    endif()
   endif()
 endif()
 
