@@ -17,8 +17,14 @@
 #include "global.h"
 
 #if defined(HAS_NFC)
+#if defined(HAS_NFC_PCSC)
 #include "arch/NFC/NFCDriver_PCSC.h"
-#else
+#endif
+#if defined(HAS_NFC_LIBNFC)
+#include "arch/NFC/NFCDriver_LibNFC.h"
+#endif
+#endif
+#if !defined(HAS_NFC)
 #include "arch/NFC/NFCDriver_Null.h"
 #endif
 
@@ -66,14 +72,47 @@ NFCManager::NFCManager()
     LOG->Info("NFCManager: Disabled by preference.");
     return;
   }
+  LOG->Info(
+      "NFCManager: Starting NFC initialization (poll interval %.3fs).",
+      m_fPollIntervalSeconds.Get());
 
-#if defined(HAS_NFC)
+  bool bDriverInitialized = false;
+
+#if defined(HAS_NFC_PCSC)
+  LOG->Info("NFCManager: Trying PC/SC NFC backend.");
   m_pDriver = std::make_unique<NFCDriver_PCSC>();
+  bDriverInitialized = m_pDriver->Init();
+  if (bDriverInitialized) {
+    LOG->Info("NFCManager: Using PC/SC NFC backend.");
+  }
+  if (!bDriverInitialized) {
+#if defined(HAS_NFC_LIBNFC)
+    LOG->Warn(
+        "NFCManager: PC/SC NFC driver failed; trying libnfc fallback "
+        "(direct USB mode).");
+    m_pDriver = std::make_unique<NFCDriver_LibNFC>();
+    bDriverInitialized = m_pDriver->Init();
+    if (bDriverInitialized) {
+      LOG->Warn(
+          "NFCManager: Using libnfc fallback backend. This mode may compete "
+          "with pcscd/CCID for reader ownership.");
+    }
 #else
+    m_pDriver.reset();
+#endif
+  }
+#elif defined(HAS_NFC_LIBNFC)
+  LOG->Warn(
+      "NFCManager: PC/SC backend unavailable at compile-time; using libnfc "
+      "direct USB backend.");
+  m_pDriver = std::make_unique<NFCDriver_LibNFC>();
+  bDriverInitialized = m_pDriver->Init();
+#elif !defined(HAS_NFC)
   m_pDriver = std::make_unique<NFCDriver_Null>();
+  bDriverInitialized = m_pDriver->Init();
 #endif
 
-  if (!m_pDriver->Init()) {
+  if (!m_pDriver || !bDriverInitialized) {
     LOG->Warn(
         "NFCManager: Driver failed to initialize. "
         "NFC card login will be unavailable.");
@@ -84,6 +123,18 @@ NFCManager::NFCManager()
   m_PollThread.SetName("NFCManager poll");
   m_PollThread.Create(PollThread_Start, this);
   LOG->Info("NFCManager: Initialized successfully.");
+  LOG->Info(
+      "NFCManager: Card data I/O support: %s (max payload %d bytes).",
+      m_pDriver->SupportsCardDataIO() ? "enabled" : "disabled",
+      m_pDriver->GetMaxCardDataBytes());
+  const std::vector<std::string> vReaders = m_pDriver->GetReaderNames();
+  if (vReaders.empty()) {
+    LOG->Info("NFCManager: No readers detected at initialization.");
+  } else {
+    for (const auto& sReaderName : vReaders) {
+      LOG->Info("NFCManager: Initial reader: %s", sReaderName.c_str());
+    }
+  }
 
   // Register with Lua.
   {

@@ -120,24 +120,26 @@ else()
 endif()
 
 if(APPLE OR LINUX)
-  list(APPEND SMDATA_OS_UNIX_CRASH_SRC
-              "archutils/Unix/Backtrace.cpp"
-              "archutils/Unix/BacktraceNames.cpp"
-              "archutils/Unix/CrashHandler.cpp"
-              "archutils/Unix/CrashHandlerChild.cpp"
-              "archutils/Unix/CrashHandlerInternal.cpp"
-              "archutils/Unix/SignalHandler.cpp")
-  list(APPEND SMDATA_OS_UNIX_CRASH_HPP
-              "archutils/Unix/Backtrace.h"
-              "archutils/Unix/BacktraceNames.h"
-              "archutils/Unix/CrashHandler.h"
-              "archutils/Unix/CrashHandlerInternal.h"
-              "archutils/Unix/SignalHandler.h")
-  source_group("OS Specific\\\\Unix"
-               FILES
-               ${SMDATA_OS_UNIX_CRASH_SRC}
-               ${SMDATA_OS_UNIX_CRASH_HPP})
+  if(WITH_CRASH_HANDLER)
+    list(APPEND SMDATA_OS_UNIX_CRASH_SRC
+                "archutils/Unix/Backtrace.cpp"
+                "archutils/Unix/BacktraceNames.cpp"
+                "archutils/Unix/CrashHandler.cpp"
+                "archutils/Unix/CrashHandlerChild.cpp"
+                "archutils/Unix/CrashHandlerInternal.cpp"
+                "archutils/Unix/SignalHandler.cpp")
+    list(APPEND SMDATA_OS_UNIX_CRASH_HPP
+                "archutils/Unix/Backtrace.h"
+                "archutils/Unix/BacktraceNames.h"
+                "archutils/Unix/CrashHandler.h"
+                "archutils/Unix/CrashHandlerInternal.h"
+                "archutils/Unix/SignalHandler.h")
+    source_group("OS Specific\\\\Unix"
+                 FILES
+                 ${SMDATA_OS_UNIX_CRASH_SRC}
+                 ${SMDATA_OS_UNIX_CRASH_HPP})
 
-  list(APPEND SMDATA_OS_SRC ${SMDATA_OS_UNIX_CRASH_SRC})
-  list(APPEND SMDATA_OS_HPP ${SMDATA_OS_UNIX_CRASH_HPP})
+    list(APPEND SMDATA_OS_SRC ${SMDATA_OS_UNIX_CRASH_SRC})
+    list(APPEND SMDATA_OS_HPP ${SMDATA_OS_UNIX_CRASH_HPP})
+  endif()
 endif()
