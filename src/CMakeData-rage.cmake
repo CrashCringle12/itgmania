@@ -141,7 +141,8 @@ list(APPEND SMDATA_RAGE_FILE_SRC
             "RageFileDriverTimeout.cpp"
             "RageFileDriverZip.cpp"
             "RageFileManager.cpp"
-            "RageFileManager_ReadAhead.cpp")
+            "RageFileManager_ReadAhead.cpp"
+            "RageZipWriter.cpp")
 
 list(APPEND SMDATA_RAGE_FILE_HPP
             "RageFile.h"
@@ -156,7 +157,8 @@ list(APPEND SMDATA_RAGE_FILE_HPP
             "RageFileDriverTimeout.h"
             "RageFileDriverZip.h"
             "RageFileManager.h"
-            "RageFileManager_ReadAhead.h")
+            "RageFileManager_ReadAhead.h"
+            "RageZipWriter.h")
 
 source_group("Rage\\\\File"
              FILES
