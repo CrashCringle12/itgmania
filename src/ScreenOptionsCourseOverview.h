@@ -4,33 +4,105 @@
 #include <string>
 #include <vector>
 
-#include "InputEventPlus.h"
-#include "PlayerNumber.h"
-#include "RageSound.h"
-#include "ScreenMessage.h"
-#include "ScreenOptions.h"
-#include "ThemeMetric.h"
+#include "ScreenWithMenuElements.h"
 
-class ScreenOptionsCourseOverview : public ScreenOptions {
+class ScreenOptionsCourseOverview : public ScreenWithMenuElements {
  public:
-  virtual ~ScreenOptionsCourseOverview();
+  void Init() override;
+  void BeginScreen() override;
+  void HandleScreenMessage(const ScreenMessage SM) override;
 
-  virtual void Init();
-  virtual void BeginScreen();
-
- protected:
- private:
-  virtual void ImportOptions(int row, const std::vector<PlayerNumber>& vpns);
-  virtual void ExportOptions(int row, const std::vector<PlayerNumber>& vpns);
-
-  virtual void HandleScreenMessage(const ScreenMessage SM);
-  virtual void AfterChangeValueInRow(int iRow, PlayerNumber pn);
-  virtual void ProcessMenuStart(const InputEventPlus& input);
-
-  RageSound m_soundSave;
-  ThemeMetric<std::string> PLAY_SCREEN;
-  ThemeMetric<std::string> EDIT_SCREEN;
+  bool MenuLeft(const InputEventPlus& input) override;
+  bool MenuRight(const InputEventPlus& input) override;
+  bool MenuUp(const InputEventPlus& input) override;
+  bool MenuDown(const InputEventPlus& input) override;
+  bool MenuStart(const InputEventPlus& input) override;
+  bool MenuSelect(const InputEventPlus& input) override;
+  bool MenuBack(const InputEventPlus& input) override;
 };
+
+// ---------------------------------------------------------------------------
+// CourseOverview: namespace module exposed to Lua so themes can render the
+// course overview / edit hub without going through ScreenOptions rows.
+// ---------------------------------------------------------------------------
+namespace CourseOverview {
+
+struct CourseEntryInfo {
+  std::string sSongTitle;
+  std::string sSongSubtitle;
+  std::string sDifficulty;  // localized
+  int iLowMeter = -1;
+  int iHighMeter = -1;
+  bool bSecret = false;
+};
+
+// Snapshot of the current course (refreshed by Rebuild).
+bool HasCourse();
+std::string GetTitle();
+std::string GetPath();
+bool IsMachineCourse();
+int GetNumEntries();
+std::string GetStepsType();         // localized
+std::string GetCourseDifficulty();  // localized
+float GetTotalSeconds();
+const std::vector<CourseEntryInfo>& GetEntries();
+
+// Actions: each returns true on success.  Theme is expected to call Rebuild
+// indirectly through the broadcast messages or after a Save.
+void Play();
+void Edit();
+void Shuffle();
+bool Save(std::string& sErrorOut);
+bool NeedsName();
+bool Rename(const std::string& sNewName, std::string& sErrorOut);
+bool Delete(std::string& sErrorOut);
+std::string ValidateName(const std::string& sName);
+int GetMaxNameLength();
+
+// Theme metric accessors so Lua can transition without knowing metric keys.
+std::string GetPlayScreen();
+std::string GetEditScreen();
+std::string GetPrevScreen();
+
+// Re-snapshot the entry list from GAMESTATE->m_pCurCourse.
+void Rebuild();
+
+// ---------------------------------------------------------------------------
+// Engine-owned UI state.  The theme overlay is a pure renderer; all input
+// handling and state mutation lives in the screen class (see Input/Menu*).
+// ---------------------------------------------------------------------------
+enum Focus {
+  Focus_List = 0,
+  Focus_Tabs,
+};
+enum TabId {
+  Tab_Play = 0,
+  Tab_Edit,
+  Tab_Shuffle,
+  Tab_Rename,
+  Tab_Delete,
+  Tab_Save,
+  Tab_Back,
+  NUM_TABS,
+};
+
+Focus GetFocus();
+void SetFocus(Focus f);
+int GetTabIndex();                       // 1-based
+void SetTabIndex(int iIndex1);
+int GetTabCount();
+TabId GetTabIdAt(int iIndex1);
+std::string GetTabLabel(int iIndex1);
+
+int GetWheelPos();                       // 1-based scroll position in list
+void SetWheelPos(int iPos1);
+void AdvanceWheel(int iDelta);
+
+void AdvanceTab(int iDelta);
+void TriggerCurrentTab();
+void ResetUI();
+
+}  // namespace CourseOverview
 
 #endif
 
