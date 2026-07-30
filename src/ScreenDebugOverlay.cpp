@@ -1435,8 +1435,8 @@ DECLARE_ONE(DebugLineVolumeDown);
 DECLARE_ONE(DebugLineVolumeUp);
 DECLARE_ONE(DebugLineVisualDelayDown);
 DECLARE_ONE(DebugLineVisualDelayUp);
-// DECLARE_ONE( DebugLineForceCrash );
-DECLARE_ONE(FakeDebugLine2);  // force crash
+DECLARE_ONE( DebugLineForceCrash );
+//DECLARE_ONE(FakeDebugLine2);  // force crash
 DECLARE_ONE(DebugLineUptime);
 DECLARE_ONE(DebugLineResetKeyMapping);
 DECLARE_ONE(DebugLineMuteActions);

@@ -63,8 +63,12 @@ const std::string TEMP_OS_MOUNT_POINT = "/@temp-os/";
 
 static void InstallSmzip(
     const std::string& sZipFile, PlayAfterLaunchInfo& out) {
-  if (!FILEMAN->Mount("zip", sZipFile, TEMP_ZIP_MOUNT_POINT)) {
-    FAIL_M("Failed to mount " + sZipFile);
+  const std::string sRealZipFile = FILEMAN->ResolvePath(sZipFile);
+  const std::string& sMountZipFile =
+      sRealZipFile.empty() ? sZipFile : sRealZipFile;
+
+  if (!FILEMAN->Mount("zip", sMountZipFile, TEMP_ZIP_MOUNT_POINT)) {
+    FAIL_M("Failed to mount " + sMountZipFile);
   }
 
   std::vector<std::string> vsFiles;
@@ -105,7 +109,7 @@ static void InstallSmzip(
       break;
     }
   }
-  FILEMAN->Unmount("zip", sZipFile, TEMP_ZIP_MOUNT_POINT);
+  FILEMAN->Unmount("zip", sMountZipFile, TEMP_ZIP_MOUNT_POINT);
 
   SCREENMAN->SystemMessage(sResult);
 }

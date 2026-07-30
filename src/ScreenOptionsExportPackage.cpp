@@ -7,6 +7,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <unordered_set>
 #include <vector>
 
 #include "LuaBinding.h"
@@ -384,6 +385,12 @@ bool StartExport(std::string& sErrorOut) {
   // so the worker has a flat list and never touches the selection vector.
   // Anything inside a ".git" directory (VCS metadata) is excluded.
   auto pJob = std::make_shared<ExportJob>();
+  std::unordered_set<std::string> sAddedFiles;
+  auto AddFileIfNeeded = [&](const std::string& sPath) {
+    if (sAddedFiles.insert(sPath).second) {
+      pJob->vsFiles.push_back(sPath);
+    }
+  };
   auto IsInsideDotGit = [](const std::string& sPath) {
     // Match "/.git/" anywhere in the path, plus a leading ".git/" prefix.
     if (sPath.find("/.git/") != std::string::npos) {
@@ -396,16 +403,38 @@ bool StartExport(std::string& sErrorOut) {
   };
   for (const std::string& d : g_vsSelected) {
     std::string sDir = d;
+    while (!sDir.empty() && sDir.front() == '/') {
+      sDir.erase(sDir.begin());
+    }
     if (sDir.empty() || sDir.back() != '/') {
       sDir += "/";
     }
+
+    // Song selections are stored at the song-folder level. Include the loose
+    // files from the containing pack root as well so banners, pack.ini, etc.
+    // travel with the exported pack even when only individual songs are chosen.
+    if (sDir.rfind("Songs/", 0) == 0) {
+      const std::size_t iSongSep = sDir.find('/', 6);
+      if (iSongSep != std::string::npos) {
+        const std::string sPackRoot = sDir.substr(0, iSongSep);
+        std::vector<std::string> vsRootFiles;
+        GetDirListing(sPackRoot + "/*", vsRootFiles, false, true);
+        for (const std::string& sRootFile : vsRootFiles) {
+          if (IsADirectory(sRootFile) || IsInsideDotGit(sRootFile)) {
+            continue;
+          }
+          AddFileIfNeeded(sRootFile);
+        }
+      }
+    }
+
     std::vector<std::string> vsTmp;
     GetDirListingRecursive(sDir, "*", vsTmp);
     for (const std::string& f : vsTmp) {
       if (IsInsideDotGit(f)) {
         continue;
       }
-      pJob->vsFiles.push_back(f);
+      AddFileIfNeeded(f);
     }
   }
   if (pJob->vsFiles.empty()) {

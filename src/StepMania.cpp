@@ -704,8 +704,11 @@ static void MountTreeOfZips(const std::string& dir) {
         continue;
       }
 
-      LOG->Trace("VFS: found %s", zip.c_str());
-      FILEMAN->Mount("zip", zip, "/");
+      const std::string sRealZip = FILEMAN->ResolvePath(zip);
+      const std::string& sMountZip = sRealZip.empty() ? zip : sRealZip;
+
+      LOG->Trace("VFS: found %s", sMountZip.c_str());
+      FILEMAN->Mount("zip", sMountZip, "/");
     }
 
     GetDirListing(path + "/*", dirs, true, true);
