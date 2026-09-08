@@ -101,6 +101,9 @@ class MusicWheel : public WheelBase {
   ThemeMetric<bool> RANDOM_PICKS_LOCKED_SONGS;
   ThemeMetric<int> MOST_PLAYED_SONGS_TO_SHOW;
   ThemeMetric<int> RECENT_SONGS_TO_SHOW;
+  ThemeMetric<int> SORT_NEWEST_GROUPS_TO_SHOW;
+  ThemeMetric<bool> SORT_NEWEST_USE_BINS;
+  ThemeMetric<bool> SORT_NEWEST_BIN_SEPARATELY;
   ThemeMetric<std::string> MODE_MENU_CHOICE_NAMES;
   ThemeMetricMap<std::string> CHOICE;
   ThemeMetric1D<RageColor> SECTION_COLORS;

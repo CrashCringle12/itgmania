@@ -157,13 +157,27 @@ void SortSongPointerArrayByNumPlays(
 void SortSongPointerArrayByStepsTypeAndMeter(
     std::vector<Song*>& vpSongsInOut, StepsType st, Difficulty dc);
 std::string GetSectionNameFromSongAndSort(const Song* pSong, SortOrder so);
+/* Sorts that nest their sections (Year, Newest) return the name of the
+ * section the song's section lives under; "" for every other sort. */
+std::string GetParentSectionNameFromSongAndSort(
+    const Song* pSong, SortOrder so);
+/* The name of the "how long ago was this added" bin the song falls into,
+ * as configured by the NewestBin* metrics. */
+std::string GetNewestBinName(const Song* pSong);
 void SortSongPointerArrayBySectionName(
     std::vector<Song*>& vpSongsInOut, SortOrder so);
 void SortSongPointerArrayByParentSectionName(std::vector<Song*>& vpSongsInOut);
 void SortByMostRecentlyPlayedForMachine(std::vector<Song*>& vpSongsInOut);
 void SortByMostRecentlyPlayedForProfile(
     std::vector<Song*>& vpSongsInOut, PlayerNumber pn);
+void SortByMostRecentlyAdded(std::vector<Song*>& vpSongsInOut);
+void SortSongPointerArrayByNewestGroup(std::vector<Song*>& vpSongsInOut);
+/* Drops every song past the first iMaxGroups groups. The array must already be
+ * sorted so that each group's songs are contiguous. */
+void TrimSongPointerArrayToGroupCount(
+    std::vector<Song*>& vpSongsInOut, int iMaxGroups);
 void SortSongPointerArrayByLength(std::vector<Song*>& vpSongsInOut);
+void SortSongPointerArrayByYear(std::vector<Song*>& vpSongsInOut);
 void SortSongPointerArrayByGroup(std::vector<Song*>& vpSongsInOut);
 
 int CompareSongPointersByGroup(const Song* pSong1, const Song* pSong2);

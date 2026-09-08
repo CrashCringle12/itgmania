@@ -67,6 +67,19 @@ static std::string CUSTOM_WHEEL_ITEM_COLOR(std::string s) {
   return ssprintf("%sColor", s.c_str());
 }
 
+/* Sorts that nest their sections underneath WheelItemDataType_ParentSection
+ * items. */
+static bool SortUsesParentSections(SortOrder so) {
+  switch (so) {
+    case SORT_SERIES:
+    case SORT_YEAR:
+    case SORT_NEWEST:
+      return true;
+    default:
+      return false;
+  }
+}
+
 static LocalizedString EMPTY_STRING("MusicWheel", "Empty");
 
 AutoScreenMessage(
@@ -115,6 +128,9 @@ void MusicWheel::Load(std::string sType) {
   RANDOM_PICKS_LOCKED_SONGS.Load(sType, "RandomPicksLockedSongs");
   MOST_PLAYED_SONGS_TO_SHOW.Load(sType, "MostPlayedSongsToShow");
   RECENT_SONGS_TO_SHOW.Load(sType, "RecentSongsToShow");
+  SORT_NEWEST_GROUPS_TO_SHOW.Load(sType, "SortNewestGroupsToShow");
+  SORT_NEWEST_USE_BINS.Load(sType, "SortNewestUseBins");
+  SORT_NEWEST_BIN_SEPARATELY.Load(sType, "SortNewestBinSeparately");
   MODE_MENU_CHOICE_NAMES.Load(sType, "ModeMenuChoiceNames");
   SORT_ORDERS.Load(sType, "SortOrders");
   SHOW_EASY_FLAG.Load(sType, "UseEasyMarkerFlag");
@@ -614,6 +630,8 @@ void MusicWheel::BuildWheelItemDatas(
     case SORT_DOUBLE_HARD_METER:
     case SORT_DOUBLE_CHALLENGE_METER:
     case SORT_LENGTH:
+    case SORT_YEAR:
+    case SORT_NEWEST:
     case SORT_RECENT:
     case SORT_RECENT_P1:
     case SORT_RECENT_P2: {
@@ -717,6 +735,12 @@ void MusicWheel::BuildWheelItemDatas(
         case SORT_LENGTH:
           SongUtil::SortSongPointerArrayByLength(arraySongs);
           break;
+        case SORT_YEAR:
+          SongUtil::SortSongPointerArrayByYear(arraySongs);
+          break;
+        case SORT_NEWEST:
+          SongUtil::SortByMostRecentlyAdded(arraySongs);
+          break;
         case SORT_RECENT:
           SongUtil::SortByMostRecentlyPlayedForMachine(arraySongs);
           if ((int)arraySongs.size() > RECENT_SONGS_TO_SHOW) {
@@ -803,6 +827,8 @@ void MusicWheel::BuildWheelItemDatas(
           case SORT_TOP_GRADES_P2:
           case SORT_BPM:
           case SORT_LENGTH:
+          case SORT_YEAR:
+          case SORT_NEWEST:
             break;  // don't sort by section
           default:
             SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
@@ -985,6 +1011,203 @@ void MusicWheel::BuildWheelItemDatas(
               arrayWheelItemDatas.push_back(new MusicWheelItemData(
                   WheelItemDataType_Song, pSong, sLastSection, nullptr, pGroup,
                   SONGMAN->GetSongColor(pSong), 0));
+            }
+          }
+          break;
+
+        case SORT_YEAR:
+          // Years are ParentSections; the groups released that year are the
+          // sections beneath them.
+          if (bUseSections) {
+            std::string lastYear;
+            std::string lastGroup;
+            bool haveLast = false;
+            for (unsigned i = 0; i < arraySongs.size(); ++i) {
+              Song* pSong = arraySongs[i];
+              Group* pGroup = SONGMAN->GetGroup(pSong);
+              if (pGroup == nullptr) {
+                LOG->Warn("Song %s has no group!", pSong->GetSongDir().c_str());
+                continue;
+              }
+              const std::string groupName = pGroup->GetGroupName();
+              const std::string yearName =
+                  SongUtil::GetParentSectionNameFromSongAndSort(pSong, so);
+
+              if (!haveLast || yearName != lastYear) {
+                int yearSongCount = 0;
+                for (unsigned j = i; j < arraySongs.size(); ++j) {
+                  if (SongUtil::GetParentSectionNameFromSongAndSort(
+                          arraySongs[j], so) != yearName) {
+                    break;
+                  }
+                  ++yearSongCount;
+                }
+                RageColor yearColor =
+                    SECTION_COLORS.GetValue(iSectionColorIndex);
+                iSectionColorIndex =
+                    (iSectionColorIndex + 1) % NUM_SECTION_COLORS;
+                MusicWheelItemData* pYearItem = new MusicWheelItemData(
+                    WheelItemDataType_ParentSection, nullptr, yearName, nullptr,
+                    nullptr, yearColor, yearSongCount);
+                pYearItem->m_sLabel = yearName;
+                arrayWheelItemDatas.push_back(pYearItem);
+              }
+
+              if (!haveLast || groupName != lastGroup || yearName != lastYear) {
+                int groupSongCount = 0;
+                for (unsigned j = i; j < arraySongs.size(); ++j) {
+                  if (SONGMAN->GetGroup(arraySongs[j]) != pGroup) {
+                    break;
+                  }
+                  ++groupSongCount;
+                }
+                arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                    WheelItemDataType_Section, nullptr, groupName, nullptr,
+                    pGroup, SONGMAN->GetSongGroupColor(groupName),
+                    groupSongCount, yearName));
+              }
+
+              arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                  WheelItemDataType_Song, pSong, groupName, nullptr, pGroup,
+                  SONGMAN->GetSongColor(pSong), 0, yearName));
+
+              lastYear = yearName;
+              lastGroup = groupName;
+              haveLast = true;
+            }
+          } else {
+            for (unsigned i = 0; i < arraySongs.size(); i++) {
+              Song* pSong = arraySongs[i];
+              arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                  WheelItemDataType_Song, pSong, sLastSection, nullptr,
+                  SONGMAN->GetGroup(pSong), SONGMAN->GetSongColor(pSong), 0));
+            }
+          }
+          break;
+
+        case SORT_NEWEST:
+          // A ParentSection listing the most recently added groups, plus a
+          // listing of the songs themselves that is either binned by how long
+          // ago they showed up, flat, or both.
+          if (bUseSections) {
+            std::vector<Song*> arrayByGroup = arraySongs;
+            SongUtil::SortSongPointerArrayByNewestGroup(arrayByGroup);
+            SongUtil::TrimSongPointerArrayToGroupCount(
+                arrayByGroup, SORT_NEWEST_GROUPS_TO_SHOW);
+
+            const std::string groupsParent =
+                THEME->GetString("MusicWheel", "SortNewestGroupsText");
+            MusicWheelItemData* pGroupsItem = new MusicWheelItemData(
+                WheelItemDataType_ParentSection, nullptr, groupsParent, nullptr,
+                nullptr, SECTION_COLORS.GetValue(iSectionColorIndex),
+                arrayByGroup.size());
+            pGroupsItem->m_sLabel = groupsParent;
+            iSectionColorIndex = (iSectionColorIndex + 1) % NUM_SECTION_COLORS;
+            arrayWheelItemDatas.push_back(pGroupsItem);
+
+            const Group* pLastGroup = nullptr;
+            for (unsigned i = 0; i < arrayByGroup.size(); ++i) {
+              Song* pSong = arrayByGroup[i];
+              Group* pGroup = SONGMAN->GetGroup(pSong);
+              if (pGroup == nullptr) {
+                LOG->Warn("Song %s has no group!", pSong->GetSongDir().c_str());
+                continue;
+              }
+              const std::string groupName = pGroup->GetGroupName();
+
+              if (pGroup != pLastGroup) {
+                int groupSongCount = 0;
+                for (unsigned j = i; j < arrayByGroup.size(); ++j) {
+                  if (SONGMAN->GetGroup(arrayByGroup[j]) != pGroup) {
+                    break;
+                  }
+                  ++groupSongCount;
+                }
+                arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                    WheelItemDataType_Section, nullptr, groupName, nullptr,
+                    pGroup, SONGMAN->GetSongGroupColor(groupName),
+                    groupSongCount, groupsParent));
+                pLastGroup = pGroup;
+              }
+
+              arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                  WheelItemDataType_Song, pSong, groupName, nullptr, pGroup,
+                  SONGMAN->GetSongColor(pSong), 0, groupsParent));
+            }
+
+            if (SORT_NEWEST_USE_BINS) {
+              const std::string songsParent =
+                  THEME->GetString("MusicWheel", "SortNewestSongsText");
+              MusicWheelItemData* pSongsItem = new MusicWheelItemData(
+                  WheelItemDataType_ParentSection, nullptr, songsParent,
+                  nullptr, nullptr, SECTION_COLORS.GetValue(iSectionColorIndex),
+                  arraySongs.size());
+              pSongsItem->m_sLabel = songsParent;
+              iSectionColorIndex =
+                  (iSectionColorIndex + 1) % NUM_SECTION_COLORS;
+              arrayWheelItemDatas.push_back(pSongsItem);
+
+              std::string lastBin;
+              bool haveLastBin = false;
+              for (unsigned i = 0; i < arraySongs.size(); ++i) {
+                Song* pSong = arraySongs[i];
+                const std::string binName =
+                    SongUtil::GetParentSectionNameFromSongAndSort(pSong, so);
+
+                if (!haveLastBin || binName != lastBin) {
+                  int binSongCount = 0;
+                  for (unsigned j = i; j < arraySongs.size(); ++j) {
+                    if (SongUtil::GetParentSectionNameFromSongAndSort(
+                            arraySongs[j], so) != binName) {
+                      break;
+                    }
+                    ++binSongCount;
+                  }
+                  RageColor binColor =
+                      SECTION_COLORS.GetValue(iSectionColorIndex);
+                  iSectionColorIndex =
+                      (iSectionColorIndex + 1) % NUM_SECTION_COLORS;
+                  arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                      WheelItemDataType_Section, nullptr, binName, nullptr,
+                      nullptr, binColor, binSongCount, songsParent));
+                }
+
+                arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                    WheelItemDataType_Song, pSong, binName, nullptr,
+                    SONGMAN->GetGroup(pSong), SONGMAN->GetSongColor(pSong), 0,
+                    songsParent));
+
+                lastBin = binName;
+                haveLastBin = true;
+              }
+            }
+
+            // A ParentSection can only hold sections, so the unbinned song
+            // listing is a top-level section instead.
+            if (!SORT_NEWEST_USE_BINS || SORT_NEWEST_BIN_SEPARATELY) {
+              const std::string allSongs = THEME->GetString(
+                  "MusicWheel", SORT_NEWEST_USE_BINS ? "SortNewestAllSongsText"
+                                                     : "SortNewestSongsText");
+              arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                  WheelItemDataType_Section, nullptr, allSongs, nullptr,
+                  nullptr, SECTION_COLORS.GetValue(iSectionColorIndex),
+                  arraySongs.size()));
+              iSectionColorIndex =
+                  (iSectionColorIndex + 1) % NUM_SECTION_COLORS;
+
+              for (unsigned i = 0; i < arraySongs.size(); ++i) {
+                Song* pSong = arraySongs[i];
+                arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                    WheelItemDataType_Song, pSong, allSongs, nullptr,
+                    SONGMAN->GetGroup(pSong), SONGMAN->GetSongColor(pSong), 0));
+              }
+            }
+          } else {
+            for (unsigned i = 0; i < arraySongs.size(); i++) {
+              Song* pSong = arraySongs[i];
+              arrayWheelItemDatas.push_back(new MusicWheelItemData(
+                  WheelItemDataType_Song, pSong, sLastSection, nullptr,
+                  SONGMAN->GetGroup(pSong), SONGMAN->GetSongColor(pSong), 0));
             }
           }
           break;
@@ -1851,7 +2074,7 @@ void MusicWheel::SetOpenSections(
   // yet: show only parent sections and the child sections of the open
   // parent (no songs).
   const bool parentSectionOnlyView =
-      (GAMESTATE->m_SortOrder == SORT_SERIES &&
+      (SortUsesParentSections(GAMESTATE->m_SortOrder) &&
        !m_sExpandedParentSectionName.empty() && m_sExpandedSectionName.empty());
 
   if (parentSectionOnlyView) {

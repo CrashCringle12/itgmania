@@ -2372,6 +2372,10 @@ class LunaSong : public Luna<Song> {
     p->ReloadFromSongDir();
     COMMON_RETURN_SELF;
   }
+  static int GetFirstSeen(T* p, lua_State* L) {
+    lua_pushstring(L, p->m_FirstSeen.GetString().c_str());
+    return 1;
+  }
 
   LunaSong() {
     ADD_METHOD(GetDisplayFullTitle);
@@ -2440,6 +2444,7 @@ class LunaSong : public Luna<Song> {
     ADD_METHOD(GetPreviewVidPath);
     ADD_METHOD(GetPreviewMusicPath);
     ADD_METHOD(ReloadFromSongDir);
+    ADD_METHOD(GetFirstSeen);
   }
 };
 

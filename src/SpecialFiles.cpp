@@ -13,6 +13,7 @@ const std::string SpecialFiles::LANGUAGES_SUBDIR = "Languages/";
 const std::string SpecialFiles::BASE_LANGUAGE = "en";
 const std::string SpecialFiles::METRICS_FILE = "metrics.ini";
 const std::string SpecialFiles::CACHE_DIR = "Cache/";
+const std::string SpecialFiles::SONG_FIRST_SEEN_PATH = "Save/SongFirstSeen.ini";
 const std::string SpecialFiles::BASE_THEME_NAME = "_fallback";
 const std::string SpecialFiles::DEFAULTS_INI_PATH = "Data/Defaults.ini";
 const std::string SpecialFiles::STATIC_INI_PATH = "Data/Static.ini";

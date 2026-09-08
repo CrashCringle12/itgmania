@@ -2425,6 +2425,7 @@ int SongManager::GetNumEditsLoadedFromProfile(ProfileSlot slot) const {
 
 void SongManager::AddSongToList(Song* new_song) {
   new_song->SetEnabled(true);
+  new_song->m_FirstSeen = SONGINDEX->AddFirstSeen(new_song->GetSongDir());
   m_pSongs.push_back(new_song);
   std::string dir = new_song->GetSongDir();
   MakeLower(dir);

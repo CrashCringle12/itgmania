@@ -1809,7 +1809,13 @@ void ScreenSelectMusic::AfterMusicChange() {
                 curSort == SORT_SERIES) {
               g_sBannerPath = SONGMAN->GetSeriesBannerPath(
                   m_MusicWheel.GetSelectedSection());
-            } else if (curSort == SORT_GROUP || curSort == SORT_SERIES) {
+            } else if (wtype == WheelItemDataType_ParentSection) {
+              // Years and Recently Added bins have no banner of their own.
+              bWantBanner = false;  // we load it ourself
+              m_Banner.LoadFromSortOrder(curSort);
+            } else if (
+                curSort == SORT_GROUP || curSort == SORT_SERIES ||
+                curSort == SORT_YEAR || curSort == SORT_NEWEST) {
               g_sBannerPath = SONGMAN->GetSongGroupBannerPath(
                   m_MusicWheel.GetSelectedSection());
             } else {

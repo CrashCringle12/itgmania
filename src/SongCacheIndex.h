@@ -3,11 +3,13 @@
 
 #include <string>
 
+#include "DateTime.h"
 #include "IniFile.h"
 #include "RageThreads.h"
 
 class SongCacheIndex {
   IniFile CacheIndex;
+  IniFile FirstSeenIndex;
   mutable RageMutex Mutex;
   static std::string MangleName(const std::string& Name);
 
@@ -22,6 +24,13 @@ class SongCacheIndex {
   void SaveCacheIndex();
   void AddCacheIndex(const std::string& path, unsigned hash);
   unsigned GetCacheHash(const std::string& path) const;
+
+  void ReadFirstSeenIndex();
+  void SaveFirstSeenIndex();
+  /* Returns the time this path was first seen, adding an entry for the
+   * current time if we've never seen it before. */
+  DateTime AddFirstSeen(const std::string& path);
+
   bool delay_save_cache;
 };
 
