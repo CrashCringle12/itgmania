@@ -20,6 +20,9 @@ extern const std::string LANGUAGES_SUBDIR;
 extern const std::string BASE_LANGUAGE;
 extern const std::string METRICS_FILE;
 extern const std::string CACHE_DIR;
+/** @brief The index of when each song was first seen. This lives outside of
+ * CACHE_DIR so that it survives cache format changes. */
+extern const std::string SONG_FIRST_SEEN_PATH;
 extern const std::string BASE_THEME_NAME;
 extern const std::string DEFAULTS_INI_PATH;
 extern const std::string STATIC_INI_PATH;

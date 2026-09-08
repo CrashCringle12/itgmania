@@ -158,6 +158,8 @@ enum SortOrder {
   SORT_ARTIST,    /**< Sort by the name of the artist of the Song. */
   SORT_GENRE,     /**< Sort by the Song's genre. */
   SORT_LENGTH,    /**< Sort the songs/courses by how long they would last. */
+  SORT_YEAR,      /**< Sort by the year the Song's group was released. */
+  SORT_NEWEST,    /**< Sort by when the Song was first seen on disk. */
   SORT_METER,     /**< Sort by the difficulty of all meters */
   SORT_BEGINNER_METER, /**< Sort by the difficulty of the single beginner meter.
                         */

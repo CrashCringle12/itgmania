@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Attack.h"
+#include "DateTime.h"
 #include "Difficulty.h"
 #include "EnumHelper.h"
 #include "GameConstantsAndTypes.h"
@@ -174,6 +175,9 @@ class Song {
 
   /** @brief The base directory name that this Song is in. */
   std::string m_sSongName;
+
+  /** @brief When this Song was first seen on disk. */
+  DateTime m_FirstSeen;
 
   /**
    * @brief the Profile this came from.

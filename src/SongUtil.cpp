@@ -1,6 +1,7 @@
 #include "SongUtil.h"
 
 #include <algorithm>
+#include <climits>
 #include <cmath>
 #include <cstddef>
 #include <cstring>
@@ -45,6 +46,10 @@ ThemeMetric<bool> SHOW_SECTIONS_IN_BPM_SORT(
     "MusicWheel", "ShowSectionsInBPMSort");
 ThemeMetric<bool> SHOW_SECTIONS_IN_LENGTH_SORT(
     "MusicWheel", "ShowSectionsInLengthSort");
+ThemeMetric<std::string> SORT_NEWEST_BIN_NAMES(
+    "MusicWheel", "SortNewestBinNames");
+ThemeMetric<std::string> SORT_NEWEST_BIN_DAYS(
+    "MusicWheel", "SortNewestBinDays");
 
 bool SongCriteria::Matches(const Song* pSong) const {
   if (m_vsGroupNames.size() > 0 &&
@@ -534,6 +539,22 @@ void SongUtil::SortSongPointerArrayByLength(std::vector<Song*>& vpSongsInOut) {
   sort(vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByLength);
 }
 
+void SongUtil::SortSongPointerArrayByYear(std::vector<Song*>& vpSongsInOut) {
+  // Songs within a year keep their usual group/title ordering.
+  SortSongPointerArrayByGroupAndTitle(vpSongsInOut);
+
+  for (const Song* pSong : vpSongsInOut) {
+    const Group* pGroup = SONGMAN->GetGroup(pSong);
+    const int iYear = pGroup != nullptr ? pGroup->GetYearReleased() : 0;
+    // Songs whose group has no year sort after everything else.
+    g_mapSongSortVal[pSong] = iYear > 0 ? ssprintf("0%04d", iYear) : "1";
+  }
+  stable_sort(
+      vpSongsInOut.begin(), vpSongsInOut.end(),
+      CompareSongPointersBySortValueAscending);
+  g_mapSongSortVal.clear();
+}
+
 void AppendOctal(int n, int digits, std::string& out) {
   for (int p = digits - 1; p >= 0; --p) {
     const int shift = p * 3;
@@ -770,6 +791,8 @@ std::string SongUtil::GetSectionNameFromSongAndSort(
       return SONGMAN->SongToPreferredSortSectionName(pSong);
     case SORT_SERIES:
     case SORT_GROUP:
+    case SORT_YEAR:
+    case SORT_NEWEST:
       if (SONGMAN->GetGroup(pSong) == nullptr) {
         LOG->Warn(
             "SongUtil::GetSectionNameFromSongAndSort: %s has no group",
@@ -919,6 +942,76 @@ std::string SongUtil::GetSectionNameFromSongAndSort(
   }
 }
 
+/* The number of whole calendar days between the given date and today. */
+static int GetDaysSince(const DateTime& dt) {
+  tm then = {};
+  then.tm_year = dt.tm_year;
+  then.tm_mon = dt.tm_mon;
+  then.tm_mday = dt.tm_mday;
+  then.tm_isdst = -1;
+
+  const DateTime nowDateTime = DateTime::GetNowDateTime();
+  tm now = {};
+  now.tm_year = nowDateTime.tm_year;
+  now.tm_mon = nowDateTime.tm_mon;
+  now.tm_mday = nowDateTime.tm_mday;
+  now.tm_isdst = -1;
+
+  const time_t thenTime = mktime(&then);
+  const time_t nowTime = mktime(&now);
+  if (thenTime == (time_t)-1 || nowTime == (time_t)-1) {
+    return INT_MAX;
+  }
+
+  const double seconds = difftime(nowTime, thenTime);
+  if (seconds <= 0) {
+    return 0;
+  }
+  return (int)lrint(seconds / (60 * 60 * 24));
+}
+
+std::string SongUtil::GetNewestBinName(const Song* pSong) {
+  std::vector<std::string> vsNames;
+  split(SORT_NEWEST_BIN_NAMES, ",", vsNames);
+  if (vsNames.empty()) {
+    return std::string();
+  }
+
+  std::vector<std::string> vsDays;
+  split(SORT_NEWEST_BIN_DAYS, ",", vsDays);
+
+  const int iDaysSince = GetDaysSince(pSong->m_FirstSeen);
+  for (unsigned i = 0; i < vsDays.size() && i + 1 < vsNames.size(); ++i) {
+    if (iDaysSince < StringToInt(vsDays[i])) {
+      return THEME->GetString("MusicWheel", vsNames[i]);
+    }
+  }
+  // Anything older than the last threshold lands in the catch-all bin.
+  return THEME->GetString("MusicWheel", vsNames.back());
+}
+
+std::string SongUtil::GetParentSectionNameFromSongAndSort(
+    const Song* pSong, SortOrder so) {
+  if (pSong == nullptr) {
+    return std::string();
+  }
+
+  switch (so) {
+    case SORT_YEAR: {
+      const Group* pGroup = SONGMAN->GetGroup(pSong);
+      const int iYear = pGroup != nullptr ? pGroup->GetYearReleased() : 0;
+      if (iYear > 0) {
+        return ssprintf("%d", iYear);
+      }
+      return SORT_NOT_AVAILABLE.GetValue();
+    }
+    case SORT_NEWEST:
+      return GetNewestBinName(pSong);
+    default:
+      return std::string();
+  }
+}
+
 void SongUtil::SortSongPointerArrayBySectionName(
     std::vector<Song*>& vpSongsInOut, SortOrder so) {
   std::string sOther = SORT_OTHER.GetValue();
@@ -1035,6 +1128,65 @@ void SongUtil::SortByMostRecentlyPlayedForProfile(
       vpSongsInOut.begin(), vpSongsInOut.end(),
       CompareSongPointersBySortValueDescending);
   g_mapSongSortVal.clear();
+}
+
+void SongUtil::SortByMostRecentlyAdded(std::vector<Song*>& vpSongsInOut) {
+  // Songs first seen at the same time keep their usual group/title ordering.
+  SortSongPointerArrayByGroupAndTitle(vpSongsInOut);
+
+  for (const Song* s : vpSongsInOut) {
+    g_mapSongSortVal[s] = s->m_FirstSeen.GetString();
+  }
+  stable_sort(
+      vpSongsInOut.begin(), vpSongsInOut.end(),
+      CompareSongPointersBySortValueDescending);
+  g_mapSongSortVal.clear();
+}
+
+void SongUtil::SortSongPointerArrayByNewestGroup(
+    std::vector<Song*>& vpSongsInOut) {
+  // A group is as recent as its most recently added song.
+  std::map<const Group*, std::string> mapGroupRecency;
+  for (const Song* s : vpSongsInOut) {
+    const Group* pGroup = SONGMAN->GetGroup(s);
+    std::string& sRecency = mapGroupRecency[pGroup];
+    const std::string sFirstSeen = s->m_FirstSeen.GetString();
+    if (sFirstSeen > sRecency) {
+      sRecency = sFirstSeen;
+    }
+  }
+
+  SortByMostRecentlyAdded(vpSongsInOut);
+
+  for (const Song* s : vpSongsInOut) {
+    g_mapSongSortVal[s] = mapGroupRecency[SONGMAN->GetGroup(s)];
+  }
+  stable_sort(
+      vpSongsInOut.begin(), vpSongsInOut.end(),
+      CompareSongPointersBySortValueDescending);
+  g_mapSongSortVal.clear();
+}
+
+void SongUtil::TrimSongPointerArrayToGroupCount(
+    std::vector<Song*>& vpSongsInOut, int iMaxGroups) {
+  if (iMaxGroups <= 0) {
+    return;
+  }
+
+  int iGroups = 0;
+  const Group* pLastGroup = nullptr;
+  for (unsigned i = 0; i < vpSongsInOut.size(); ++i) {
+    const Group* pGroup = SONGMAN->GetGroup(vpSongsInOut[i]);
+    if (pGroup == pLastGroup) {
+      continue;
+    }
+    ++iGroups;
+    if (iGroups > iMaxGroups) {
+      vpSongsInOut.erase(vpSongsInOut.begin() + i, vpSongsInOut.end());
+      return;
+    }
+    pLastGroup = pGroup;
+  }
 }
 
 bool SongUtil::IsEditDescriptionUnique(

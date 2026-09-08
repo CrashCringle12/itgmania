@@ -163,6 +163,8 @@ static const char* SortOrderNames[] = {
     "Artist",
     "Genre",
     "Length",
+    "Year",
+    "Newest",
     "Meter",
     "BeginnerMeter",
     "EasyMeter",

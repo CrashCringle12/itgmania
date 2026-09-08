@@ -34,6 +34,7 @@
  * the directory hash) in order to find the cache file.
  */
 #define CACHE_INDEX SpecialFiles::CACHE_DIR + "index.cache"
+static const std::string FIRST_SEEN_KEY = "FirstSeen";
 
 SongCacheIndex*
     SONGINDEX;  // global and accessible from anywhere in our program
@@ -66,11 +67,17 @@ std::string SongCacheIndex::GetCacheFilePath(
       "%s%s/%s", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), s.c_str());
 }
 
-SongCacheIndex::SongCacheIndex() : Mutex("SongCacheIndex") { ReadCacheIndex(); }
+SongCacheIndex::SongCacheIndex() : Mutex("SongCacheIndex") {
+  ReadCacheIndex();
+  ReadFirstSeenIndex();
+}
 
 SongCacheIndex::~SongCacheIndex() {}
 
-void SongCacheIndex::ReadFromDisk() { ReadCacheIndex(); }
+void SongCacheIndex::ReadFromDisk() {
+  ReadCacheIndex();
+  ReadFirstSeenIndex();
+}
 
 static void EmptyDir(std::string dir) {
   ASSERT(dir[dir.size() - 1] == '/');
@@ -119,6 +126,7 @@ void SongCacheIndex::ReadCacheIndex() {
 void SongCacheIndex::SaveCacheIndex() {
   LockMutex L(Mutex);
   CacheIndex.WriteFile(CACHE_INDEX);
+  SaveFirstSeenIndex();
 }
 
 void SongCacheIndex::AddCacheIndex(const std::string& path, unsigned hash) {
@@ -152,6 +160,33 @@ std::string SongCacheIndex::MangleName(const std::string& Name) {
   return ret;
 }
 
+void SongCacheIndex::ReadFirstSeenIndex() {
+  LockMutex L(Mutex);
+  // Don't care if this fails; it won't exist on the first run.
+  FirstSeenIndex.ReadFile(SpecialFiles::SONG_FIRST_SEEN_PATH);
+}
+
+void SongCacheIndex::SaveFirstSeenIndex() {
+  LockMutex L(Mutex);
+  FirstSeenIndex.WriteFile(SpecialFiles::SONG_FIRST_SEEN_PATH);
+}
+
+DateTime SongCacheIndex::AddFirstSeen(const std::string& path) {
+  LockMutex L(Mutex);
+  DateTime dt;
+  std::string sFirstSeen;
+  if (FirstSeenIndex.GetValue(FIRST_SEEN_KEY, MangleName(path), sFirstSeen) &&
+      dt.FromString(sFirstSeen)) {
+    return dt;
+  }
+
+  dt = DateTime::GetNowDateTime();
+  FirstSeenIndex.SetValue(FIRST_SEEN_KEY, MangleName(path), dt.GetString());
+  if (!delay_save_cache) {
+    FirstSeenIndex.WriteFile(SpecialFiles::SONG_FIRST_SEEN_PATH);
+  }
+  return dt;
+}
 /*
  * (c) 2002-2003 Glenn Maynard
  * All rights reserved.
