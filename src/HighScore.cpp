@@ -746,9 +746,18 @@ class LunaHighScore : public Luna<HighScore> {
     rv.PushSelf(L);
     return 1;
   }
+
   static int GetPlayerGuid(T* p, lua_State* L) {
     PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
     lua_pushstring(L, p->GetPlayerGuid(pn).c_str());
+    return 1;
+  }
+  // Ordinary (non-routine) HighScores already persist the profile GUID in
+  // HighScore::sPlayerGuid.  Expose that scalar value separately from the
+  // existing routine-player GetPlayerGuid(PlayerNumber) binding so themes can
+  // identify/dedupe machine leaderboard entries reliably.
+  static int GetProfileGuid(T* p, lua_State* L) {
+    lua_pushstring(L, p->GetPlayerGuid().c_str());
     return 1;
   }
   DEFINE_METHOD(GetGrade, GetGrade())
@@ -767,6 +776,7 @@ class LunaHighScore : public Luna<HighScore> {
     ADD_METHOD(GetHoldNoteScore);
     ADD_METHOD(GetRadarValues);
     ADD_METHOD(GetPlayerGuid);
+    ADD_METHOD(GetProfileGuid);
     ADD_METHOD(GetGrade);
     ADD_METHOD(GetMaxCombo);
     ADD_METHOD(GetStageAward);
@@ -816,10 +826,26 @@ class LunaHighScoreList : public Luna<HighScoreList> {
     return 1;
   }
 
+  static int GetNumTimesPlayed(T* p, lua_State* L) {
+    lua_pushnumber(L, p->GetNumTimesPlayed());
+    return 1;
+  }
+
+  static int GetLastPlayed(T* p, lua_State* L) {
+    if (p->GetNumTimesPlayed() == 0) {
+      lua_pushnil(L);
+      return 1;
+    }
+    lua_pushstring(L, p->GetLastPlayed().GetString().c_str());
+    return 1;
+  }
+
   LunaHighScoreList() {
     ADD_METHOD(GetHighScores);
     ADD_METHOD(GetHighestScoreOfName);
     ADD_METHOD(GetRankOfName);
+    ADD_METHOD(GetNumTimesPlayed);
+    ADD_METHOD(GetLastPlayed);
   }
 };
 
