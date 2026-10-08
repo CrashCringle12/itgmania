@@ -63,12 +63,22 @@ void ScreenMiniMenu::Init() {
 void ScreenMiniMenu::BeginScreen() {
   ASSERT(g_pMenuDef != nullptr);
 
+  const int iInitialRowCode = g_pMenuDef->iInitialRowCode;
   LoadMenu(g_pMenuDef);
   m_SMSendOnOK = g_SendOnOK;
   m_SMSendOnCancel = g_SendOnCancel;
   g_pMenuDef = nullptr;
 
   ScreenOptions::BeginScreen();
+
+  for (size_t r = 0; r < m_vMenuRows.size(); ++r) {
+    if (iInitialRowCode != -1 && m_vMenuRows[r].iRowCode == iInitialRowCode &&
+        m_pRows[r]->GetRowDef().IsEnabledForPlayer(
+            GAMESTATE->GetMasterPlayerNumber())) {
+      MoveRowAbsolute(GAMESTATE->GetMasterPlayerNumber(), (int)r);
+      break;
+    }
+  }
 
   /* HACK: An OptionRow exits if a screen is set. ScreenMiniMenu is always
    * pushed, so we don't set screens to load. Set a dummy screen, so

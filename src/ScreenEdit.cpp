@@ -116,6 +116,7 @@ AutoScreenMessage(SM_BackFromStepsInformation);
 AutoScreenMessage(SM_BackFromStepsData);
 AutoScreenMessage(SM_BackFromOptions);
 AutoScreenMessage(SM_BackFromSongInformation);
+AutoScreenMessage(SM_BackFromInformationTextEntry);
 AutoScreenMessage(SM_BackFromBGChange);
 AutoScreenMessage(SM_BackFromInsertTapAttack);
 AutoScreenMessage(SM_BackFromInsertTapAttackPlayerOptions);
@@ -2251,11 +2252,24 @@ void ScreenEdit::MakeFilteredMenuDef(const MenuDef* pDef, MenuDef& menu) {
 
 void ScreenEdit::EditMiniMenu(
     const MenuDef* pDef, ScreenMessage SM_SendOnOK,
-    ScreenMessage SM_SendOnCancel) {
+    ScreenMessage SM_SendOnCancel, int iInitialRowCode) {
   // Reload options.
   MenuDef menu("");
   MakeFilteredMenuDef(pDef, menu);
+  menu.iInitialRowCode = iInitialRowCode;
   ScreenMiniMenu::MiniMenu(&menu, SM_SendOnOK, SM_SendOnCancel);
+}
+
+void ScreenEdit::InformationTextEntry(
+    ScreenMessage smSendOnPop, std::string sQuestion,
+    std::string sInitialAnswer, int iMaxInputLength,
+    bool (*Validate)(const std::string&, std::string&),
+    void (*OnOK)(const std::string&), void (*OnCancel)()) {
+  m_InformationTextEntryMessage =
+      smSendOnPop == SM_None ? SM_BackFromInformationTextEntry : smSendOnPop;
+  ScreenTextEntry::TextEntry(
+      m_InformationTextEntryMessage, sQuestion, sInitialAnswer, iMaxInputLength,
+      Validate, OnOK, OnCancel);
 }
 
 void ScreenEdit::Update(float fDeltaTime) {
@@ -4733,9 +4747,10 @@ void ScreenEdit::HandleScreenMessage(const ScreenMessage SM) {
     if (!ScreenMiniMenu::s_bCancelled) {
       HandleAdjustSyncMenuChoice(ScreenMiniMenu::s_iLastRowCode);
     }
-  } else if (SM == SM_BackFromDifficultyMeterChange) {
-    int i = StringToInt(ScreenTextEntry::s_sLastAnswer);
-    GAMESTATE->m_pCurSteps[PLAYER_1]->SetMeter(i);
+  } else if (
+      SM == SM_BackFromDifficultyMeterChange &&
+      !ScreenTextEntry::s_bCancelledLast) {
+    // ChangeStepMeter already applied and clamped the confirmed value.
     SetDirty(true);
   } else if (
       SM == SM_BackFromBeat0Change && !ScreenTextEntry::s_bCancelledLast) {
@@ -5396,6 +5411,25 @@ void ScreenEdit::HandleScreenMessage(const ScreenMessage SM) {
   }
 
   ScreenWithMenuElements::HandleScreenMessage(SM);
+
+  if (!m_InformationTextEntryMessage.empty() &&
+      SM == m_InformationTextEntryMessage) {
+    const ScreenMessage parent = m_InformationMenuReturnMessage;
+    const int row = m_iInformationMenuReturnRow;
+    m_InformationTextEntryMessage.clear();
+    m_InformationMenuReturnMessage.clear();
+    m_iInformationMenuReturnRow = -1;
+
+    if (!ScreenTextEntry::s_bCancelledLast) {
+      if (parent == SM_BackFromSongInformation) {
+        HandleMainMenuChoice(edit_song_info, std::vector<int>(), row);
+      } else if (parent == SM_BackFromStepsInformation) {
+        HandleMainMenuChoice(edit_steps_information, std::vector<int>(), row);
+      } else if (parent == SM_BackFromTimingDataInformation) {
+        DisplayTimingMenu(row);
+      }
+    }
+  }
 }
 
 void ScreenEdit::SetDirty(bool dirty) {
@@ -5671,7 +5705,7 @@ inline float ScreenEdit::GetBeat() {
 
 inline int ScreenEdit::GetRow() { return BeatToNoteRow(GetBeat()); }
 
-void ScreenEdit::DisplayTimingMenu() {
+void ScreenEdit::DisplayTimingMenu(int iInitialRowCode) {
   int row = GetRow();
   const TimingData& pTime = GetAppropriateTiming();
   bool bHasSpeedOnThisRow = pTime.GetSpeedSegmentAtRow(row)->GetRow() == row;
@@ -5716,7 +5750,9 @@ void ScreenEdit::DisplayTimingMenu() {
   g_TimingDataInformation.rows[speed_wait].bEnabled = bHasSpeedOnThisRow;
   g_TimingDataInformation.rows[speed_mode].bEnabled = bHasSpeedOnThisRow;
 
-  EditMiniMenu(&g_TimingDataInformation, SM_BackFromTimingDataInformation);
+  EditMiniMenu(
+      &g_TimingDataInformation, SM_BackFromTimingDataInformation, SM_None,
+      iInitialRowCode);
 }
 
 void ScreenEdit::DisplayTimingChangeMenu() {
@@ -5838,7 +5874,7 @@ int ScreenEdit::GetSongOrNotesEnd() {
 }
 
 void ScreenEdit::HandleMainMenuChoice(
-    MainMenuChoice c, const std::vector<int>& iAnswers) {
+    MainMenuChoice c, const std::vector<int>& iAnswers, int iInitialRowCode) {
   GAMESTATE->SetProcessedTimingData(m_pSteps->GetTimingData());
   switch (c) {
     DEFAULT_FAIL(c);
@@ -5939,7 +5975,9 @@ void ScreenEdit::HandleMainMenuChoice(
           (EDIT_MODE.GetValue() >= EditMode_Full);
       g_StepsInformation.rows[step_music].SetOneUnthemedChoice(
           pSteps->GetMusicFile());
-      EditMiniMenu(&g_StepsInformation, SM_BackFromStepsInformation, SM_None);
+      EditMiniMenu(
+          &g_StepsInformation, SM_BackFromStepsInformation, SM_None,
+          iInitialRowCode);
     } break;
     case view_steps_data: {
       float fMusicSeconds = m_pSoundMusic->GetLengthSeconds();
@@ -6062,7 +6100,9 @@ void ScreenEdit::HandleMainMenuChoice(
       g_SongInformation.rows[max_bpm].SetOneUnthemedChoice(
           std::to_string(pSong->m_fSpecifiedBPMMax));
 
-      EditMiniMenu(&g_SongInformation, SM_BackFromSongInformation);
+      EditMiniMenu(
+          &g_SongInformation, SM_BackFromSongInformation, SM_None,
+          iInitialRowCode);
     } break;
     case edit_timing_data: {
       DisplayTimingMenu();
@@ -6789,6 +6829,8 @@ static LocalizedString ENTER_NEW_STEP_MUSIC(
     "ScreenEdit", "Enter the music file for this chart.");
 void ScreenEdit::HandleStepsInformationChoice(
     StepsInformationChoice c, const std::vector<int>& iAnswers) {
+  m_InformationMenuReturnMessage = SM_BackFromStepsInformation;
+  m_iInformationMenuReturnRow = c;
   Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
   Difficulty dc = (Difficulty)iAnswers[difficulty];
   pSteps->SetDifficulty(dc);
@@ -6796,14 +6838,14 @@ void ScreenEdit::HandleStepsInformationChoice(
 
   switch (c) {
     case chartname: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_NEW_CHART_NAME, m_pSteps->GetChartName(),
           MAX_STEPS_DESCRIPTION_LENGTH, SongUtil::ValidateCurrentStepsChartName,
           ChangeChartName, nullptr);
       break;
     }
     case description: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_NEW_DESCRIPTION, m_pSteps->GetDescription(),
           MAX_STEPS_DESCRIPTION_LENGTH,
           SongUtil::ValidateCurrentStepsDescription, ChangeDescription,
@@ -6811,38 +6853,38 @@ void ScreenEdit::HandleStepsInformationChoice(
       break;
     }
     case chartstyle: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_NEW_CHART_STYLE, m_pSteps->GetChartStyle(), 255,
           nullptr, ChangeChartStyle, nullptr);
       break;
     }
     case step_credit: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_NEW_STEP_AUTHOR, m_pSteps->GetCredit(), 255,
           SongUtil::ValidateCurrentStepsCredit, ChangeStepCredit, nullptr);
       break;
     }
     case meter: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromDifficultyMeterChange, ENTER_NEW_METER,
           ssprintf("%d", m_pSteps->GetMeter()), 4, ScreenTextEntry::IntValidate,
           ChangeStepMeter, nullptr);
       break;
     }
     case step_min_bpm: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_MIN_BPM, std::to_string(pSteps->GetMinBPM()), 20,
           ScreenTextEntry::FloatValidate, ChangeStepsMinBPM, nullptr);
       break;
     }
     case step_max_bpm: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_MAX_BPM, std::to_string(pSteps->GetMaxBPM()), 20,
           ScreenTextEntry::FloatValidate, ChangeStepsMaxBPM, nullptr);
       break;
     }
     case step_music: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromStepMusicChange, ENTER_NEW_STEP_MUSIC,
           m_pSteps->GetMusicFile(), 255, SongUtil::ValidateCurrentStepsMusic,
           ChangeStepMusic, nullptr);
@@ -6875,80 +6917,82 @@ static LocalizedString ENTER_PREVIEW_LENGTH(
     "ScreenEdit", "Enter a new preview length.");
 void ScreenEdit::HandleSongInformationChoice(
     SongInformationChoice c, const std::vector<int>& iAnswers) {
+  m_InformationMenuReturnMessage = SM_BackFromSongInformation;
+  m_iInformationMenuReturnRow = c;
   Song* pSong = GAMESTATE->m_pCurSong;
   pSong->m_DisplayBPMType = static_cast<DisplayBPM>(iAnswers[display_bpm]);
 
   switch (c) {
     case main_title:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_MAIN_TITLE, pSong->m_sMainTitle, 100, nullptr,
           ChangeMainTitle, nullptr);
       break;
     case sub_title:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_SUB_TITLE, pSong->m_sSubTitle, 100, nullptr,
           ChangeSubTitle, nullptr);
       break;
     case artist:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_ARTIST, pSong->m_sArtist, 100, nullptr, ChangeArtist,
           nullptr);
       break;
     case genre:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_GENRE, pSong->m_sGenre, 100, nullptr, ChangeGenre,
           nullptr);
       break;
     case credit:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_CREDIT, pSong->m_sCredit, 100, nullptr, ChangeCredit,
           nullptr);
       break;
     case preview:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_PREVIEW, pSong->m_PreviewFile, 100,
           SongUtil::ValidateCurrentSongPreview, ChangePreview, nullptr);
       break;
     case main_title_transliteration:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_MAIN_TITLE_TRANSLIT, pSong->m_sMainTitleTranslit, 100,
           nullptr, ChangeMainTitleTranslit, nullptr);
       break;
     case sub_title_transliteration:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_SUB_TITLE_TRANSLIT, pSong->m_sSubTitleTranslit, 100,
           nullptr, ChangeSubTitleTranslit, nullptr);
       break;
     case artist_transliteration:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100,
           nullptr, ChangeArtistTranslit, nullptr);
       break;
     case last_second_hint:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_LAST_SECOND_HINT,
           std::to_string(pSong->GetSpecifiedLastSecond()), 20,
           ScreenTextEntry::FloatValidate, ChangeLastSecondHint, nullptr);
       break;
     case preview_start:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_PREVIEW_START,
           std::to_string(pSong->m_fMusicSampleStartSeconds), 20,
           ScreenTextEntry::FloatValidate, ChangePreviewStart, nullptr);
       break;
     case preview_length:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_PREVIEW_LENGTH,
           std::to_string(pSong->m_fMusicSampleLengthSeconds), 20,
           ScreenTextEntry::FloatValidate, ChangePreviewLength, nullptr);
       break;
     case min_bpm:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_MIN_BPM, std::to_string(pSong->m_fSpecifiedBPMMin), 20,
           ScreenTextEntry::FloatValidate, ChangeMinBPM, nullptr);
       break;
     case max_bpm:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_None, ENTER_MAX_BPM, std::to_string(pSong->m_fSpecifiedBPMMax), 20,
           ScreenTextEntry::FloatValidate, ChangeMaxBPM, nullptr);
       break;
@@ -6987,30 +7031,32 @@ static LocalizedString CONFIRM_TIMING_ERASE(
     "ScreenEdit", "Are you sure you want to erase this chart's timing data?");
 void ScreenEdit::HandleTimingDataInformationChoice(
     TimingDataInformationChoice c, const std::vector<int>& iAnswers) {
+  m_InformationMenuReturnMessage = SM_BackFromTimingDataInformation;
+  m_iInformationMenuReturnRow = c;
   switch (c) {
     DEFAULT_FAIL(c);
     case beat_0_offset:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromBeat0Change, ENTER_BEAT_0_OFFSET,
           std::to_string(GetAppropriateTiming().m_fBeat0OffsetInSeconds), 20);
       break;
     case bpm:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromBPMChange, ENTER_BPM_VALUE,
           std::to_string(GetAppropriateTiming().GetBPMAtBeat(GetBeat())), 10);
       break;
     case stop:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromStopChange, ENTER_STOP_VALUE,
           std::to_string(GetAppropriateTiming().GetStopAtBeat(GetBeat())), 10);
       break;
     case delay:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromDelayChange, ENTER_DELAY_VALUE,
           std::to_string(GetAppropriateTiming().GetDelayAtBeat(GetBeat())), 10);
       break;
     case tickcount:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromTickcountChange, ENTER_TICKCOUNT_VALUE,
           ssprintf("%d", GetAppropriateTiming().GetTickcountAtBeat(GetBeat())),
           2);
@@ -7018,25 +7064,25 @@ void ScreenEdit::HandleTimingDataInformationChoice(
     case combo: {
       const ComboSegment* cs =
           GetAppropriateTiming().GetComboSegmentAtBeat(GetBeat());
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromComboChange, ENTER_COMBO_VALUE,
           ssprintf("%d/%d", cs->GetCombo(), cs->GetMissCombo()), 7);
       break;
     }
     case label:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromLabelChange, ENTER_LABEL_VALUE,
           ssprintf(
               "%s", GetAppropriateTiming().GetLabelAtBeat(GetBeat()).c_str()),
           64);
       break;
     case warp:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromWarpChange, ENTER_WARP_VALUE,
           std::to_string(GetAppropriateTiming().GetWarpAtBeat(GetBeat())), 10);
       break;
     case speed_percent:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromSpeedPercentChange, ENTER_SPEED_PERCENT_VALUE,
           std::to_string(
               GetAppropriateTiming()
@@ -7045,7 +7091,7 @@ void ScreenEdit::HandleTimingDataInformationChoice(
           10);
       break;
     case scroll:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromScrollChange, ENTER_SCROLL_VALUE,
           std::to_string(
               GetAppropriateTiming()
@@ -7054,7 +7100,7 @@ void ScreenEdit::HandleTimingDataInformationChoice(
           10);
       break;
     case speed_wait:
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromSpeedWaitChange, ENTER_SPEED_WAIT_VALUE,
           std::to_string(
               GetAppropriateTiming()
@@ -7063,13 +7109,13 @@ void ScreenEdit::HandleTimingDataInformationChoice(
           10);
       break;
     case speed_mode: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromSpeedModeChange, ENTER_SPEED_MODE_VALUE, "", 3);
 
       break;
     }
     case fake: {
-      ScreenTextEntry::TextEntry(
+      InformationTextEntry(
           SM_BackFromFakeChange, ENTER_FAKE_VALUE,
           std::to_string(GetAppropriateTiming().GetFakeAtBeat(GetBeat())), 10);
       break;

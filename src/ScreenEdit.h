@@ -307,7 +307,7 @@ class ScreenEdit : public ScreenWithMenuElements {
   void DoHelp();
 
   /** @brief Display the TimingData menu for editing song and step timing. */
-  void DisplayTimingMenu();
+  void DisplayTimingMenu(int iInitialRowCode = -1);
 
   /** @brief Convert a screen y coordinate to the beat drawn at that point. */
   float MouseYToBeat(float fScreenY);
@@ -505,7 +505,9 @@ class ScreenEdit : public ScreenWithMenuElements {
     MAIN_MENU_CHOICE_INVALID
   };
   int GetSongOrNotesEnd();
-  void HandleMainMenuChoice(MainMenuChoice c, const std::vector<int>& iAnswers);
+  void HandleMainMenuChoice(
+      MainMenuChoice c, const std::vector<int>& iAnswers,
+      int iInitialRowCode = -1);
   void HandleMainMenuChoice(MainMenuChoice c) {
     const std::vector<int> v;
     HandleMainMenuChoice(c, v);
@@ -822,7 +824,18 @@ class ScreenEdit : public ScreenWithMenuElements {
   void MakeFilteredMenuDef(const MenuDef* pDef, MenuDef& menu);
   void EditMiniMenu(
       const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None,
-      ScreenMessage SM_SendOnCancel = SM_None);
+      ScreenMessage SM_SendOnCancel = SM_None, int iInitialRowCode = -1);
+
+  // The "Information" menus close out when you're typing in the mini menu.
+  // Remember the completion message so we reopen the menu on confirmation.
+  void InformationTextEntry(
+      ScreenMessage smSendOnPop, std::string sQuestion,
+      std::string sInitialAnswer, int iMaxInputLength,
+      bool (*Validate)(const std::string&, std::string&) = nullptr,
+      void (*OnOK)(const std::string&) = nullptr, void (*OnCancel)() = nullptr);
+  ScreenMessage m_InformationMenuReturnMessage;
+  ScreenMessage m_InformationTextEntryMessage;
+  int m_iInformationMenuReturnRow = -1;
 
   int attackInProcess;
   int modInProcess;

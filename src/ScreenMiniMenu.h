@@ -204,6 +204,7 @@ struct MenuRowDef {
 struct MenuDef {
   std::string sClassName;
   std::vector<MenuRowDef> rows;
+  int iInitialRowCode = -1;
 
   MenuDef(
       std::string c, MenuRowDef r0 = MenuRowDef(), MenuRowDef r1 = MenuRowDef(),
