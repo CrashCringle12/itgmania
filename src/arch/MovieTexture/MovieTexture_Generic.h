@@ -31,6 +31,9 @@ class MovieDecoder {
   virtual void Close() = 0;
   virtual void Rewind() = 0;
   virtual void Rollover() = 0;
+  // Called with the decoding thread stopped. Returns the actual movie time,
+  // or a negative value on failure. Leaves the target frame ready to display.
+  virtual float Seek(float seconds, bool loop) = 0;
 
   // Decode the next frame.
   // Return 1 on success, 0 on EOF, -1 on fatal error, -2 on cancel.
@@ -134,6 +137,7 @@ class MovieTexture_Generic : public RageMovieTexture {
   float clock_;
 
   void UpdateFrame();
+  void StartDecoding();
 
   void CreateTexture();
   void DestroyTexture();

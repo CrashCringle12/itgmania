@@ -65,6 +65,18 @@ std::string MovieTexture_Generic::Init() {
   CreateFrameRects();
   decoder_->SetLooping(loop_);
 
+  StartDecoding();
+
+  LOG->Trace(
+      "Resolution: %ix%i (%ix%i, %ix%i)", m_iSourceWidth, m_iSourceHeight,
+      m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
+
+  CHECKPOINT_M("Generic initialization completed. No errors found.");
+
+  return std::string();
+}
+
+void MovieTexture_Generic::StartDecoding() {
   decoding_thread_ = std::make_unique<std::thread>([this]() {
     LOG->Trace(
         "Beginning to decode video file \"%s\"", GetID().filename.c_str());
@@ -79,20 +91,14 @@ std::string MovieTexture_Generic::Init() {
         "Done decoding video file \"%s\", took %f seconds",
         GetID().filename.c_str(), timer.Ago());
   });
-
-  LOG->Trace(
-      "Resolution: %ix%i (%ix%i, %ix%i)", m_iSourceWidth, m_iSourceHeight,
-      m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
-
-  CHECKPOINT_M("Generic initialization completed. No errors found.");
-
-  return std::string();
 }
 
 MovieTexture_Generic::~MovieTexture_Generic() {
   if (decoder_) {
     decoder_->Cancel();
-    decoding_thread_->join();
+    if (decoding_thread_ && decoding_thread_->joinable()) {
+      decoding_thread_->join();
+    }
     decoder_->Close();
   }
 
@@ -417,20 +423,26 @@ EffectMode MovieTexture_Generic::GetEffectMode(
 void MovieTexture_Generic::Reload() {}
 
 void MovieTexture_Generic::SetPosition(float seconds) {
-  // TODO: The only non-zero use case of this function would be practice mode.
-  // Implement this by mathing out fSeconds and frame counts to seek the
-  // video.
-  if (seconds != 0) {
-    LOG->Warn(
-        "MovieTexture_Generic::SetPosition(%f): non-0 seeking unsupported; "
-        "ignored",
-        seconds);
+  if (failure_ || !std::isfinite(seconds)) {
     return;
   }
 
   LOG->Trace("Seek to %f", seconds);
-  clock_ = 0;
-  decoder_->Rewind();
+  // Stop the worker before resetting its buffers and decoding to the target.
+  // Skipped frames are decoded without color conversion or texture uploads.
+  decoder_->Cancel();
+  decoding_thread_->join();
+  clock_ = decoder_->Seek(std::max(seconds, 0.0f), loop_);
+  finished_ = false;
+  if (clock_ < 0) {
+    failure_ = true;
+    LOG->Warn("Could not seek movie %s", GetID().filename.c_str());
+    return;
+  }
+  if (decoder_->IsCurrentFrameReady()) {
+    UpdateFrame();
+  }
+  StartDecoding();
 }
 
 uintptr_t MovieTexture_Generic::GetTexHandle() const {

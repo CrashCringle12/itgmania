@@ -2,6 +2,7 @@
 
 #include <cerrno>
 #include <chrono>
+#include <cmath>
 #include <cstdarg>
 #include <cstddef>
 #include <cstdint>
@@ -440,6 +441,14 @@ int MovieDecoder_FFMpeg::DecodePacketToFrame() {
 }
 
 int MovieDecoder_FFMpeg::GetFrame(RageSurface* surface_out) {
+  // Seeking only needs to release the frame back to the decoding buffer.
+  if (surface_out == nullptr) {
+    const auto index = (display_frame_num_ + offset_) % frame_buffer_.size();
+    std::lock_guard<std::mutex> lock(frame_buffer_[index]->lock);
+    frame_buffer_[index]->displayed = true;
+    ++display_frame_num_;
+    return 1;
+  }
   avcodec::AVFrame pict;
   pict.data[0] = (unsigned char*)surface_out->pixels;
   pict.linesize[0] = surface_out->pitch;
@@ -673,6 +682,79 @@ void MovieDecoder_FFMpeg::Close() {
 void MovieDecoder_FFMpeg::Rewind() {
   display_frame_num_ = 0;
   reset_ = true;
+}
+
+float MovieDecoder_FFMpeg::Seek(float seconds, bool loop) {
+  // The caller has joined the worker, so all decoder state is exclusively
+  // ours until Seek returns. Decode forward to preserve inter-frame references
+  // and the packet cache used by looping movies.
+  cancel_ = false;
+  reset_ = false;
+  end_of_movie_ = false;
+  avcodec::avcodec_flush_buffers(av_stream_codec_);
+  if (!end_of_file_) {
+    if (avcodec::av_seek_frame(
+            av_format_context_, av_stream_->index,
+            av_stream_->start_time == AV_NOPTS_VALUE ? 0
+                                                     : av_stream_->start_time,
+            AVSEEK_FLAG_BACKWARD) < 0) {
+      return -1;
+    }
+    packet_buffer_.clear();
+  }
+  for (auto& frame : frame_buffer_) {
+    frame->displayed = true;
+  }
+  offset_ = next_offset_ = display_frame_num_ = 0;
+  packet_buffer_position_ = frame_buffer_position_ = 0;
+
+  const float duration =
+      av_stream_->duration > 0
+          ? static_cast<float>(
+                av_stream_->duration * av_q2d(av_stream_->time_base))
+          : 0.0f;
+  if (loop && duration > 0) {
+    seconds = std::fmod(seconds, duration);
+  }
+
+  float last_timestamp = 0;
+  float frame_duration =
+      av_stream_->avg_frame_rate.num > 0
+          ? static_cast<float>(
+                av_q2d(avcodec::av_inv_q(av_stream_->avg_frame_rate)))
+          : 1.0f / 30;
+  while (true) {
+    const int status = DecodeFrame();
+    if (status < 0 || frame_buffer_.empty()) {
+      return -1;
+    }
+    if (end_of_file_ && display_frame_num_ >= total_frames_) {
+      const float actual_duration = last_timestamp + frame_duration;
+      if (loop && actual_duration > 0) {
+        return Seek(std::fmod(seconds, actual_duration), false);
+      }
+      // A non-looping movie holds its final frame past the end.
+      display_frame_num_ = total_frames_ - 1;
+      frame_buffer_[(display_frame_num_ + offset_) % frame_buffer_.size()]
+          ->displayed = false;
+      return last_timestamp;
+    }
+    if (!IsCurrentFrameReady()) {
+      continue;
+    }
+    if (packet_buffer_position_ >= total_frames_ - 1 && !end_of_file_) {
+      ++total_frames_;
+    }
+    const float timestamp = GetTimestamp();
+    if (timestamp >= seconds) {
+      return seconds;
+    }
+    if (timestamp > last_timestamp) {
+      frame_duration = timestamp - last_timestamp;
+    }
+    last_timestamp = timestamp;
+    GetFrame(nullptr);
+  }
 }
 
 void MovieDecoder_FFMpeg::Rollover() {

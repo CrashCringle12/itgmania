@@ -3,6 +3,7 @@
 #ifndef RAGE_MOVIE_TEXTURE_FFMPEG_H
 #define RAGE_MOVIE_TEXTURE_FFMPEG_H
 
+#include <atomic>
 #include <cstdint>
 #include <limits>
 #include <mutex>
@@ -85,6 +86,7 @@ class MovieDecoder_FFMpeg : public MovieDecoder {
   // Like rewind, but handles the case that a looping video reached the end,
   // and the next frame to display is the first one of the movie.
   void Rollover();
+  float Seek(float seconds, bool loop);
 
   // This draws a frame from the buffer onto the provided RageSurface.
   // Returns 1 if the last frame of the movie, -1 if there's an issue
@@ -183,7 +185,7 @@ class MovieDecoder_FFMpeg : public MovieDecoder {
   int end_of_file_;
 
   // The various flags used to signal the decoding thread to do something.
-  bool cancel_ = false;
+  std::atomic<bool> cancel_{false};
   bool looping_ = false;
   bool reset_ = false;
   bool end_of_movie_ = false;
