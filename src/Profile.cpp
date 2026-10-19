@@ -1697,6 +1697,12 @@ ProfileLoadResult Profile::LoadStatsProtobufFromDir(
     return ProfileLoadResult_FailedTampered;
   }
 
+  if (!doc.has_general_data() || !doc.has_song_scores() ||
+      !doc.has_course_scores() || !doc.has_legacy_sections()) {
+    LOG->Warn("Incomplete protobuf stats document '%s'", sStatsFile.c_str());
+    return ProfileLoadResult_FailedTampered;
+  }
+
   // Match XML load behavior: Editable.ini values should remain authoritative.
   std::string sName = m_sDisplayName;
   std::string sCharacterID = m_sCharacterID;
@@ -1772,7 +1778,9 @@ ProfileLoadResult Profile::LoadStatsProtobufFromDir(
     m_iTotalSessionSeconds = general.total_session_seconds();
     m_iTotalGameplaySeconds = general.total_gameplay_seconds();
     m_fTotalCaloriesBurned = general.total_calories_burned();
-    m_GoalType = GoalType(general.goal_type());
+    if (general.goal_type() >= 0 && general.goal_type() < NUM_GoalType) {
+      m_GoalType = GoalType(general.goal_type());
+    }
     m_iGoalCalories = general.goal_calories();
     m_iGoalSeconds = general.goal_seconds();
     m_sLastPlayedMachineGuid = general.last_played_machine_guid();
@@ -2129,60 +2137,169 @@ XNode* Profile::SaveStatsXmlCreateNode() const {
   return xml;
 }
 
-bool Profile::SaveStatsXmlToDir(std::string sDir, bool bSignData) const {
-  LOG->Trace("SaveStatsXmlToDir: %s", sDir.c_str());
-  std::unique_ptr<XNode> xml(SaveStatsXmlCreateNode());
-
-  sDir = sDir + PROFILEMAN->GetStatsPrefix();
-  // Save stats.xml
-  std::string fn = sDir + (g_bProfileDataCompress ? STATS_XML_GZ : STATS_XML);
-
+// FILEMAN->Move uses CRT rename on Windows, which cannot replace an existing
+// destination. Use RageFile's normal write path, which supports replacement,
+// and verify the closed destination before removing the source.
+static bool MoveReplacingProfileStats(
+    const std::string& source, const std::string& destination) {
+  if (!FileCopy(source, destination)) {
+    return false;
+  }
   {
-    std::string sError;
-    RageFile f;
-    if (!f.Open(fn, RageFile::WRITE)) {
-      LuaHelpers::ReportScriptErrorFmt(
-          "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str());
+    RageFile original;
+    RageFile replacement;
+    if (!original.Open(source, RageFile::READ) ||
+        !replacement.Open(destination, RageFile::READ)) {
       return false;
     }
-
-    if (g_bProfileDataCompress) {
-      RageFileObjGzip gzip(&f);
-      gzip.Start();
-      if (!XmlFileUtil::SaveToFile(xml.get(), gzip, "", false)) {
+    for (;;) {
+      std::string expected;
+      std::string actual;
+      if (original.Read(expected, 32 * 1024) == -1 ||
+          replacement.Read(actual, 32 * 1024) == -1 || expected != actual) {
+        LOG->Warn(
+            "Could not verify profile file replacement '%s'",
+            destination.c_str());
         return false;
       }
-
-      if (gzip.Finish() == -1) {
-        return false;
-      }
-
-      /* After successfully saving STATS_XML_GZ, remove any stray STATS_XML. */
-      if (FILEMAN->IsAFile(sDir + STATS_XML)) {
-        FILEMAN->Remove(sDir + STATS_XML);
-      }
-    } else {
-      if (!XmlFileUtil::SaveToFile(xml.get(), f, "", false)) {
-        return false;
-      }
-
-      /* After successfully saving STATS_XML, remove any stray STATS_XML_GZ. */
-      if (FILEMAN->IsAFile(sDir + STATS_XML_GZ)) {
-        FILEMAN->Remove(sDir + STATS_XML_GZ);
+      if (expected.empty()) {
+        break;
       }
     }
   }
+  return FILEMAN->Remove(source);
+}
 
-  if (bSignData) {
-    std::string sStatsXmlSigFile = fn + SIGNATURE_APPEND;
-    CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
-
-    // Save the "don't share" file
-    std::string sDontShareFile = sDir + DONT_SHARE_SIG;
-    CryptManager::SignFileToFile(sStatsXmlSigFile, sDontShareFile);
+// Publish only closed, flushed files. The inactive format is archived only
+// after the new data and any required signatures have been written
+// successfully.
+static bool PublishProfileStats(
+    const std::string& dir, const std::string& name, const std::string& pending,
+    bool sign) {
+  const std::string destination = dir + name;
+  const std::string signature = destination + SIGNATURE_APPEND;
+  const std::string pending_signature = pending + SIGNATURE_APPEND;
+  const std::string pending_dont_share = pending + ".dontshare";
+  if (sign) {
+    CryptManager::SignFileToFile(pending, pending_signature);
+    if (!CryptManager::VerifyFileWithFile(pending, pending_signature)) {
+      return false;
+    }
+    CryptManager::SignFileToFile(pending_signature, pending_dont_share);
+    if (!CryptManager::VerifyFileWithFile(
+            pending_signature, pending_dont_share)) {
+      return false;
+    }
   }
-
+  const std::vector<std::string> active_names = {
+      STATS_XML,
+      STATS_XML_GZ,
+      STATS_PROTOBUF,
+      STATS_XML + SIGNATURE_APPEND,
+      STATS_XML_GZ + SIGNATURE_APPEND,
+      STATS_PROTOBUF + SIGNATURE_APPEND,
+      DONT_SHARE_SIG};
+  std::vector<std::string> originals;
+  for (const auto& active : active_names) {
+    if (FILEMAN->IsAFile(dir + active)) {
+      if (!FileCopy(dir + active, dir + active + ".bak")) {
+        return false;
+      }
+      originals.push_back(active);
+    }
+  }
+  const auto publish = [&]() -> bool {
+    if (!MoveReplacingProfileStats(pending, destination)) {
+      return false;
+    }
+    // Keep the previous don't-share signature with each archived format.
+    // It must be copied before replacing the active signature below.
+    for (const auto& other : {STATS_XML, STATS_XML_GZ, STATS_PROTOBUF}) {
+      if (other == name || !FILEMAN->IsAFile(dir + other)) {
+        continue;
+      }
+      if (FILEMAN->IsAFile(dir + DONT_SHARE_SIG) &&
+          !FileCopy(dir + DONT_SHARE_SIG, dir + other + ".bak.dontshare.sig")) {
+        return false;
+      }
+    }
+    if (sign) {
+      if (!MoveReplacingProfileStats(pending_signature, signature) ||
+          !MoveReplacingProfileStats(
+              pending_dont_share, dir + DONT_SHARE_SIG)) {
+        return false;
+      }
+    } else {
+      FILEMAN->Remove(signature);
+      FILEMAN->Remove(dir + DONT_SHARE_SIG);
+    }
+    for (const auto& other : {STATS_XML, STATS_XML_GZ, STATS_PROTOBUF}) {
+      if (other == name || !FILEMAN->IsAFile(dir + other)) {
+        continue;
+      }
+      const std::string source = dir + other;
+      const std::string backup = source + ".bak";
+      if (!MoveReplacingProfileStats(source, backup)) {
+        LOG->Warn(
+            "Could not archive alternate profile stats '%s'", source.c_str());
+        return false;
+      }
+      if (FILEMAN->IsAFile(source + SIGNATURE_APPEND)) {
+        if (!MoveReplacingProfileStats(
+                source + SIGNATURE_APPEND, backup + SIGNATURE_APPEND)) {
+          return false;
+        }
+      } else {
+        FILEMAN->Remove(backup + SIGNATURE_APPEND);
+        FILEMAN->Remove(backup + ".dontshare.sig");
+      }
+    }
+    return true;
+  };
+  if (!publish()) {
+    for (const auto& active : active_names) {
+      if (std::find(originals.begin(), originals.end(), active) !=
+          originals.end()) {
+        if (!FileCopy(dir + active + ".bak", dir + active)) {
+          LOG->Warn(
+              "Profile restore failed; preserved '%s'",
+              (dir + active + ".bak").c_str());
+        }
+      } else {
+        FILEMAN->Remove(dir + active);
+      }
+    }
+    return false;
+  }
+  // Keep the previous files as .bak, including alternate formats archived
+  // during conversion. These are also used for recovery if publication fails.
   return true;
+}
+
+bool Profile::SaveStatsXmlToDir(std::string sDir, bool bSignData) const {
+  std::unique_ptr<XNode> xml(SaveStatsXmlCreateNode());
+  sDir += PROFILEMAN->GetStatsPrefix();
+  const std::string name = g_bProfileDataCompress ? STATS_XML_GZ : STATS_XML;
+  const std::string pending = sDir + name + ".new";
+  RageFile file;
+  if (!file.Open(pending, RageFile::WRITE | RageFile::STREAMED)) {
+    return false;
+  }
+  if (g_bProfileDataCompress) {
+    RageFileObjGzip gzip(&file);
+    gzip.Start();
+    if (!XmlFileUtil::SaveToFile(xml.get(), gzip, "", false) ||
+        gzip.Finish() == -1) {
+      return false;
+    }
+  } else if (!XmlFileUtil::SaveToFile(xml.get(), file, "", false)) {
+    return false;
+  }
+  if (file.Flush() == -1) {
+    return false;
+  }
+  file.Close();
+  return PublishProfileStats(sDir, name, pending, bSignData);
 }
 
 bool Profile::SaveStatsProtobufToDir(std::string sDir, bool bSignData) const {
@@ -2410,10 +2527,10 @@ bool Profile::SaveStatsProtobufToDir(std::string sDir, bool bSignData) const {
   }
 
   sDir = sDir + PROFILEMAN->GetStatsPrefix();
-  std::string fn = sDir + STATS_PROTOBUF;
+  std::string fn = sDir + STATS_PROTOBUF + ".new";
 
   RageFile f;
-  if (!f.Open(fn, RageFile::WRITE)) {
+  if (!f.Open(fn, RageFile::WRITE | RageFile::STREAMED)) {
     LuaHelpers::ReportScriptErrorFmt(
         "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str());
     return false;
@@ -2432,15 +2549,7 @@ bool Profile::SaveStatsProtobufToDir(std::string sDir, bool bSignData) const {
       "Wrote protobuf stats '%s' (%d bytes)", fn.c_str(),
       int(serialized_proto.size()));
 
-  if (bSignData) {
-    std::string sStatsSigFile = fn + SIGNATURE_APPEND;
-    CryptManager::SignFileToFile(fn, sStatsSigFile);
-
-    std::string sDontShareFile = sDir + DONT_SHARE_SIG;
-    CryptManager::SignFileToFile(sStatsSigFile, sDontShareFile);
-  }
-
-  return true;
+  return PublishProfileStats(sDir, STATS_PROTOBUF, fn, bSignData);
 #endif
 }
 
@@ -3479,40 +3588,47 @@ XNode* Profile::SaveCoinDataCreateNode() const {
 }
 
 void Profile::MoveBackupToDir(std::string sFromDir, std::string sToDir) {
-  std::string stats_file;
-  std::string old_stats_file;
-  if (FILEMAN->IsAFile(sFromDir + STATS_XML)) {
-    stats_file = STATS_XML;
-    old_stats_file = STATS_XML_GZ;
-  } else if (FILEMAN->IsAFile(sFromDir + STATS_XML_GZ)) {
-    stats_file = STATS_XML_GZ;
-    old_stats_file = STATS_XML;
-  }
-
-  if (!stats_file.empty()) {
-    bool backup_complete =
-        FILEMAN->Move(sFromDir + stats_file, sToDir + stats_file);
-    const std::string signature_file = stats_file + SIGNATURE_APPEND;
-    if (FILEMAN->IsAFile(sFromDir + signature_file)) {
-      const bool signature_moved =
-          FILEMAN->Move(sFromDir + signature_file, sToDir + signature_file);
-      backup_complete = backup_complete && signature_moved;
+  const std::string from = sFromDir + PROFILEMAN->GetStatsPrefix();
+  const std::string to = sToDir + PROFILEMAN->GetStatsPrefix();
+  const bool prefer_protobuf = PREFSMAN->m_ProfileScoresStorageFormat ==
+                               ProfileScoresStorageFormat_Protobuf;
+  const std::vector<std::string> formats =
+      prefer_protobuf
+          ? std::vector<std::string>{STATS_PROTOBUF, STATS_XML, STATS_XML_GZ}
+          : std::vector<std::string>{STATS_XML, STATS_XML_GZ, STATS_PROTOBUF};
+  for (const auto& name : formats) {
+    if (!FILEMAN->IsAFile(from + name)) {
+      continue;
     }
-
-    // We should not leave an outdated file in LastGood for an alternate format
-    // after the new backup succeeds.
-    // Otherwise the wrong backup file might be loaded if LastGood gets used.
-    if (backup_complete) {
-      FILEMAN->Remove(sToDir + old_stats_file);
-      FILEMAN->Remove(sToDir + old_stats_file + SIGNATURE_APPEND);
+    // Copy first so a failed backup cannot remove the active stats file.
+    bool complete = FileCopy(from + name, to + name);
+    const std::string signature = name + SIGNATURE_APPEND;
+    if (FILEMAN->IsAFile(from + signature)) {
+      complete = FileCopy(from + signature, to + signature) && complete;
+      if (FILEMAN->IsAFile(from + DONT_SHARE_SIG)) {
+        complete =
+            FileCopy(from + DONT_SHARE_SIG, to + DONT_SHARE_SIG) && complete;
+      } else {
+        FILEMAN->Remove(to + DONT_SHARE_SIG);
+      }
+    } else {
+      FILEMAN->Remove(to + signature);
+      FILEMAN->Remove(to + DONT_SHARE_SIG);
     }
+    if (complete) {
+      for (const auto& other : formats) {
+        if (other != name) {
+          FILEMAN->Remove(to + other);
+          FILEMAN->Remove(to + other + SIGNATURE_APPEND);
+        }
+      }
+    } else {
+      LOG->Warn("Could not back up profile stats '%s'", (from + name).c_str());
+    }
+    break;
   }
-
   if (FILEMAN->IsAFile(sFromDir + EDITABLE_INI)) {
-    FILEMAN->Move(sFromDir + EDITABLE_INI, sToDir + EDITABLE_INI);
-  }
-  if (FILEMAN->IsAFile(sFromDir + DONT_SHARE_SIG)) {
-    FILEMAN->Move(sFromDir + DONT_SHARE_SIG, sToDir + DONT_SHARE_SIG);
+    FileCopy(sFromDir + EDITABLE_INI, sToDir + EDITABLE_INI);
   }
 }
 

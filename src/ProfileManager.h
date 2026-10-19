@@ -26,7 +26,7 @@ class ProfileManager {
 
   void Init();
 
-  bool FixedProfiles() const;  // If true, profiles shouldn't be added/deleted d
+  bool FixedProfiles() const;  // If true, profiles shouldn't be added/deleted
 
   // local profiles
   void UnloadAllLocalProfiles();
