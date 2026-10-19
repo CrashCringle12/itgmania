@@ -205,6 +205,7 @@ XNode* HighScoreImpl::CreateNode() const {
     for (size_t i = 0; i < playerNames.size(); ++i) {
       XNode* pPlayerNode =
           pRoutineNode->AppendChild(PlayerNumberToString((PlayerNumber)i));
+      pPlayerNode->AppendChild("Name", playerNames[i]);
       pPlayerNode->AppendChild("Grade", GradeToString(playerGrades[i]));
       pPlayerNode->AppendChild("Score", playerScores[i]);
       pPlayerNode->AppendChild("PercentDP", playerPercentDPs[i]);
@@ -391,6 +392,33 @@ void HighScore::SetLifeRemainingSeconds(float f) {
   m_Impl->fLifeRemainingSeconds = f;
 }
 void HighScore::SetDisqualified(bool b) { m_Impl->bDisqualified = b; }
+
+std::string HighScore::GetPlayerName(PlayerNumber pn) const {
+  return m_Impl->playerNames.at(pn);
+}
+Grade HighScore::GetPlayerGrade(PlayerNumber pn) const {
+  return m_Impl->playerGrades.at(pn);
+}
+unsigned int HighScore::GetPlayerScore(PlayerNumber pn) const {
+  return m_Impl->playerScores.at(pn);
+}
+float HighScore::GetPlayerPercentDP(PlayerNumber pn) const {
+  return m_Impl->playerPercentDPs.at(pn);
+}
+unsigned int HighScore::GetPlayerMaxCombo(PlayerNumber pn) const {
+  return m_Impl->playerMaxCombos.at(pn);
+}
+int HighScore::GetPlayerTapNoteScore(
+    PlayerNumber pn, TapNoteScore score) const {
+  return m_Impl->playerTapNoteScores.at(pn).at(score);
+}
+int HighScore::GetPlayerHoldNoteScore(
+    PlayerNumber pn, HoldNoteScore score) const {
+  return m_Impl->playerHoldNoteScores.at(pn).at(score);
+}
+void HighScore::SetPlayerName(PlayerNumber pn, const std::string& name) {
+  m_Impl->playerNames.at(pn) = name;
+}
 
 void HighScore::SetRoutine(bool b) { m_Impl->bIsRoutine = b; }
 

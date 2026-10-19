@@ -59,14 +59,14 @@ struct XmlNodeAttrDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XmlNodeAttrDefaultTypeInternal _XmlNodeAttr_default_instance_;
 
-inline constexpr HighScore::Impl_::Impl_(
+inline constexpr RoutinePlayerScore::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
         #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
         tap_note_scores_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::itgmania::profile::HighScore,
-            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.tap_note_scores_)>()
+            ::itgmania::profile::RoutinePlayerScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.tap_note_scores_)>()
         }
         #else
         tap_note_scores_ {}
@@ -75,74 +75,47 @@ inline constexpr HighScore::Impl_::Impl_(
         _tap_note_scores_cached_byte_size_{0},
         #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
         hold_note_scores_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::itgmania::profile::HighScore,
-            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.hold_note_scores_)>()
+            ::itgmania::profile::RoutinePlayerScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.hold_note_scores_)>()
         }
         #else
         hold_note_scores_ {}
         #endif
         ,
         _hold_note_scores_cached_byte_size_{0},
-        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
-        radar_values_{visibility, ::_pbi::InternalMetadataOffset::Build<
-            ::itgmania::profile::HighScore,
-            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.radar_values_)>()
-        }
-        #else
-        radar_values_ {}
-        #endif
-        ,
         name_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         grade_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        stage_award_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        peak_combo_award_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        modifiers_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        date_time_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
         player_guid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        machine_guid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        player_index_{0u},
         score_{0u},
         percent_dp_{0},
-        survive_seconds_{0},
-        max_combo_{0u},
-        product_id_{0},
-        life_remaining_seconds_{0},
-        disqualified_{false} {}
+        max_combo_{0u} {}
 
 template <typename>
-constexpr HighScore::HighScore(::_pbi::ConstantInitialized)
+constexpr RoutinePlayerScore::RoutinePlayerScore(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(HighScore_class_data_.base()),
+    : ::google::protobuf::Message(RoutinePlayerScore_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(),
 #endif  // PROTOBUF_CUSTOM_VTABLE
       _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
 }
-struct HighScoreDefaultTypeInternal {
-  constexpr HighScoreDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~HighScoreDefaultTypeInternal() {}
+struct RoutinePlayerScoreDefaultTypeInternal {
+  constexpr RoutinePlayerScoreDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~RoutinePlayerScoreDefaultTypeInternal() {}
   union {
-    HighScore _instance;
+    RoutinePlayerScore _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HighScoreDefaultTypeInternal _HighScore_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoutinePlayerScoreDefaultTypeInternal _RoutinePlayerScore_default_instance_;
 
 inline constexpr GeneralDataSection_UnlockEntry::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -372,6 +345,130 @@ struct XmlNodeDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XmlNodeDefaultTypeInternal _XmlNode_default_instance_;
 
+inline constexpr HighScore::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
+        tap_note_scores_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::HighScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.tap_note_scores_)>()
+        }
+        #else
+        tap_note_scores_ {}
+        #endif
+        ,
+        _tap_note_scores_cached_byte_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
+        hold_note_scores_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::HighScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.hold_note_scores_)>()
+        }
+        #else
+        hold_note_scores_ {}
+        #endif
+        ,
+        _hold_note_scores_cached_byte_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
+        radar_values_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::HighScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.radar_values_)>()
+        }
+        #else
+        radar_values_ {}
+        #endif
+        ,
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        routine_players_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::HighScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.routine_players_)>()
+        }
+        #else  // !PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        routine_players_ {}
+        #endif
+        ,
+        name_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        grade_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        stage_award_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        peak_combo_award_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        modifiers_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        date_time_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        player_guid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        machine_guid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        score_{0u},
+        percent_dp_{0},
+        survive_seconds_{0},
+        max_combo_{0u},
+        product_id_{0},
+        life_remaining_seconds_{0},
+        disqualified_{false},
+        is_routine_{false} {}
+
+template <typename>
+constexpr HighScore::HighScore(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(HighScore_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct HighScoreDefaultTypeInternal {
+  constexpr HighScoreDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~HighScoreDefaultTypeInternal() {}
+  union {
+    HighScore _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HighScoreDefaultTypeInternal _HighScore_default_instance_;
+
+inline constexpr LegacySections::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        category_scores_{nullptr},
+        screenshot_data_{nullptr},
+        calorie_data_{nullptr},
+        coin_data_{nullptr} {}
+
+template <typename>
+constexpr LegacySections::LegacySections(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(LegacySections_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct LegacySectionsDefaultTypeInternal {
+  constexpr LegacySectionsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~LegacySectionsDefaultTypeInternal() {}
+  union {
+    LegacySections _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LegacySectionsDefaultTypeInternal _LegacySections_default_instance_;
+
 inline constexpr HighScoreList::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     ::_pbi::ConstantInitialized) noexcept
@@ -412,71 +509,6 @@ struct HighScoreListDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HighScoreListDefaultTypeInternal _HighScoreList_default_instance_;
-
-inline constexpr SongStepsScore::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        steps_type_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        difficulty_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        description_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        high_score_list_{nullptr},
-        hash_{0u} {}
-
-template <typename>
-constexpr SongStepsScore::SongStepsScore(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(SongStepsScore_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
-}
-struct SongStepsScoreDefaultTypeInternal {
-  constexpr SongStepsScoreDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~SongStepsScoreDefaultTypeInternal() {}
-  union {
-    SongStepsScore _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SongStepsScoreDefaultTypeInternal _SongStepsScore_default_instance_;
-
-inline constexpr LegacySections::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    ::_pbi::ConstantInitialized) noexcept
-      : _cached_size_{0},
-        category_scores_{nullptr},
-        screenshot_data_{nullptr},
-        calorie_data_{nullptr},
-        coin_data_{nullptr} {}
-
-template <typename>
-constexpr LegacySections::LegacySections(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(LegacySections_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
-}
-struct LegacySectionsDefaultTypeInternal {
-  constexpr LegacySectionsDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~LegacySectionsDefaultTypeInternal() {}
-  union {
-    LegacySections _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LegacySectionsDefaultTypeInternal _LegacySections_default_instance_;
 
 inline constexpr GeneralDataSection::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -606,6 +638,9 @@ inline constexpr GeneralDataSection::Impl_::Impl_(
         num_stages_passed_by_grade_ {}
         #endif
         ,
+        creation_time_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
         user_table_{nullptr},
         total_holds_{0},
         total_rolls_{0},
@@ -633,6 +668,42 @@ struct GeneralDataSectionDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GeneralDataSectionDefaultTypeInternal _GeneralDataSection_default_instance_;
+
+inline constexpr SongStepsScore::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        steps_type_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        difficulty_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        description_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        high_score_list_{nullptr},
+        hash_{0u} {}
+
+template <typename>
+constexpr SongStepsScore::SongStepsScore(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(SongStepsScore_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+struct SongStepsScoreDefaultTypeInternal {
+  constexpr SongStepsScoreDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~SongStepsScoreDefaultTypeInternal() {}
+  union {
+    SongStepsScore _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SongStepsScoreDefaultTypeInternal _SongStepsScore_default_instance_;
 
 inline constexpr CourseTrailScore::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
@@ -920,7 +991,7 @@ const ::uint32_t
         1,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::GeneralDataSection, _impl_._has_bits_),
-        49, // hasbit index offset
+        50, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::GeneralDataSection, _impl_.display_name_),
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::GeneralDataSection, _impl_.character_id_),
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::GeneralDataSection, _impl_.last_used_high_score_name_),
@@ -967,6 +1038,7 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::GeneralDataSection, _impl_.num_stages_passed_by_play_mode_),
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::GeneralDataSection, _impl_.num_stages_passed_by_grade_),
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::GeneralDataSection, _impl_.user_table_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::GeneralDataSection, _impl_.creation_time_),
         0,
         1,
         2,
@@ -998,20 +1070,21 @@ const ::uint32_t
         28,
         29,
         30,
-        40,
         41,
         42,
         43,
         44,
+        45,
         31,
         32,
         33,
         34,
         35,
         36,
-        45,
+        46,
         37,
         38,
+        40,
         39,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::SongStepsScore, _impl_._has_bits_),
@@ -1039,8 +1112,29 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::SongScoresSection, _impl_.songs_),
         0,
         0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_._has_bits_),
+        12, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.player_index_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.name_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.grade_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.score_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.percent_dp_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.max_combo_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.player_guid_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.tap_note_scores_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.hold_note_scores_),
+        5,
+        2,
+        3,
+        6,
+        7,
+        8,
+        4,
+        0,
+        1,
+        0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_._has_bits_),
-        21, // hasbit index offset
+        23, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.name_),
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.grade_),
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.score_),
@@ -1059,24 +1153,28 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.radar_values_),
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.life_remaining_seconds_),
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.disqualified_),
-        3,
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.is_routine_),
+        PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.routine_players_),
         4,
-        11,
+        5,
         12,
         13,
         14,
-        5,
+        15,
         6,
         7,
         8,
         9,
         10,
-        15,
+        11,
+        16,
         0,
         1,
         2,
-        16,
         17,
+        18,
+        19,
+        3,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScoreList, _impl_._has_bits_),
         7, // hasbit index offset
@@ -1138,15 +1236,16 @@ static const ::_pbi::MigrationSchema
         {55, sizeof(::itgmania::profile::GeneralDataSection_LastCourse)},
         {62, sizeof(::itgmania::profile::GeneralDataSection_UnlockEntry)},
         {69, sizeof(::itgmania::profile::GeneralDataSection)},
-        {164, sizeof(::itgmania::profile::SongStepsScore)},
-        {177, sizeof(::itgmania::profile::SongScoreEntry)},
-        {184, sizeof(::itgmania::profile::SongScoresSection)},
-        {189, sizeof(::itgmania::profile::HighScore)},
-        {228, sizeof(::itgmania::profile::HighScoreList)},
-        {239, sizeof(::itgmania::profile::CourseTrailScore)},
-        {248, sizeof(::itgmania::profile::CourseScoreEntry)},
-        {257, sizeof(::itgmania::profile::CourseScoresSection)},
-        {262, sizeof(::itgmania::profile::ProfileStatsDocument)},
+        {166, sizeof(::itgmania::profile::SongStepsScore)},
+        {179, sizeof(::itgmania::profile::SongScoreEntry)},
+        {186, sizeof(::itgmania::profile::SongScoresSection)},
+        {191, sizeof(::itgmania::profile::RoutinePlayerScore)},
+        {212, sizeof(::itgmania::profile::HighScore)},
+        {255, sizeof(::itgmania::profile::HighScoreList)},
+        {266, sizeof(::itgmania::profile::CourseTrailScore)},
+        {275, sizeof(::itgmania::profile::CourseScoreEntry)},
+        {284, sizeof(::itgmania::profile::CourseScoresSection)},
+        {289, sizeof(::itgmania::profile::ProfileStatsDocument)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::itgmania::profile::_XmlNodeAttr_default_instance_._instance,
@@ -1162,6 +1261,7 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::itgmania::profile::_SongStepsScore_default_instance_._instance,
     &::itgmania::profile::_SongScoreEntry_default_instance_._instance,
     &::itgmania::profile::_SongScoresSection_default_instance_._instance,
+    &::itgmania::profile::_RoutinePlayerScore_default_instance_._instance,
     &::itgmania::profile::_HighScore_default_instance_._instance,
     &::itgmania::profile::_HighScoreList_default_instance_._instance,
     &::itgmania::profile::_CourseTrailScore_default_instance_._instance,
@@ -1181,7 +1281,7 @@ const char descriptor_table_protodef_ProfileStats_2eproto[] ABSL_ATTRIBUTE_SECTI
     "ot_data\030\002 \001(\0132\031.itgmania.profile.XmlNode"
     "\022/\n\014calorie_data\030\003 \001(\0132\031.itgmania.profil"
     "e.XmlNode\022,\n\tcoin_data\030\004 \001(\0132\031.itgmania."
-    "profile.XmlNode\"\251\017\n\022GeneralDataSection\022\024"
+    "profile.XmlNode\"\300\017\n\022GeneralDataSection\022\024"
     "\n\014display_name\030\001 \001(\t\022\024\n\014character_id\030\002 \001"
     "(\t\022!\n\031last_used_high_score_name\030\003 \001(\t\022\025\n"
     "\rweight_pounds\030\004 \001(\005\022\016\n\006voomax\030\005 \001(\002\022\022\n\n"
@@ -1223,62 +1323,70 @@ const char descriptor_table_protodef_ProfileStats_2eproto[] ABSL_ATTRIBUTE_SECTI
     "lDataSection.IntPair\022P\n\032num_stages_passe"
     "d_by_grade\030- \003(\0132,.itgmania.profile.Gene"
     "ralDataSection.IntPair\022-\n\nuser_table\030. \001"
-    "(\0132\031.itgmania.profile.XmlNode\032(\n\nStringP"
-    "air\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\032%\n\007IntPa"
-    "ir\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\005\032<\n\016StyleP"
-    "layCount\022\014\n\004game\030\001 \001(\t\022\r\n\005style\030\002 \001(\t\022\r\n"
-    "\005count\030\003 \001(\005\032\027\n\010LastSong\022\013\n\003dir\030\001 \001(\t\032.\n"
-    "\nLastCourse\022\014\n\004path\030\001 \001(\t\022\022\n\nfull_title\030"
-    "\002 \001(\t\0324\n\013UnlockEntry\022\027\n\017unlock_entry_id\030"
-    "\001 \001(\t\022\014\n\004auth\030\002 \001(\t\"\225\001\n\016SongStepsScore\022\022"
-    "\n\nsteps_type\030\001 \001(\t\022\022\n\ndifficulty\030\002 \001(\t\022\023"
-    "\n\013description\030\003 \001(\t\022\014\n\004hash\030\004 \001(\r\0228\n\017hig"
-    "h_score_list\030\005 \001(\0132\037.itgmania.profile.Hi"
-    "ghScoreList\"U\n\016SongScoreEntry\022\013\n\003dir\030\001 \001"
-    "(\t\0226\n\014steps_scores\030\002 \003(\0132 .itgmania.prof"
-    "ile.SongStepsScore\"D\n\021SongScoresSection\022"
-    "/\n\005songs\030\001 \003(\0132 .itgmania.profile.SongSc"
-    "oreEntry\"\212\003\n\tHighScore\022\014\n\004name\030\001 \001(\t\022\r\n\005"
-    "grade\030\002 \001(\t\022\r\n\005score\030\003 \001(\r\022\022\n\npercent_dp"
-    "\030\004 \001(\002\022\027\n\017survive_seconds\030\005 \001(\002\022\021\n\tmax_c"
-    "ombo\030\006 \001(\r\022\023\n\013stage_award\030\007 \001(\t\022\030\n\020peak_"
-    "combo_award\030\010 \001(\t\022\021\n\tmodifiers\030\t \001(\t\022\021\n\t"
-    "date_time\030\n \001(\t\022\023\n\013player_guid\030\013 \001(\t\022\024\n\014"
-    "machine_guid\030\014 \001(\t\022\022\n\nproduct_id\030\r \001(\005\022\027"
-    "\n\017tap_note_scores\030\016 \003(\005\022\030\n\020hold_note_sco"
-    "res\030\017 \003(\005\022\024\n\014radar_values\030\020 \003(\002\022\036\n\026life_"
-    "remaining_seconds\030\021 \001(\002\022\024\n\014disqualified\030"
-    "\022 \001(\010\"\204\001\n\rHighScoreList\022\030\n\020num_times_pla"
-    "yed\030\001 \001(\005\022\023\n\013last_played\030\002 \001(\t\022\022\n\nhigh_g"
-    "rade\030\003 \001(\t\0220\n\013high_scores\030\004 \003(\0132\033.itgman"
-    "ia.profile.HighScore\"{\n\020CourseTrailScore"
-    "\022\022\n\nsteps_type\030\001 \001(\t\022\031\n\021course_difficult"
-    "y\030\002 \001(\t\0228\n\017high_score_list\030\003 \001(\0132\037.itgma"
-    "nia.profile.HighScoreList\"n\n\020CourseScore"
-    "Entry\022\014\n\004path\030\001 \001(\t\022\022\n\nfull_title\030\002 \001(\t\022"
-    "8\n\014trail_scores\030\003 \003(\0132\".itgmania.profile"
-    ".CourseTrailScore\"J\n\023CourseScoresSection"
-    "\0223\n\007courses\030\001 \003(\0132\".itgmania.profile.Cou"
-    "rseScoreEntry\"\235\002\n\024ProfileStatsDocument\022\026"
-    "\n\016schema_version\030\001 \001(\r\022:\n\014general_data\030\003"
-    " \001(\0132$.itgmania.profile.GeneralDataSecti"
-    "on\0228\n\013song_scores\030\004 \001(\0132#.itgmania.profi"
-    "le.SongScoresSection\022<\n\rcourse_scores\030\005 "
-    "\001(\0132%.itgmania.profile.CourseScoresSecti"
-    "on\0229\n\017legacy_sections\030\006 \001(\0132 .itgmania.p"
-    "rofile.LegacySectionsb\006proto3"
+    "(\0132\031.itgmania.profile.XmlNode\022\025\n\rcreatio"
+    "n_time\030/ \001(\t\032(\n\nStringPair\022\013\n\003key\030\001 \001(\t\022"
+    "\r\n\005value\030\002 \001(\t\032%\n\007IntPair\022\013\n\003key\030\001 \001(\t\022\r"
+    "\n\005value\030\002 \001(\005\032<\n\016StylePlayCount\022\014\n\004game\030"
+    "\001 \001(\t\022\r\n\005style\030\002 \001(\t\022\r\n\005count\030\003 \001(\005\032\027\n\010L"
+    "astSong\022\013\n\003dir\030\001 \001(\t\032.\n\nLastCourse\022\014\n\004pa"
+    "th\030\001 \001(\t\022\022\n\nfull_title\030\002 \001(\t\0324\n\013UnlockEn"
+    "try\022\027\n\017unlock_entry_id\030\001 \001(\t\022\014\n\004auth\030\002 \001"
+    "(\t\"\225\001\n\016SongStepsScore\022\022\n\nsteps_type\030\001 \001("
+    "\t\022\022\n\ndifficulty\030\002 \001(\t\022\023\n\013description\030\003 \001"
+    "(\t\022\014\n\004hash\030\004 \001(\r\0228\n\017high_score_list\030\005 \001("
+    "\0132\037.itgmania.profile.HighScoreList\"U\n\016So"
+    "ngScoreEntry\022\013\n\003dir\030\001 \001(\t\0226\n\014steps_score"
+    "s\030\002 \003(\0132 .itgmania.profile.SongStepsScor"
+    "e\"D\n\021SongScoresSection\022/\n\005songs\030\001 \003(\0132 ."
+    "itgmania.profile.SongScoreEntry\"\305\001\n\022Rout"
+    "inePlayerScore\022\024\n\014player_index\030\001 \001(\r\022\014\n\004"
+    "name\030\002 \001(\t\022\r\n\005grade\030\003 \001(\t\022\r\n\005score\030\004 \001(\r"
+    "\022\022\n\npercent_dp\030\005 \001(\002\022\021\n\tmax_combo\030\006 \001(\r\022"
+    "\023\n\013player_guid\030\007 \001(\t\022\027\n\017tap_note_scores\030"
+    "\010 \003(\005\022\030\n\020hold_note_scores\030\t \003(\005\"\335\003\n\tHigh"
+    "Score\022\014\n\004name\030\001 \001(\t\022\r\n\005grade\030\002 \001(\t\022\r\n\005sc"
+    "ore\030\003 \001(\r\022\022\n\npercent_dp\030\004 \001(\002\022\027\n\017survive"
+    "_seconds\030\005 \001(\002\022\021\n\tmax_combo\030\006 \001(\r\022\023\n\013sta"
+    "ge_award\030\007 \001(\t\022\030\n\020peak_combo_award\030\010 \001(\t"
+    "\022\021\n\tmodifiers\030\t \001(\t\022\021\n\tdate_time\030\n \001(\t\022\023"
+    "\n\013player_guid\030\013 \001(\t\022\024\n\014machine_guid\030\014 \001("
+    "\t\022\022\n\nproduct_id\030\r \001(\005\022\027\n\017tap_note_scores"
+    "\030\016 \003(\005\022\030\n\020hold_note_scores\030\017 \003(\005\022\024\n\014rada"
+    "r_values\030\020 \003(\002\022\036\n\026life_remaining_seconds"
+    "\030\021 \001(\002\022\024\n\014disqualified\030\022 \001(\010\022\022\n\nis_routi"
+    "ne\030\023 \001(\010\022=\n\017routine_players\030\024 \003(\0132$.itgm"
+    "ania.profile.RoutinePlayerScore\"\204\001\n\rHigh"
+    "ScoreList\022\030\n\020num_times_played\030\001 \001(\005\022\023\n\013l"
+    "ast_played\030\002 \001(\t\022\022\n\nhigh_grade\030\003 \001(\t\0220\n\013"
+    "high_scores\030\004 \003(\0132\033.itgmania.profile.Hig"
+    "hScore\"{\n\020CourseTrailScore\022\022\n\nsteps_type"
+    "\030\001 \001(\t\022\031\n\021course_difficulty\030\002 \001(\t\0228\n\017hig"
+    "h_score_list\030\003 \001(\0132\037.itgmania.profile.Hi"
+    "ghScoreList\"n\n\020CourseScoreEntry\022\014\n\004path\030"
+    "\001 \001(\t\022\022\n\nfull_title\030\002 \001(\t\0228\n\014trail_score"
+    "s\030\003 \003(\0132\".itgmania.profile.CourseTrailSc"
+    "ore\"J\n\023CourseScoresSection\0223\n\007courses\030\001 "
+    "\003(\0132\".itgmania.profile.CourseScoreEntry\""
+    "\243\002\n\024ProfileStatsDocument\022\026\n\016schema_versi"
+    "on\030\001 \001(\r\022:\n\014general_data\030\003 \001(\0132$.itgmani"
+    "a.profile.GeneralDataSection\0228\n\013song_sco"
+    "res\030\004 \001(\0132#.itgmania.profile.SongScoresS"
+    "ection\022<\n\rcourse_scores\030\005 \001(\0132%.itgmania"
+    ".profile.CourseScoresSection\0229\n\017legacy_s"
+    "ections\030\006 \001(\0132 .itgmania.profile.LegacyS"
+    "ectionsJ\004\010\002\020\003b\006proto3"
 };
 static ::absl::once_flag descriptor_table_ProfileStats_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_ProfileStats_2eproto = {
     false,
     false,
-    3829,
+    4141,
     descriptor_table_protodef_ProfileStats_2eproto,
     "ProfileStats.proto",
     &descriptor_table_ProfileStats_2eproto_once,
     nullptr,
     0,
-    19,
+    20,
     schemas,
     file_default_instances,
     TableStruct_ProfileStats_2eproto::offsets,
@@ -4406,7 +4514,8 @@ PROTOBUF_NDEBUG_INLINE GeneralDataSection::Impl_::Impl_(
         #else
         num_stages_passed_by_grade_ { visibility, arena, from.num_stages_passed_by_grade_ }
         #endif
-     {}
+        ,
+        creation_time_(arena, from.creation_time_) {}
 
 GeneralDataSection::GeneralDataSection(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
@@ -4436,7 +4545,7 @@ GeneralDataSection::GeneralDataSection(
                offsetof(Impl_, weight_pounds_) +
                sizeof(Impl_::total_jumps_));
   cached_has_bits = _impl_._has_bits_[1];
-  _impl_.user_table_ = (CheckHasBit(cached_has_bits, 0x00000080U))
+  _impl_.user_table_ = (CheckHasBit(cached_has_bits, 0x00000100U))
                 ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.user_table_)
                 : nullptr;
   ::memcpy(reinterpret_cast<char*>(&_impl_) +
@@ -4535,7 +4644,8 @@ PROTOBUF_NDEBUG_INLINE GeneralDataSection::Impl_::Impl_(
         #else
         num_stages_passed_by_grade_ { visibility, arena }
         #endif
-     {}
+        ,
+        creation_time_(arena) {}
 
 inline void GeneralDataSection::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -4575,6 +4685,7 @@ inline void GeneralDataSection::SharedDtor(MessageLite& self) {
   this_._impl_.last_played_date_.Destroy();
   delete this_._impl_.last_song_;
   delete this_._impl_.last_course_;
+  this_._impl_.creation_time_.Destroy();
   delete this_._impl_.user_table_;
   this_._impl_.~Impl_();
 }
@@ -4668,16 +4779,16 @@ GeneralDataSection::GetClassData() const {
   return GeneralDataSection_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<5, 46, 10, 239, 7>
+const ::_pbi::TcParseTable<5, 47, 10, 252, 7>
 GeneralDataSection::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_._has_bits_),
     0, // no _extensions_
-    46, 248,  // max_field_number, fast_idx_mask
+    47, 248,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
     0,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    46,  // num_field_entries
+    47,  // num_field_entries
     10,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     GeneralDataSection_class_data_.base(),
@@ -4814,7 +4925,7 @@ GeneralDataSection::_table_ = {
       PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_jumps_)}},
   }}, {{
     33, 0, 1,
-    49152, 32,
+    32768, 32,
     65535, 65535
   }}, {{
     // string display_name = 1;
@@ -4880,15 +4991,15 @@ GeneralDataSection::_table_ = {
     // int32 total_jumps = 31;
     {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_jumps_), _Internal::kHasBitsOffset + 30, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 total_holds = 32;
-    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_holds_), _Internal::kHasBitsOffset + 40, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_holds_), _Internal::kHasBitsOffset + 41, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 total_rolls = 33;
-    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_rolls_), _Internal::kHasBitsOffset + 41, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_rolls_), _Internal::kHasBitsOffset + 42, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 total_mines = 34;
-    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_mines_), _Internal::kHasBitsOffset + 42, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_mines_), _Internal::kHasBitsOffset + 43, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 total_hands = 35;
-    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_hands_), _Internal::kHasBitsOffset + 43, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_hands_), _Internal::kHasBitsOffset + 44, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // int32 total_lifts = 36;
-    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_lifts_), _Internal::kHasBitsOffset + 44, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.total_lifts_), _Internal::kHasBitsOffset + 45, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // repeated .itgmania.profile.GeneralDataSection.StringPair default_modifiers = 37;
     {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.default_modifiers_), _Internal::kHasBitsOffset + 31, 2, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
     // repeated .itgmania.profile.GeneralDataSection.UnlockEntry unlock_entries = 38;
@@ -4902,13 +5013,15 @@ GeneralDataSection::_table_ = {
     // repeated int32 num_songs_played_by_meter = 42;
     {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.num_songs_played_by_meter_), _Internal::kHasBitsOffset + 36, 0, (0 | ::_fl::kFcRepeated | ::_fl::kPackedInt32)},
     // int32 num_total_songs_played = 43;
-    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.num_total_songs_played_), _Internal::kHasBitsOffset + 45, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.num_total_songs_played_), _Internal::kHasBitsOffset + 46, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // repeated .itgmania.profile.GeneralDataSection.IntPair num_stages_passed_by_play_mode = 44;
     {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.num_stages_passed_by_play_mode_), _Internal::kHasBitsOffset + 37, 7, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
     // repeated .itgmania.profile.GeneralDataSection.IntPair num_stages_passed_by_grade = 45;
     {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.num_stages_passed_by_grade_), _Internal::kHasBitsOffset + 38, 8, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
     // .itgmania.profile.XmlNode user_table = 46;
-    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.user_table_), _Internal::kHasBitsOffset + 39, 9, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.user_table_), _Internal::kHasBitsOffset + 40, 9, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    // string creation_time = 47;
+    {PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.creation_time_), _Internal::kHasBitsOffset + 39, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::itgmania::profile::GeneralDataSection_LastSong>()},
@@ -4923,7 +5036,7 @@ GeneralDataSection::_table_ = {
       {::_pbi::TcParser::GetTable<::itgmania::profile::XmlNode>()},
   }},
   {{
-    "\43\14\14\31\0\0\0\0\0\4\12\17\26\17\0\0\0\0\0\0\0\0\0\0\30\20\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+    "\43\14\14\31\0\0\0\0\0\4\12\17\26\17\0\0\0\0\0\0\0\0\0\0\30\20\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\15"
     "itgmania.profile.GeneralDataSection"
     "display_name"
     "character_id"
@@ -4935,6 +5048,7 @@ GeneralDataSection::_table_ = {
     "last_steps_type"
     "last_played_machine_guid"
     "last_played_date"
+    "creation_time"
   }},
 };
 PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
@@ -5029,11 +5143,14 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
       _impl_.num_stages_passed_by_grade_.Clear();
     }
     if (CheckHasBit(cached_has_bits, 0x00000080U)) {
-      ABSL_DCHECK(_impl_.user_table_ != nullptr);
-      _impl_.user_table_->Clear();
+      _impl_.creation_time_.ClearNonDefaultToEmpty();
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x00003f00U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    ABSL_DCHECK(_impl_.user_table_ != nullptr);
+    _impl_.user_table_->Clear();
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00007e00U)) {
     ::memset(&_impl_.total_holds_, 0, static_cast<::size_t>(
         reinterpret_cast<char*>(&_impl_.num_total_songs_played_) -
         reinterpret_cast<char*>(&_impl_.total_holds_)) + sizeof(_impl_.num_total_songs_played_));
@@ -5348,7 +5465,7 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
 
   cached_has_bits = this_._impl_._has_bits_[1];
   // int32 total_holds = 32;
-  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000200U)) {
     if (this_._internal_total_holds() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteInt32ToArray(
@@ -5357,7 +5474,7 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
   }
 
   // int32 total_rolls = 33;
-  if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000400U)) {
     if (this_._internal_total_rolls() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteInt32ToArray(
@@ -5366,7 +5483,7 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
   }
 
   // int32 total_mines = 34;
-  if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000800U)) {
     if (this_._internal_total_mines() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteInt32ToArray(
@@ -5375,7 +5492,7 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
   }
 
   // int32 total_hands = 35;
-  if (CheckHasBit(cached_has_bits, 0x00000800U)) {
+  if (CheckHasBit(cached_has_bits, 0x00001000U)) {
     if (this_._internal_total_hands() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteInt32ToArray(
@@ -5384,7 +5501,7 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
   }
 
   // int32 total_lifts = 36;
-  if (CheckHasBit(cached_has_bits, 0x00001000U)) {
+  if (CheckHasBit(cached_has_bits, 0x00002000U)) {
     if (this_._internal_total_lifts() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteInt32ToArray(
@@ -5471,7 +5588,7 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
   }
 
   // int32 num_total_songs_played = 43;
-  if (CheckHasBit(cached_has_bits, 0x00002000U)) {
+  if (CheckHasBit(cached_has_bits, 0x00004000U)) {
     if (this_._internal_num_total_songs_played() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteInt32ToArray(
@@ -5506,10 +5623,20 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
   }
 
   // .itgmania.profile.XmlNode user_table = 46;
-  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
     target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
         46, *this_._impl_.user_table_, this_._impl_.user_table_->GetCachedSize(), target,
         stream);
+  }
+
+  // string creation_time = 47;
+  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (!this_._internal_creation_time().empty()) {
+      const ::std::string& _s = this_._internal_creation_time();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "itgmania.profile.GeneralDataSection.creation_time");
+      target = stream->WriteStringMaybeAliased(47, _s, target);
+    }
   }
 
   if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -5812,50 +5939,57 @@ PROTOBUF_NOINLINE void GeneralDataSection::Clear() {
         total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
       }
     }
-    // .itgmania.profile.XmlNode user_table = 46;
+    // string creation_time = 47;
     if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (!this_._internal_creation_time().empty()) {
+        total_size += 2 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_creation_time());
+      }
+    }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00007f00U)) {
+    // .itgmania.profile.XmlNode user_table = 46;
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
       total_size += 2 +
                     ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.user_table_);
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x00003f00U)) {
     // int32 total_holds = 32;
-    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
       if (this_._internal_total_holds() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_total_holds());
       }
     }
     // int32 total_rolls = 33;
-    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
       if (this_._internal_total_rolls() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_total_rolls());
       }
     }
     // int32 total_mines = 34;
-    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
       if (this_._internal_total_mines() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_total_mines());
       }
     }
     // int32 total_hands = 35;
-    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
+    if (CheckHasBit(cached_has_bits, 0x00001000U)) {
       if (this_._internal_total_hands() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_total_hands());
       }
     }
     // int32 total_lifts = 36;
-    if (CheckHasBit(cached_has_bits, 0x00001000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00002000U)) {
       if (this_._internal_total_lifts() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_total_lifts());
       }
     }
     // int32 num_total_songs_played = 43;
-    if (CheckHasBit(cached_has_bits, 0x00002000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
       if (this_._internal_num_total_songs_played() != 0) {
         total_size += 2 + ::_pbi::WireFormatLite::Int32Size(
                                         this_._internal_num_total_songs_played());
@@ -6131,6 +6265,17 @@ void GeneralDataSection::MergeImpl(::google::protobuf::MessageLite& to_msg,
           from._internal_num_stages_passed_by_grade());
     }
     if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (!from._internal_creation_time().empty()) {
+        _this->_internal_set_creation_time(from._internal_creation_time());
+      } else {
+        if (_this->_impl_.creation_time_.IsDefault()) {
+          _this->_internal_set_creation_time("");
+        }
+      }
+    }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00007f00U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
       ABSL_DCHECK(from._impl_.user_table_ != nullptr);
       if (_this->_impl_.user_table_ == nullptr) {
         _this->_impl_.user_table_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.user_table_);
@@ -6138,34 +6283,32 @@ void GeneralDataSection::MergeImpl(::google::protobuf::MessageLite& to_msg,
         _this->_impl_.user_table_->MergeFrom(*from._impl_.user_table_);
       }
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x00003f00U)) {
-    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
       if (from._internal_total_holds() != 0) {
         _this->_impl_.total_holds_ = from._impl_.total_holds_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
       if (from._internal_total_rolls() != 0) {
         _this->_impl_.total_rolls_ = from._impl_.total_rolls_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
       if (from._internal_total_mines() != 0) {
         _this->_impl_.total_mines_ = from._impl_.total_mines_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
+    if (CheckHasBit(cached_has_bits, 0x00001000U)) {
       if (from._internal_total_hands() != 0) {
         _this->_impl_.total_hands_ = from._impl_.total_hands_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00001000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00002000U)) {
       if (from._internal_total_lifts() != 0) {
         _this->_impl_.total_lifts_ = from._impl_.total_lifts_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00002000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
       if (from._internal_num_total_songs_played() != 0) {
         _this->_impl_.num_total_songs_played_ = from._impl_.num_total_songs_played_;
       }
@@ -6215,6 +6358,7 @@ void GeneralDataSection::InternalSwap(GeneralDataSection* PROTOBUF_RESTRICT PROT
   _impl_.num_songs_played_by_meter_.InternalSwap(&other->_impl_.num_songs_played_by_meter_);
   _impl_.num_stages_passed_by_play_mode_.InternalSwap(&other->_impl_.num_stages_passed_by_play_mode_);
   _impl_.num_stages_passed_by_grade_.InternalSwap(&other->_impl_.num_stages_passed_by_grade_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.creation_time_, &other->_impl_.creation_time_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(GeneralDataSection, _impl_.num_total_songs_played_)
       + sizeof(GeneralDataSection::_impl_.num_total_songs_played_)
@@ -7329,6 +7473,631 @@ void SongScoresSection::InternalSwap(SongScoresSection* PROTOBUF_RESTRICT PROTOB
 }
 // ===================================================================
 
+class RoutinePlayerScore::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<RoutinePlayerScore>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_._has_bits_);
+};
+
+RoutinePlayerScore::RoutinePlayerScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, RoutinePlayerScore_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:itgmania.profile.RoutinePlayerScore)
+}
+PROTOBUF_NDEBUG_INLINE RoutinePlayerScore::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::itgmania::profile::RoutinePlayerScore& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
+        tap_note_scores_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::RoutinePlayerScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.tap_note_scores_)>()
+        , from.tap_note_scores_}
+        #else
+        tap_note_scores_ { visibility, arena, from.tap_note_scores_ }
+        #endif
+        ,
+        _tap_note_scores_cached_byte_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
+        hold_note_scores_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::RoutinePlayerScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.hold_note_scores_)>()
+        , from.hold_note_scores_}
+        #else
+        hold_note_scores_ { visibility, arena, from.hold_note_scores_ }
+        #endif
+        ,
+        _hold_note_scores_cached_byte_size_{0},
+        name_(arena, from.name_),
+        grade_(arena, from.grade_),
+        player_guid_(arena, from.player_guid_) {}
+
+RoutinePlayerScore::RoutinePlayerScore(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const RoutinePlayerScore& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, RoutinePlayerScore_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  RoutinePlayerScore* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, player_index_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, player_index_),
+           offsetof(Impl_, max_combo_) -
+               offsetof(Impl_, player_index_) +
+               sizeof(Impl_::max_combo_));
+
+  // @@protoc_insertion_point(copy_constructor:itgmania.profile.RoutinePlayerScore)
+}
+PROTOBUF_NDEBUG_INLINE RoutinePlayerScore::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
+        tap_note_scores_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::RoutinePlayerScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.tap_note_scores_)>()
+        }
+        #else
+        tap_note_scores_ { visibility, arena }
+        #endif
+        ,
+        _tap_note_scores_cached_byte_size_{0},
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_FIELD
+        hold_note_scores_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::RoutinePlayerScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::RoutinePlayerScore, _impl_.hold_note_scores_)>()
+        }
+        #else
+        hold_note_scores_ { visibility, arena }
+        #endif
+        ,
+        _hold_note_scores_cached_byte_size_{0},
+        name_(arena),
+        grade_(arena),
+        player_guid_(arena) {}
+
+inline void RoutinePlayerScore::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, player_index_),
+           0,
+           offsetof(Impl_, max_combo_) -
+               offsetof(Impl_, player_index_) +
+               sizeof(Impl_::max_combo_));
+}
+RoutinePlayerScore::~RoutinePlayerScore() {
+  // @@protoc_insertion_point(destructor:itgmania.profile.RoutinePlayerScore)
+  SharedDtor(*this);
+}
+inline void RoutinePlayerScore::SharedDtor(MessageLite& self) {
+  RoutinePlayerScore& this_ = static_cast<RoutinePlayerScore&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.name_.Destroy();
+  this_._impl_.grade_.Destroy();
+  this_._impl_.player_guid_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL RoutinePlayerScore::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) RoutinePlayerScore(arena);
+}
+#ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+constexpr auto RoutinePlayerScore::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(RoutinePlayerScore),
+                                            alignof(RoutinePlayerScore));
+}
+#else  // !PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+constexpr auto RoutinePlayerScore::InternalNewImpl_() {
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.tap_note_scores_) +
+          decltype(RoutinePlayerScore::_impl_.tap_note_scores_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.hold_note_scores_) +
+          decltype(RoutinePlayerScore::_impl_.hold_note_scores_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(RoutinePlayerScore), alignof(RoutinePlayerScore), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&RoutinePlayerScore::PlacementNew_,
+                                 sizeof(RoutinePlayerScore),
+                                 alignof(RoutinePlayerScore));
+  }
+}
+#endif
+constexpr auto RoutinePlayerScore::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_RoutinePlayerScore_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // IsInitialized
+          &RoutinePlayerScore::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<RoutinePlayerScore>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &RoutinePlayerScore::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<RoutinePlayerScore>(), &RoutinePlayerScore::ByteSizeLong,
+              &RoutinePlayerScore::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_._cached_size_),
+          false,
+      },
+      &RoutinePlayerScore::kDescriptorMethods,
+      &descriptor_table_ProfileStats_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull RoutinePlayerScore_class_data_ =
+        RoutinePlayerScore::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+RoutinePlayerScore::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&RoutinePlayerScore_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(RoutinePlayerScore_class_data_.tc_table);
+  return RoutinePlayerScore_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<4, 9, 0, 72, 2>
+RoutinePlayerScore::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_._has_bits_),
+    0, // no _extensions_
+    9, 120,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294966784,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    9,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    RoutinePlayerScore_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::itgmania::profile::RoutinePlayerScore>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // uint32 player_index = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(RoutinePlayerScore, _impl_.player_index_), 5>(),
+     {8, 5, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.player_index_)}},
+    // string name = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 2, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.name_)}},
+    // string grade = 3;
+    {::_pbi::TcParser::FastUS1,
+     {26, 3, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.grade_)}},
+    // uint32 score = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(RoutinePlayerScore, _impl_.score_), 6>(),
+     {32, 6, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.score_)}},
+    // float percent_dp = 5;
+    {::_pbi::TcParser::FastF32S1,
+     {45, 7, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.percent_dp_)}},
+    // uint32 max_combo = 6;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(RoutinePlayerScore, _impl_.max_combo_), 8>(),
+     {48, 8, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.max_combo_)}},
+    // string player_guid = 7;
+    {::_pbi::TcParser::FastUS1,
+     {58, 4, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.player_guid_)}},
+    // repeated int32 tap_note_scores = 8;
+    {::_pbi::TcParser::FastV32P1,
+     {66, 0, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.tap_note_scores_)}},
+    // repeated int32 hold_note_scores = 9;
+    {::_pbi::TcParser::FastV32P1,
+     {74, 1, 0,
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.hold_note_scores_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // uint32 player_index = 1;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.player_index_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // string name = 2;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.name_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string grade = 3;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.grade_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // uint32 score = 4;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.score_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // float percent_dp = 5;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.percent_dp_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
+    // uint32 max_combo = 6;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.max_combo_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // string player_guid = 7;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.player_guid_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // repeated int32 tap_note_scores = 8;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.tap_note_scores_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kPackedInt32)},
+    // repeated int32 hold_note_scores = 9;
+    {PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.hold_note_scores_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcRepeated | ::_fl::kPackedInt32)},
+  }},
+  // no aux_entries
+  {{
+    "\43\0\4\5\0\0\0\13\0\0\0\0\0\0\0\0"
+    "itgmania.profile.RoutinePlayerScore"
+    "name"
+    "grade"
+    "player_guid"
+  }},
+};
+PROTOBUF_NOINLINE void RoutinePlayerScore::Clear() {
+// @@protoc_insertion_point(message_clear_start:itgmania.profile.RoutinePlayerScore)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _impl_.tap_note_scores_.Clear();
+    }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000002U)) {
+      _impl_.hold_note_scores_.Clear();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      _impl_.name_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      _impl_.grade_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      _impl_.player_guid_.ClearNonDefaultToEmpty();
+    }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x000000e0U)) {
+    ::memset(&_impl_.player_index_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.percent_dp_) -
+        reinterpret_cast<char*>(&_impl_.player_index_)) + sizeof(_impl_.percent_dp_));
+  }
+  _impl_.max_combo_ = 0u;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL RoutinePlayerScore::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const RoutinePlayerScore& this_ = static_cast<const RoutinePlayerScore&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL RoutinePlayerScore::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const RoutinePlayerScore& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:itgmania.profile.RoutinePlayerScore)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // uint32 player_index = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (this_._internal_player_index() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          1, this_._internal_player_index(), target);
+    }
+  }
+
+  // string name = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (!this_._internal_name().empty()) {
+      const ::std::string& _s = this_._internal_name();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "itgmania.profile.RoutinePlayerScore.name");
+      target = stream->WriteStringMaybeAliased(2, _s, target);
+    }
+  }
+
+  // string grade = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (!this_._internal_grade().empty()) {
+      const ::std::string& _s = this_._internal_grade();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "itgmania.profile.RoutinePlayerScore.grade");
+      target = stream->WriteStringMaybeAliased(3, _s, target);
+    }
+  }
+
+  // uint32 score = 4;
+  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (this_._internal_score() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          4, this_._internal_score(), target);
+    }
+  }
+
+  // float percent_dp = 5;
+  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (::absl::bit_cast<::uint32_t>(this_._internal_percent_dp()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteFloatToArray(
+          5, this_._internal_percent_dp(), target);
+    }
+  }
+
+  // uint32 max_combo = 6;
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (this_._internal_max_combo() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          6, this_._internal_max_combo(), target);
+    }
+  }
+
+  // string player_guid = 7;
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (!this_._internal_player_guid().empty()) {
+      const ::std::string& _s = this_._internal_player_guid();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "itgmania.profile.RoutinePlayerScore.player_guid");
+      target = stream->WriteStringMaybeAliased(7, _s, target);
+    }
+  }
+
+  // repeated int32 tap_note_scores = 8;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    {
+      int byte_size = this_._impl_._tap_note_scores_cached_byte_size_.Get();
+      if (byte_size > 0) {
+        target = stream->WriteInt32Packed(
+            8, this_._internal_tap_note_scores(), byte_size, target);
+      }
+    }
+  }
+
+  // repeated int32 hold_note_scores = 9;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000002U)) {
+    {
+      int byte_size = this_._impl_._hold_note_scores_cached_byte_size_.Get();
+      if (byte_size > 0) {
+        target = stream->WriteInt32Packed(
+            9, this_._internal_hold_note_scores(), byte_size, target);
+      }
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:itgmania.profile.RoutinePlayerScore)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t RoutinePlayerScore::ByteSizeLong(const MessageLite& base) {
+  const RoutinePlayerScore& this_ = static_cast<const RoutinePlayerScore&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t RoutinePlayerScore::ByteSizeLong() const {
+  const RoutinePlayerScore& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:itgmania.profile.RoutinePlayerScore)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
+    // repeated int32 tap_note_scores = 8;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      total_size +=
+          ::_pbi::WireFormatLite::Int32SizeWithPackedTagSize(
+              this_._internal_tap_note_scores(), 1,
+              this_._impl_._tap_note_scores_cached_byte_size_);
+    }
+    // repeated int32 hold_note_scores = 9;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000002U)) {
+      total_size +=
+          ::_pbi::WireFormatLite::Int32SizeWithPackedTagSize(
+              this_._internal_hold_note_scores(), 1,
+              this_._impl_._hold_note_scores_cached_byte_size_);
+    }
+    // string name = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!this_._internal_name().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_name());
+      }
+    }
+    // string grade = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (!this_._internal_grade().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_grade());
+      }
+    }
+    // string player_guid = 7;
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (!this_._internal_player_guid().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_player_guid());
+      }
+    }
+    // uint32 player_index = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (this_._internal_player_index() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_player_index());
+      }
+    }
+    // uint32 score = 4;
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (this_._internal_score() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_score());
+      }
+    }
+    // float percent_dp = 5;
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (::absl::bit_cast<::uint32_t>(this_._internal_percent_dp()) != 0) {
+        total_size += 5;
+      }
+    }
+  }
+   {
+    // uint32 max_combo = 6;
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+      if (this_._internal_max_combo() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_max_combo());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void RoutinePlayerScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<RoutinePlayerScore*>(&to_msg);
+  auto& from = static_cast<const RoutinePlayerScore&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:itgmania.profile.RoutinePlayerScore)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _this->_internal_mutable_tap_note_scores()->MergeFrom(from._internal_tap_note_scores());
+    }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000002U)) {
+      _this->_internal_mutable_hold_note_scores()->MergeFrom(from._internal_hold_note_scores());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!from._internal_name().empty()) {
+        _this->_internal_set_name(from._internal_name());
+      } else {
+        if (_this->_impl_.name_.IsDefault()) {
+          _this->_internal_set_name("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (!from._internal_grade().empty()) {
+        _this->_internal_set_grade(from._internal_grade());
+      } else {
+        if (_this->_impl_.grade_.IsDefault()) {
+          _this->_internal_set_grade("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (!from._internal_player_guid().empty()) {
+        _this->_internal_set_player_guid(from._internal_player_guid());
+      } else {
+        if (_this->_impl_.player_guid_.IsDefault()) {
+          _this->_internal_set_player_guid("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (from._internal_player_index() != 0) {
+        _this->_impl_.player_index_ = from._impl_.player_index_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (from._internal_score() != 0) {
+        _this->_impl_.score_ = from._impl_.score_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (::absl::bit_cast<::uint32_t>(from._internal_percent_dp()) != 0) {
+        _this->_impl_.percent_dp_ = from._impl_.percent_dp_;
+      }
+    }
+  }
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (from._internal_max_combo() != 0) {
+      _this->_impl_.max_combo_ = from._impl_.max_combo_;
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void RoutinePlayerScore::CopyFrom(const RoutinePlayerScore& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:itgmania.profile.RoutinePlayerScore)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void RoutinePlayerScore::InternalSwap(RoutinePlayerScore* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.tap_note_scores_.InternalSwap(&other->_impl_.tap_note_scores_);
+  _impl_.hold_note_scores_.InternalSwap(&other->_impl_.hold_note_scores_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, &other->_impl_.name_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.grade_, &other->_impl_.grade_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.player_guid_, &other->_impl_.player_guid_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.max_combo_)
+      + sizeof(RoutinePlayerScore::_impl_.max_combo_)
+      - PROTOBUF_FIELD_OFFSET(RoutinePlayerScore, _impl_.player_index_)>(
+          reinterpret_cast<char*>(&_impl_.player_index_),
+          reinterpret_cast<char*>(&other->_impl_.player_index_));
+}
+
+::google::protobuf::Metadata RoutinePlayerScore::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
 class HighScore::_Internal {
  public:
   using HasBits =
@@ -7381,6 +8150,15 @@ PROTOBUF_NDEBUG_INLINE HighScore::Impl_::Impl_(
         radar_values_ { visibility, arena, from.radar_values_ }
         #endif
         ,
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        routine_players_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::HighScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.routine_players_)>()
+        , from.routine_players_}
+        #else
+        routine_players_ { visibility, arena, from.routine_players_ }
+        #endif
+        ,
         name_(arena, from.name_),
         grade_(arena, from.grade_),
         stage_award_(arena, from.stage_award_),
@@ -7407,9 +8185,9 @@ HighScore::HighScore(
                offsetof(Impl_, score_),
            reinterpret_cast<const char*>(&from._impl_) +
                offsetof(Impl_, score_),
-           offsetof(Impl_, disqualified_) -
+           offsetof(Impl_, is_routine_) -
                offsetof(Impl_, score_) +
-               sizeof(Impl_::disqualified_));
+               sizeof(Impl_::is_routine_));
 
   // @@protoc_insertion_point(copy_constructor:itgmania.profile.HighScore)
 }
@@ -7446,6 +8224,15 @@ PROTOBUF_NDEBUG_INLINE HighScore::Impl_::Impl_(
         radar_values_ { visibility, arena }
         #endif
         ,
+        #ifdef PROTOBUF_INTERNAL_REMOVE_ARENA_PTRS_REPEATED_PTR_FIELD
+        routine_players_{visibility, ::_pbi::InternalMetadataOffset::Build<
+            ::itgmania::profile::HighScore,
+            PROTOBUF_FIELD_OFFSET(::itgmania::profile::HighScore, _impl_.routine_players_)>()
+        }
+        #else
+        routine_players_ { visibility, arena }
+        #endif
+        ,
         name_(arena),
         grade_(arena),
         stage_award_(arena),
@@ -7460,9 +8247,9 @@ inline void HighScore::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, score_),
            0,
-           offsetof(Impl_, disqualified_) -
+           offsetof(Impl_, is_routine_) -
                offsetof(Impl_, score_) +
-               sizeof(Impl_::disqualified_));
+               sizeof(Impl_::is_routine_));
 }
 HighScore::~HighScore() {
   // @@protoc_insertion_point(destructor:itgmania.profile.HighScore)
@@ -7511,6 +8298,10 @@ constexpr auto HighScore::InternalNewImpl_() {
           decltype(HighScore::_impl_.radar_values_)::
               InternalGetArenaOffset(
                   ::google::protobuf::Message::internal_visibility()),
+      PROTOBUF_FIELD_OFFSET(HighScore, _impl_.routine_players_) +
+          decltype(HighScore::_impl_.routine_players_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
   });
   if (arena_bits.has_value()) {
     return ::google::protobuf::internal::MessageCreator::CopyInit(
@@ -7555,18 +8346,18 @@ HighScore::GetClassData() const {
   return HighScore_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<5, 18, 0, 128, 2>
+const ::_pbi::TcParseTable<5, 20, 1, 128, 2>
 HighScore::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(HighScore, _impl_._has_bits_),
     0, // no _extensions_
-    18, 248,  // max_field_number, fast_idx_mask
+    20, 248,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294705152,  // skipmap
+    4293918720,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    18,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
+    20,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
     HighScore_class_data_.base(),
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
@@ -7577,55 +8368,55 @@ HighScore::_table_ = {
     {::_pbi::TcParser::MiniParse, {}},
     // string name = 1;
     {::_pbi::TcParser::FastUS1,
-     {10, 3, 0,
+     {10, 4, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.name_)}},
     // string grade = 2;
     {::_pbi::TcParser::FastUS1,
-     {18, 4, 0,
+     {18, 5, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.grade_)}},
     // uint32 score = 3;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(HighScore, _impl_.score_), 11>(),
-     {24, 11, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(HighScore, _impl_.score_), 12>(),
+     {24, 12, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.score_)}},
     // float percent_dp = 4;
     {::_pbi::TcParser::FastF32S1,
-     {37, 12, 0,
+     {37, 13, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.percent_dp_)}},
     // float survive_seconds = 5;
     {::_pbi::TcParser::FastF32S1,
-     {45, 13, 0,
+     {45, 14, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.survive_seconds_)}},
     // uint32 max_combo = 6;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(HighScore, _impl_.max_combo_), 14>(),
-     {48, 14, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(HighScore, _impl_.max_combo_), 15>(),
+     {48, 15, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.max_combo_)}},
     // string stage_award = 7;
     {::_pbi::TcParser::FastUS1,
-     {58, 5, 0,
+     {58, 6, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.stage_award_)}},
     // string peak_combo_award = 8;
     {::_pbi::TcParser::FastUS1,
-     {66, 6, 0,
+     {66, 7, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.peak_combo_award_)}},
     // string modifiers = 9;
     {::_pbi::TcParser::FastUS1,
-     {74, 7, 0,
+     {74, 8, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.modifiers_)}},
     // string date_time = 10;
     {::_pbi::TcParser::FastUS1,
-     {82, 8, 0,
+     {82, 9, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.date_time_)}},
     // string player_guid = 11;
     {::_pbi::TcParser::FastUS1,
-     {90, 9, 0,
+     {90, 10, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.player_guid_)}},
     // string machine_guid = 12;
     {::_pbi::TcParser::FastUS1,
-     {98, 10, 0,
+     {98, 11, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.machine_guid_)}},
     // int32 product_id = 13;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(HighScore, _impl_.product_id_), 15>(),
-     {104, 15, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(HighScore, _impl_.product_id_), 16>(),
+     {104, 16, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.product_id_)}},
     // repeated int32 tap_note_scores = 14;
     {::_pbi::TcParser::FastV32P1,
@@ -7641,14 +8432,20 @@ HighScore::_table_ = {
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.radar_values_)}},
     // float life_remaining_seconds = 17;
     {::_pbi::TcParser::FastF32S2,
-     {397, 16, 0,
+     {397, 17, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.life_remaining_seconds_)}},
     // bool disqualified = 18;
     {::_pbi::TcParser::FastV8S2,
-     {400, 17, 0,
+     {400, 18, 0,
       PROTOBUF_FIELD_OFFSET(HighScore, _impl_.disqualified_)}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // bool is_routine = 19;
+    {::_pbi::TcParser::FastV8S2,
+     {408, 19, 0,
+      PROTOBUF_FIELD_OFFSET(HighScore, _impl_.is_routine_)}},
+    // repeated .itgmania.profile.RoutinePlayerScore routine_players = 20;
+    {::_pbi::TcParser::FastMtR2,
+     {418, 3, 0,
+      PROTOBUF_FIELD_OFFSET(HighScore, _impl_.routine_players_)}},
     {::_pbi::TcParser::MiniParse, {}},
     {::_pbi::TcParser::MiniParse, {}},
     {::_pbi::TcParser::MiniParse, {}},
@@ -7664,31 +8461,31 @@ HighScore::_table_ = {
     65535, 65535
   }}, {{
     // string name = 1;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.name_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.name_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string grade = 2;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.grade_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.grade_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // uint32 score = 3;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.score_), _Internal::kHasBitsOffset + 11, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.score_), _Internal::kHasBitsOffset + 12, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // float percent_dp = 4;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.percent_dp_), _Internal::kHasBitsOffset + 12, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.percent_dp_), _Internal::kHasBitsOffset + 13, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
     // float survive_seconds = 5;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.survive_seconds_), _Internal::kHasBitsOffset + 13, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.survive_seconds_), _Internal::kHasBitsOffset + 14, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
     // uint32 max_combo = 6;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.max_combo_), _Internal::kHasBitsOffset + 14, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.max_combo_), _Internal::kHasBitsOffset + 15, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // string stage_award = 7;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.stage_award_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.stage_award_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string peak_combo_award = 8;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.peak_combo_award_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.peak_combo_award_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string modifiers = 9;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.modifiers_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.modifiers_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string date_time = 10;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.date_time_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.date_time_), _Internal::kHasBitsOffset + 9, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string player_guid = 11;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.player_guid_), _Internal::kHasBitsOffset + 9, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.player_guid_), _Internal::kHasBitsOffset + 10, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string machine_guid = 12;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.machine_guid_), _Internal::kHasBitsOffset + 10, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.machine_guid_), _Internal::kHasBitsOffset + 11, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // int32 product_id = 13;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.product_id_), _Internal::kHasBitsOffset + 15, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.product_id_), _Internal::kHasBitsOffset + 16, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt32)},
     // repeated int32 tap_note_scores = 14;
     {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.tap_note_scores_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kPackedInt32)},
     // repeated int32 hold_note_scores = 15;
@@ -7696,11 +8493,17 @@ HighScore::_table_ = {
     // repeated float radar_values = 16;
     {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.radar_values_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcRepeated | ::_fl::kPackedFloat)},
     // float life_remaining_seconds = 17;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.life_remaining_seconds_), _Internal::kHasBitsOffset + 16, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.life_remaining_seconds_), _Internal::kHasBitsOffset + 17, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
     // bool disqualified = 18;
-    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.disqualified_), _Internal::kHasBitsOffset + 17, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.disqualified_), _Internal::kHasBitsOffset + 18, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool is_routine = 19;
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.is_routine_), _Internal::kHasBitsOffset + 19, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // repeated .itgmania.profile.RoutinePlayerScore routine_players = 20;
+    {PROTOBUF_FIELD_OFFSET(HighScore, _impl_.routine_players_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
   }},
-  // no aux_entries
+  {{
+      {::_pbi::TcParser::GetTable<::itgmania::profile::RoutinePlayerScore>()},
+  }},
   {{
     "\32\4\5\0\0\0\0\13\20\11\11\13\14\0\0\0\0\0\0\0\0\0\0\0"
     "itgmania.profile.HighScore"
@@ -7732,42 +8535,45 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
     if (CheckHasBitForRepeated(cached_has_bits, 0x00000004U)) {
       _impl_.radar_values_.Clear();
     }
-    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
-      _impl_.name_.ClearNonDefaultToEmpty();
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000008U)) {
+      _impl_.routine_players_.Clear();
     }
     if (CheckHasBit(cached_has_bits, 0x00000010U)) {
-      _impl_.grade_.ClearNonDefaultToEmpty();
+      _impl_.name_.ClearNonDefaultToEmpty();
     }
     if (CheckHasBit(cached_has_bits, 0x00000020U)) {
-      _impl_.stage_award_.ClearNonDefaultToEmpty();
+      _impl_.grade_.ClearNonDefaultToEmpty();
     }
     if (CheckHasBit(cached_has_bits, 0x00000040U)) {
-      _impl_.peak_combo_award_.ClearNonDefaultToEmpty();
+      _impl_.stage_award_.ClearNonDefaultToEmpty();
     }
     if (CheckHasBit(cached_has_bits, 0x00000080U)) {
-      _impl_.modifiers_.ClearNonDefaultToEmpty();
+      _impl_.peak_combo_award_.ClearNonDefaultToEmpty();
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x00000700U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x00000f00U)) {
     if (CheckHasBit(cached_has_bits, 0x00000100U)) {
-      _impl_.date_time_.ClearNonDefaultToEmpty();
+      _impl_.modifiers_.ClearNonDefaultToEmpty();
     }
     if (CheckHasBit(cached_has_bits, 0x00000200U)) {
-      _impl_.player_guid_.ClearNonDefaultToEmpty();
+      _impl_.date_time_.ClearNonDefaultToEmpty();
     }
     if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+      _impl_.player_guid_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
       _impl_.machine_guid_.ClearNonDefaultToEmpty();
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x0000f800U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000f000U)) {
     ::memset(&_impl_.score_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.product_id_) -
-        reinterpret_cast<char*>(&_impl_.score_)) + sizeof(_impl_.product_id_));
+        reinterpret_cast<char*>(&_impl_.max_combo_) -
+        reinterpret_cast<char*>(&_impl_.score_)) + sizeof(_impl_.max_combo_));
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x00030000U)) {
-    ::memset(&_impl_.life_remaining_seconds_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.disqualified_) -
-        reinterpret_cast<char*>(&_impl_.life_remaining_seconds_)) + sizeof(_impl_.disqualified_));
+  if (BatchCheckHasBit(cached_has_bits, 0x000f0000U)) {
+    ::memset(&_impl_.product_id_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.is_routine_) -
+        reinterpret_cast<char*>(&_impl_.product_id_)) + sizeof(_impl_.is_routine_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -7793,7 +8599,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
 
   cached_has_bits = this_._impl_._has_bits_[0];
   // string name = 1;
-  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
     if (!this_._internal_name().empty()) {
       const ::std::string& _s = this_._internal_name();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7803,7 +8609,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // string grade = 2;
-  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
     if (!this_._internal_grade().empty()) {
       const ::std::string& _s = this_._internal_grade();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7813,7 +8619,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // uint32 score = 3;
-  if (CheckHasBit(cached_has_bits, 0x00000800U)) {
+  if (CheckHasBit(cached_has_bits, 0x00001000U)) {
     if (this_._internal_score() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
@@ -7822,7 +8628,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // float percent_dp = 4;
-  if (CheckHasBit(cached_has_bits, 0x00001000U)) {
+  if (CheckHasBit(cached_has_bits, 0x00002000U)) {
     if (::absl::bit_cast<::uint32_t>(this_._internal_percent_dp()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteFloatToArray(
@@ -7831,7 +8637,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // float survive_seconds = 5;
-  if (CheckHasBit(cached_has_bits, 0x00002000U)) {
+  if (CheckHasBit(cached_has_bits, 0x00004000U)) {
     if (::absl::bit_cast<::uint32_t>(this_._internal_survive_seconds()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteFloatToArray(
@@ -7840,7 +8646,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // uint32 max_combo = 6;
-  if (CheckHasBit(cached_has_bits, 0x00004000U)) {
+  if (CheckHasBit(cached_has_bits, 0x00008000U)) {
     if (this_._internal_max_combo() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
@@ -7849,7 +8655,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // string stage_award = 7;
-  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
     if (!this_._internal_stage_award().empty()) {
       const ::std::string& _s = this_._internal_stage_award();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7859,7 +8665,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // string peak_combo_award = 8;
-  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
     if (!this_._internal_peak_combo_award().empty()) {
       const ::std::string& _s = this_._internal_peak_combo_award();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7869,7 +8675,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // string modifiers = 9;
-  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
     if (!this_._internal_modifiers().empty()) {
       const ::std::string& _s = this_._internal_modifiers();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7879,7 +8685,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // string date_time = 10;
-  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000200U)) {
     if (!this_._internal_date_time().empty()) {
       const ::std::string& _s = this_._internal_date_time();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7889,7 +8695,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // string player_guid = 11;
-  if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000400U)) {
     if (!this_._internal_player_guid().empty()) {
       const ::std::string& _s = this_._internal_player_guid();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7899,7 +8705,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // string machine_guid = 12;
-  if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000800U)) {
     if (!this_._internal_machine_guid().empty()) {
       const ::std::string& _s = this_._internal_machine_guid();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7909,7 +8715,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // int32 product_id = 13;
-  if (CheckHasBit(cached_has_bits, 0x00008000U)) {
+  if (CheckHasBit(cached_has_bits, 0x00010000U)) {
     if (this_._internal_product_id() != 0) {
       target =
           ::google::protobuf::internal::WireFormatLite::WriteInt32ToArrayWithField<13>(
@@ -7947,7 +8753,7 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // float life_remaining_seconds = 17;
-  if (CheckHasBit(cached_has_bits, 0x00010000U)) {
+  if (CheckHasBit(cached_has_bits, 0x00020000U)) {
     if (::absl::bit_cast<::uint32_t>(this_._internal_life_remaining_seconds()) != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteFloatToArray(
@@ -7956,11 +8762,33 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
   }
 
   // bool disqualified = 18;
-  if (CheckHasBit(cached_has_bits, 0x00020000U)) {
+  if (CheckHasBit(cached_has_bits, 0x00040000U)) {
     if (this_._internal_disqualified() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
           18, this_._internal_disqualified(), target);
+    }
+  }
+
+  // bool is_routine = 19;
+  if (CheckHasBit(cached_has_bits, 0x00080000U)) {
+    if (this_._internal_is_routine() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          19, this_._internal_is_routine(), target);
+    }
+  }
+
+  // repeated .itgmania.profile.RoutinePlayerScore routine_players = 20;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000008U)) {
+    for (unsigned i = 0, n = static_cast<unsigned>(
+                             this_._internal_routine_players_size());
+         i < n; i++) {
+      const auto& repfield = this_._internal_routine_players().Get(i);
+      target =
+          ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+              20, repfield, repfield.GetCachedSize(),
+              target, stream);
     }
   }
 
@@ -8014,108 +8842,121 @@ PROTOBUF_NOINLINE void HighScore::Clear() {
                               static_cast<::int32_t>(data_size));
       total_size += tag_size + data_size;
     }
+    // repeated .itgmania.profile.RoutinePlayerScore routine_players = 20;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000008U)) {
+      total_size += 2UL * this_._internal_routine_players_size();
+      for (const auto& msg : this_._internal_routine_players()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
     // string name = 1;
-    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
       if (!this_._internal_name().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_name());
       }
     }
     // string grade = 2;
-    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
       if (!this_._internal_grade().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_grade());
       }
     }
     // string stage_award = 7;
-    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
       if (!this_._internal_stage_award().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_stage_award());
       }
     }
     // string peak_combo_award = 8;
-    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
       if (!this_._internal_peak_combo_award().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_peak_combo_award());
       }
     }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x0000ff00U)) {
     // string modifiers = 9;
-    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
       if (!this_._internal_modifiers().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_modifiers());
       }
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x0000ff00U)) {
     // string date_time = 10;
-    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
       if (!this_._internal_date_time().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_date_time());
       }
     }
     // string player_guid = 11;
-    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
       if (!this_._internal_player_guid().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_player_guid());
       }
     }
     // string machine_guid = 12;
-    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
       if (!this_._internal_machine_guid().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_machine_guid());
       }
     }
     // uint32 score = 3;
-    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
+    if (CheckHasBit(cached_has_bits, 0x00001000U)) {
       if (this_._internal_score() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
             this_._internal_score());
       }
     }
     // float percent_dp = 4;
-    if (CheckHasBit(cached_has_bits, 0x00001000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00002000U)) {
       if (::absl::bit_cast<::uint32_t>(this_._internal_percent_dp()) != 0) {
         total_size += 5;
       }
     }
     // float survive_seconds = 5;
-    if (CheckHasBit(cached_has_bits, 0x00002000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
       if (::absl::bit_cast<::uint32_t>(this_._internal_survive_seconds()) != 0) {
         total_size += 5;
       }
     }
     // uint32 max_combo = 6;
-    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00008000U)) {
       if (this_._internal_max_combo() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
             this_._internal_max_combo());
       }
     }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x000f0000U)) {
     // int32 product_id = 13;
-    if (CheckHasBit(cached_has_bits, 0x00008000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00010000U)) {
       if (this_._internal_product_id() != 0) {
         total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
             this_._internal_product_id());
       }
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x00030000U)) {
     // float life_remaining_seconds = 17;
-    if (CheckHasBit(cached_has_bits, 0x00010000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00020000U)) {
       if (::absl::bit_cast<::uint32_t>(this_._internal_life_remaining_seconds()) != 0) {
         total_size += 6;
       }
     }
     // bool disqualified = 18;
-    if (CheckHasBit(cached_has_bits, 0x00020000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00040000U)) {
       if (this_._internal_disqualified() != 0) {
+        total_size += 3;
+      }
+    }
+    // bool is_routine = 19;
+    if (CheckHasBit(cached_has_bits, 0x00080000U)) {
+      if (this_._internal_is_routine() != 0) {
         total_size += 3;
       }
     }
@@ -8132,6 +8973,7 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
   if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
     from.CheckHasBitConsistency();
   }
+  ::google::protobuf::Arena* arena = _this->GetArena();
   // @@protoc_insertion_point(class_specific_merge_from_start:itgmania.profile.HighScore)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
@@ -8148,7 +8990,12 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
     if (CheckHasBitForRepeated(cached_has_bits, 0x00000004U)) {
       _this->_internal_mutable_radar_values()->MergeFrom(from._internal_radar_values());
     }
-    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000008U)) {
+      _this->_internal_mutable_routine_players()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_routine_players());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
       if (!from._internal_name().empty()) {
         _this->_internal_set_name(from._internal_name());
       } else {
@@ -8157,7 +9004,7 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
       if (!from._internal_grade().empty()) {
         _this->_internal_set_grade(from._internal_grade());
       } else {
@@ -8166,7 +9013,7 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
       if (!from._internal_stage_award().empty()) {
         _this->_internal_set_stage_award(from._internal_stage_award());
       } else {
@@ -8175,7 +9022,7 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
       if (!from._internal_peak_combo_award().empty()) {
         _this->_internal_set_peak_combo_award(from._internal_peak_combo_award());
       } else {
@@ -8184,7 +9031,9 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x0000ff00U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
       if (!from._internal_modifiers().empty()) {
         _this->_internal_set_modifiers(from._internal_modifiers());
       } else {
@@ -8193,9 +9042,7 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x0000ff00U)) {
-    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
       if (!from._internal_date_time().empty()) {
         _this->_internal_set_date_time(from._internal_date_time());
       } else {
@@ -8204,7 +9051,7 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
       if (!from._internal_player_guid().empty()) {
         _this->_internal_set_player_guid(from._internal_player_guid());
       } else {
@@ -8213,7 +9060,7 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
       if (!from._internal_machine_guid().empty()) {
         _this->_internal_set_machine_guid(from._internal_machine_guid());
       } else {
@@ -8222,41 +9069,46 @@ void HighScore::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
+    if (CheckHasBit(cached_has_bits, 0x00001000U)) {
       if (from._internal_score() != 0) {
         _this->_impl_.score_ = from._impl_.score_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00001000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00002000U)) {
       if (::absl::bit_cast<::uint32_t>(from._internal_percent_dp()) != 0) {
         _this->_impl_.percent_dp_ = from._impl_.percent_dp_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00002000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
       if (::absl::bit_cast<::uint32_t>(from._internal_survive_seconds()) != 0) {
         _this->_impl_.survive_seconds_ = from._impl_.survive_seconds_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00004000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00008000U)) {
       if (from._internal_max_combo() != 0) {
         _this->_impl_.max_combo_ = from._impl_.max_combo_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00008000U)) {
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x000f0000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00010000U)) {
       if (from._internal_product_id() != 0) {
         _this->_impl_.product_id_ = from._impl_.product_id_;
       }
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x00030000U)) {
-    if (CheckHasBit(cached_has_bits, 0x00010000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00020000U)) {
       if (::absl::bit_cast<::uint32_t>(from._internal_life_remaining_seconds()) != 0) {
         _this->_impl_.life_remaining_seconds_ = from._impl_.life_remaining_seconds_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00020000U)) {
+    if (CheckHasBit(cached_has_bits, 0x00040000U)) {
       if (from._internal_disqualified() != 0) {
         _this->_impl_.disqualified_ = from._impl_.disqualified_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00080000U)) {
+      if (from._internal_is_routine() != 0) {
+        _this->_impl_.is_routine_ = from._impl_.is_routine_;
       }
     }
   }
@@ -8282,6 +9134,7 @@ void HighScore::InternalSwap(HighScore* PROTOBUF_RESTRICT PROTOBUF_NONNULL other
   _impl_.tap_note_scores_.InternalSwap(&other->_impl_.tap_note_scores_);
   _impl_.hold_note_scores_.InternalSwap(&other->_impl_.hold_note_scores_);
   _impl_.radar_values_.InternalSwap(&other->_impl_.radar_values_);
+  _impl_.routine_players_.InternalSwap(&other->_impl_.routine_players_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.name_, &other->_impl_.name_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.grade_, &other->_impl_.grade_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.stage_award_, &other->_impl_.stage_award_, arena);
@@ -8291,8 +9144,8 @@ void HighScore::InternalSwap(HighScore* PROTOBUF_RESTRICT PROTOBUF_NONNULL other
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.player_guid_, &other->_impl_.player_guid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.machine_guid_, &other->_impl_.machine_guid_, arena);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(HighScore, _impl_.disqualified_)
-      + sizeof(HighScore::_impl_.disqualified_)
+      PROTOBUF_FIELD_OFFSET(HighScore, _impl_.is_routine_)
+      + sizeof(HighScore::_impl_.is_routine_)
       - PROTOBUF_FIELD_OFFSET(HighScore, _impl_.score_)>(
           reinterpret_cast<char*>(&_impl_.score_),
           reinterpret_cast<char*>(&other->_impl_.score_));

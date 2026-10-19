@@ -64,7 +64,7 @@
 const std::string STATS_XML = "Stats.xml";
 const std::string STATS_XML_GZ = "Stats.xml.gz";
 const std::string STATS_PROTOBUF = "Stats.pb";
-constexpr unsigned int PROFILE_STATS_PROTOBUF_SCHEMA_VERSION = 5;
+constexpr unsigned int PROFILE_STATS_PROTOBUF_SCHEMA_VERSION = 6;
 /** @brief The filename for where one can edit their personal profile
  * information. */
 const std::string EDITABLE_INI = "Editable.ini";
@@ -152,6 +152,25 @@ static void SaveHighScoreToProtobuf(
 
   out->set_life_remaining_seconds(hs.GetLifeRemainingSeconds());
   out->set_disqualified(hs.GetDisqualified());
+  out->set_is_routine(hs.IsRoutine());
+  if (hs.IsRoutine()) {
+    FOREACH_PlayerNumber(pn) {
+      auto* player = out->add_routine_players();
+      player->set_player_index(pn);
+      player->set_name(hs.GetPlayerName(pn));
+      player->set_grade(GradeToString(hs.GetPlayerGrade(pn)));
+      player->set_score(hs.GetPlayerScore(pn));
+      player->set_percent_dp(hs.GetPlayerPercentDP(pn));
+      player->set_max_combo(hs.GetPlayerMaxCombo(pn));
+      player->set_player_guid(hs.GetPlayerGuid(pn));
+      FOREACH_ENUM(TapNoteScore, tns) {
+        player->add_tap_note_scores(hs.GetPlayerTapNoteScore(pn, tns));
+      }
+      FOREACH_ENUM(HoldNoteScore, hns) {
+        player->add_hold_note_scores(hs.GetPlayerHoldNoteScore(pn, hns));
+      }
+    }
+  }
 }
 
 static void LoadHighScoreFromProtobuf(
@@ -204,6 +223,33 @@ static void LoadHighScoreFromProtobuf(
 
   out.SetLifeRemainingSeconds(in.life_remaining_seconds());
   out.SetDisqualified(in.disqualified());
+  out.SetRoutine(in.is_routine());
+  if (in.is_routine()) {
+    for (const auto& player : in.routine_players()) {
+      if (player.player_index() >= NUM_PLAYERS) {
+        continue;
+      }
+      const auto pn = static_cast<PlayerNumber>(player.player_index());
+      out.SetPlayerName(pn, player.name());
+      out.SetPlayerGrade(
+          pn, std::clamp(
+                  StringToGrade(player.grade()), Grade_Tier01, Grade_NoData));
+      out.SetPlayerScore(pn, player.score());
+      out.SetPlayerPercentDP(pn, player.percent_dp());
+      out.SetPlayerMaxCombo(pn, player.max_combo());
+      out.SetPlayerGuid(pn, player.player_guid());
+      FOREACH_ENUM(TapNoteScore, tns) {
+        if (tns < player.tap_note_scores_size()) {
+          out.SetPlayerTapNoteScore(pn, tns, player.tap_note_scores(tns));
+        }
+      }
+      FOREACH_ENUM(HoldNoteScore, hns) {
+        if (hns < player.hold_note_scores_size()) {
+          out.SetPlayerHoldNoteScore(pn, hns, player.hold_note_scores(hns));
+        }
+      }
+    }
+  }
 }
 
 static void SaveHighScoreListToProtobuf(
@@ -1623,7 +1669,8 @@ ProfileLoadResult Profile::LoadStatsProtobufFromDir(
         sStatsFile.c_str());
     return ProfileLoadResult_FailedTampered;
   }
-  if (iSchemaVersion != PROFILE_STATS_PROTOBUF_SCHEMA_VERSION) {
+  if (iSchemaVersion < 5 ||
+      iSchemaVersion > PROFILE_STATS_PROTOBUF_SCHEMA_VERSION) {
     LOG->Warn(
         "Unsupported protobuf stats schema_version=%u for '%s' "
         "(supported=%u)",
@@ -1712,6 +1759,9 @@ ProfileLoadResult Profile::LoadStatsProtobufFromDir(
     m_iGoalSeconds = general.goal_seconds();
     m_sLastPlayedMachineGuid = general.last_played_machine_guid();
     m_LastPlayedDate.FromString(general.last_played_date());
+    if (!general.creation_time().empty()) {
+      m_CreationTime.FromString(general.creation_time());
+    }
     m_iTotalDancePoints = general.total_dance_points();
     m_iNumExtraStagesPassed = general.num_extra_stages_passed();
     m_iNumExtraStagesFailed = general.num_extra_stages_failed();
@@ -2158,6 +2208,7 @@ bool Profile::SaveStatsProtobufToDir(std::string sDir, bool bSignData) const {
   general_data_pb->set_goal_seconds(m_iGoalSeconds);
   general_data_pb->set_last_played_machine_guid(m_sLastPlayedMachineGuid);
   general_data_pb->set_last_played_date(m_LastPlayedDate.GetString());
+  general_data_pb->set_creation_time(m_CreationTime.GetString());
   general_data_pb->set_total_dance_points(m_iTotalDancePoints);
   general_data_pb->set_num_extra_stages_passed(m_iNumExtraStagesPassed);
   general_data_pb->set_num_extra_stages_failed(m_iNumExtraStagesFailed);

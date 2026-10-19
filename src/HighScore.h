@@ -90,6 +90,14 @@ struct HighScore {
   void SetDisqualified(bool b);
   void SetRoutine(bool b);
 
+  std::string GetPlayerName(PlayerNumber pn) const;
+  Grade GetPlayerGrade(PlayerNumber pn) const;
+  unsigned int GetPlayerScore(PlayerNumber pn) const;
+  float GetPlayerPercentDP(PlayerNumber pn) const;
+  unsigned int GetPlayerMaxCombo(PlayerNumber pn) const;
+  int GetPlayerTapNoteScore(PlayerNumber pn, TapNoteScore score) const;
+  int GetPlayerHoldNoteScore(PlayerNumber pn, HoldNoteScore score) const;
+  void SetPlayerName(PlayerNumber pn, const std::string& name);
   // Getters for player attributes
   std::string GetPlayerGuid(const PlayerNumber& pn) const;
   void SetPlayerGrade(const PlayerNumber& pn, const Grade g);

@@ -97,6 +97,7 @@ message GeneralDataSection {
   repeated IntPair num_stages_passed_by_play_mode = 44;
   repeated IntPair num_stages_passed_by_grade = 45;
   XmlNode user_table = 46;
+  string creation_time = 47;
 }
 
 message SongStepsScore {
@@ -114,6 +115,18 @@ message SongScoreEntry {
 
 message SongScoresSection {
   repeated SongScoreEntry songs = 1;
+}
+
+message RoutinePlayerScore {
+  uint32 player_index = 1;
+  string name = 2;
+  string grade = 3;
+  uint32 score = 4;
+  float percent_dp = 5;
+  uint32 max_combo = 6;
+  string player_guid = 7;
+  repeated int32 tap_note_scores = 8;
+  repeated int32 hold_note_scores = 9;
 }
 
 message HighScore {
@@ -135,6 +148,8 @@ message HighScore {
   repeated float radar_values = 16;
   float life_remaining_seconds = 17;
   bool disqualified = 18;
+  bool is_routine = 19;
+  repeated RoutinePlayerScore routine_players = 20;
 }
 
 message HighScoreList {
@@ -161,6 +176,7 @@ message CourseScoresSection {
 }
 
 message ProfileStatsDocument {
+  reserved 2; // Removed XML fallback payload; do not reuse its wire tag.
   uint32 schema_version = 1;
   GeneralDataSection general_data = 3;
   SongScoresSection song_scores = 4;

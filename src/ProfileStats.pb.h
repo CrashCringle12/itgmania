@@ -111,6 +111,10 @@ class ProfileStatsDocument;
 struct ProfileStatsDocumentDefaultTypeInternal;
 extern ProfileStatsDocumentDefaultTypeInternal _ProfileStatsDocument_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull ProfileStatsDocument_class_data_;
+class RoutinePlayerScore;
+struct RoutinePlayerScoreDefaultTypeInternal;
+extern RoutinePlayerScoreDefaultTypeInternal _RoutinePlayerScore_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull RoutinePlayerScore_class_data_;
 class SongScoreEntry;
 struct SongScoreEntryDefaultTypeInternal;
 extern SongScoreEntryDefaultTypeInternal _SongScoreEntry_default_instance_;
@@ -364,30 +368,30 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED XmlNodeAttr final : public ::google
 extern const ::google::protobuf::internal::ClassDataFull XmlNodeAttr_class_data_;
 // -------------------------------------------------------------------
 
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:itgmania.profile.HighScore) */ {
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED RoutinePlayerScore final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:itgmania.profile.RoutinePlayerScore) */ {
  public:
-  inline HighScore() : HighScore(nullptr) {}
-  ~HighScore() PROTOBUF_FINAL;
+  inline RoutinePlayerScore() : RoutinePlayerScore(nullptr) {}
+  ~RoutinePlayerScore() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(HighScore* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+  void operator delete(RoutinePlayerScore* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(HighScore));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(RoutinePlayerScore));
   }
 #endif
 
   template <typename = void>
-  explicit constexpr HighScore(::google::protobuf::internal::ConstantInitialized);
+  explicit constexpr RoutinePlayerScore(::google::protobuf::internal::ConstantInitialized);
 
-  inline HighScore(const HighScore& from) : HighScore(nullptr, from) {}
-  inline HighScore(HighScore&& from) noexcept
-      : HighScore(nullptr, ::std::move(from)) {}
-  inline HighScore& operator=(const HighScore& from) {
+  inline RoutinePlayerScore(const RoutinePlayerScore& from) : RoutinePlayerScore(nullptr, from) {}
+  inline RoutinePlayerScore(RoutinePlayerScore&& from) noexcept
+      : RoutinePlayerScore(nullptr, ::std::move(from)) {}
+  inline RoutinePlayerScore& operator=(const RoutinePlayerScore& from) {
     CopyFrom(from);
     return *this;
   }
-  inline HighScore& operator=(HighScore&& from) noexcept {
+  inline RoutinePlayerScore& operator=(RoutinePlayerScore&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -416,13 +420,13 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  [[nodiscard]] static const HighScore& default_instance() {
-    return *reinterpret_cast<const HighScore*>(
-        &_HighScore_default_instance_);
+  [[nodiscard]] static const RoutinePlayerScore& default_instance() {
+    return *reinterpret_cast<const RoutinePlayerScore*>(
+        &_RoutinePlayerScore_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 13;
-  friend void swap(HighScore& a, HighScore& b) { a.Swap(&b); }
-  inline void Swap(HighScore* PROTOBUF_NONNULL other) {
+  friend void swap(RoutinePlayerScore& a, RoutinePlayerScore& b) { a.Swap(&b); }
+  inline void Swap(RoutinePlayerScore* PROTOBUF_NONNULL other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -430,7 +434,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(HighScore* PROTOBUF_NONNULL other) {
+  void UnsafeArenaSwap(RoutinePlayerScore* PROTOBUF_NONNULL other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -438,14 +442,14 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
 
   // implements Message ----------------------------------------------
 
-  [[nodiscard]] HighScore* PROTOBUF_NONNULL
+  [[nodiscard]] RoutinePlayerScore* PROTOBUF_NONNULL
   New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<HighScore>(arena);
+    return ::google::protobuf::Message::DefaultConstruct<RoutinePlayerScore>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const HighScore& from);
+  void CopyFrom(const RoutinePlayerScore& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const HighScore& from) { HighScore::MergeImpl(*this, from); }
+  void MergeFrom(const RoutinePlayerScore& from) { RoutinePlayerScore::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(::google::protobuf::MessageLite& to_msg,
@@ -483,17 +487,17 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   private:
   void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(HighScore* PROTOBUF_NONNULL other);
+  void InternalSwap(RoutinePlayerScore* PROTOBUF_NONNULL other);
  private:
   template <typename T>
   friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "itgmania.profile.HighScore"; }
+  static ::absl::string_view FullMessageName() { return "itgmania.profile.RoutinePlayerScore"; }
 
-  explicit HighScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  HighScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const HighScore& from);
-  HighScore(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, HighScore&& from) noexcept
-      : HighScore(arena) {
+  explicit RoutinePlayerScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  RoutinePlayerScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const RoutinePlayerScore& from);
+  RoutinePlayerScore(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, RoutinePlayerScore&& from) noexcept
+      : RoutinePlayerScore(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
@@ -510,26 +514,17 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
 
   // accessors -------------------------------------------------------
   enum : int {
-    kTapNoteScoresFieldNumber = 14,
-    kHoldNoteScoresFieldNumber = 15,
-    kRadarValuesFieldNumber = 16,
-    kNameFieldNumber = 1,
-    kGradeFieldNumber = 2,
-    kStageAwardFieldNumber = 7,
-    kPeakComboAwardFieldNumber = 8,
-    kModifiersFieldNumber = 9,
-    kDateTimeFieldNumber = 10,
-    kPlayerGuidFieldNumber = 11,
-    kMachineGuidFieldNumber = 12,
-    kScoreFieldNumber = 3,
-    kPercentDpFieldNumber = 4,
-    kSurviveSecondsFieldNumber = 5,
+    kTapNoteScoresFieldNumber = 8,
+    kHoldNoteScoresFieldNumber = 9,
+    kNameFieldNumber = 2,
+    kGradeFieldNumber = 3,
+    kPlayerGuidFieldNumber = 7,
+    kPlayerIndexFieldNumber = 1,
+    kScoreFieldNumber = 4,
+    kPercentDpFieldNumber = 5,
     kMaxComboFieldNumber = 6,
-    kProductIdFieldNumber = 13,
-    kLifeRemainingSecondsFieldNumber = 17,
-    kDisqualifiedFieldNumber = 18,
   };
-  // repeated int32 tap_note_scores = 14;
+  // repeated int32 tap_note_scores = 8;
   [[nodiscard]] int tap_note_scores_size()
       const;
   private:
@@ -548,7 +543,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL _internal_mutable_tap_note_scores();
 
   public:
-  // repeated int32 hold_note_scores = 15;
+  // repeated int32 hold_note_scores = 9;
   [[nodiscard]] int hold_note_scores_size()
       const;
   private:
@@ -567,26 +562,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL _internal_mutable_hold_note_scores();
 
   public:
-  // repeated float radar_values = 16;
-  [[nodiscard]] int radar_values_size()
-      const;
-  private:
-  int _internal_radar_values_size() const;
-
-  public:
-  void clear_radar_values() ;
-  [[nodiscard]] float radar_values(int index) const;
-  void set_radar_values(int index, float value);
-  void add_radar_values(float value);
-  [[nodiscard]] const ::google::protobuf::RepeatedField<float>& radar_values() const;
-  ::google::protobuf::RepeatedField<float>* PROTOBUF_NONNULL mutable_radar_values();
-
-  private:
-  const ::google::protobuf::RepeatedField<float>& _internal_radar_values() const;
-  ::google::protobuf::RepeatedField<float>* PROTOBUF_NONNULL _internal_mutable_radar_values();
-
-  public:
-  // string name = 1;
+  // string name = 2;
   void clear_name() ;
   [[nodiscard]] const ::std::string& name() const;
   template <typename Arg_ = const ::std::string&, typename... Args_>
@@ -601,7 +577,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   ::std::string* PROTOBUF_NONNULL _internal_mutable_name();
 
   public:
-  // string grade = 2;
+  // string grade = 3;
   void clear_grade() ;
   [[nodiscard]] const ::std::string& grade() const;
   template <typename Arg_ = const ::std::string&, typename... Args_>
@@ -616,67 +592,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   ::std::string* PROTOBUF_NONNULL _internal_mutable_grade();
 
   public:
-  // string stage_award = 7;
-  void clear_stage_award() ;
-  [[nodiscard]] const ::std::string& stage_award() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_stage_award(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_stage_award();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_stage_award();
-  void set_allocated_stage_award(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_stage_award() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_stage_award(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_stage_award();
-
-  public:
-  // string peak_combo_award = 8;
-  void clear_peak_combo_award() ;
-  [[nodiscard]] const ::std::string& peak_combo_award() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_peak_combo_award(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_peak_combo_award();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_peak_combo_award();
-  void set_allocated_peak_combo_award(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_peak_combo_award() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_peak_combo_award(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_peak_combo_award();
-
-  public:
-  // string modifiers = 9;
-  void clear_modifiers() ;
-  [[nodiscard]] const ::std::string& modifiers() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_modifiers(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_modifiers();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_modifiers();
-  void set_allocated_modifiers(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_modifiers() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_modifiers(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_modifiers();
-
-  public:
-  // string date_time = 10;
-  void clear_date_time() ;
-  [[nodiscard]] const ::std::string& date_time() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_date_time(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_date_time();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_date_time();
-  void set_allocated_date_time(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_date_time() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_date_time(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_date_time();
-
-  public:
-  // string player_guid = 11;
+  // string player_guid = 7;
   void clear_player_guid() ;
   [[nodiscard]] const ::std::string& player_guid() const;
   template <typename Arg_ = const ::std::string&, typename... Args_>
@@ -691,22 +607,17 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   ::std::string* PROTOBUF_NONNULL _internal_mutable_player_guid();
 
   public:
-  // string machine_guid = 12;
-  void clear_machine_guid() ;
-  [[nodiscard]] const ::std::string& machine_guid() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_machine_guid(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_machine_guid();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_machine_guid();
-  void set_allocated_machine_guid(::std::string* PROTOBUF_NULLABLE value);
+  // uint32 player_index = 1;
+  void clear_player_index() ;
+  [[nodiscard]] ::uint32_t player_index() const;
+  void set_player_index(::uint32_t value);
 
   private:
-  const ::std::string& _internal_machine_guid() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_machine_guid(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_machine_guid();
+  ::uint32_t _internal_player_index() const;
+  void _internal_set_player_index(::uint32_t value);
 
   public:
-  // uint32 score = 3;
+  // uint32 score = 4;
   void clear_score() ;
   [[nodiscard]] ::uint32_t score() const;
   void set_score(::uint32_t value);
@@ -716,7 +627,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   void _internal_set_score(::uint32_t value);
 
   public:
-  // float percent_dp = 4;
+  // float percent_dp = 5;
   void clear_percent_dp() ;
   [[nodiscard]] float percent_dp() const;
   void set_percent_dp(float value);
@@ -724,16 +635,6 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   private:
   float _internal_percent_dp() const;
   void _internal_set_percent_dp(float value);
-
-  public:
-  // float survive_seconds = 5;
-  void clear_survive_seconds() ;
-  [[nodiscard]] float survive_seconds() const;
-  void set_survive_seconds(float value);
-
-  private:
-  float _internal_survive_seconds() const;
-  void _internal_set_survive_seconds(float value);
 
   public:
   // uint32 max_combo = 6;
@@ -746,42 +647,12 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
   void _internal_set_max_combo(::uint32_t value);
 
   public:
-  // int32 product_id = 13;
-  void clear_product_id() ;
-  [[nodiscard]] ::int32_t product_id() const;
-  void set_product_id(::int32_t value);
-
-  private:
-  ::int32_t _internal_product_id() const;
-  void _internal_set_product_id(::int32_t value);
-
-  public:
-  // float life_remaining_seconds = 17;
-  void clear_life_remaining_seconds() ;
-  [[nodiscard]] float life_remaining_seconds() const;
-  void set_life_remaining_seconds(float value);
-
-  private:
-  float _internal_life_remaining_seconds() const;
-  void _internal_set_life_remaining_seconds(float value);
-
-  public:
-  // bool disqualified = 18;
-  void clear_disqualified() ;
-  [[nodiscard]] bool disqualified() const;
-  void set_disqualified(bool value);
-
-  private:
-  bool _internal_disqualified() const;
-  void _internal_set_disqualified(bool value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:itgmania.profile.HighScore)
+  // @@protoc_insertion_point(class_scope:itgmania.profile.RoutinePlayerScore)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<5, 18,
-                                   0, 128,
+  static const ::google::protobuf::internal::TcParseTable<4, 9,
+                                   0, 72,
                                    2>
       _table_;
 
@@ -801,36 +672,27 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::
     inline explicit Impl_(
         ::google::protobuf::internal::InternalVisibility visibility,
         ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const HighScore& from_msg);
+        const RoutinePlayerScore& from_msg);
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     ::google::protobuf::RepeatedField<::int32_t> tap_note_scores_;
     ::google::protobuf::internal::CachedSize _tap_note_scores_cached_byte_size_;
     ::google::protobuf::RepeatedField<::int32_t> hold_note_scores_;
     ::google::protobuf::internal::CachedSize _hold_note_scores_cached_byte_size_;
-    ::google::protobuf::RepeatedField<float> radar_values_;
     ::google::protobuf::internal::ArenaStringPtr name_;
     ::google::protobuf::internal::ArenaStringPtr grade_;
-    ::google::protobuf::internal::ArenaStringPtr stage_award_;
-    ::google::protobuf::internal::ArenaStringPtr peak_combo_award_;
-    ::google::protobuf::internal::ArenaStringPtr modifiers_;
-    ::google::protobuf::internal::ArenaStringPtr date_time_;
     ::google::protobuf::internal::ArenaStringPtr player_guid_;
-    ::google::protobuf::internal::ArenaStringPtr machine_guid_;
+    ::uint32_t player_index_;
     ::uint32_t score_;
     float percent_dp_;
-    float survive_seconds_;
     ::uint32_t max_combo_;
-    ::int32_t product_id_;
-    float life_remaining_seconds_;
-    bool disqualified_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_ProfileStats_2eproto;
 };
 
-extern const ::google::protobuf::internal::ClassDataFull HighScore_class_data_;
+extern const ::google::protobuf::internal::ClassDataFull RoutinePlayerScore_class_data_;
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GeneralDataSection_UnlockEntry final : public ::google::protobuf::Message
@@ -2376,30 +2238,30 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED XmlNode final : public ::google::pr
 extern const ::google::protobuf::internal::ClassDataFull XmlNode_class_data_;
 // -------------------------------------------------------------------
 
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScoreList final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:itgmania.profile.HighScoreList) */ {
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScore final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:itgmania.profile.HighScore) */ {
  public:
-  inline HighScoreList() : HighScoreList(nullptr) {}
-  ~HighScoreList() PROTOBUF_FINAL;
+  inline HighScore() : HighScore(nullptr) {}
+  ~HighScore() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(HighScoreList* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+  void operator delete(HighScore* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(HighScoreList));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(HighScore));
   }
 #endif
 
   template <typename = void>
-  explicit constexpr HighScoreList(::google::protobuf::internal::ConstantInitialized);
+  explicit constexpr HighScore(::google::protobuf::internal::ConstantInitialized);
 
-  inline HighScoreList(const HighScoreList& from) : HighScoreList(nullptr, from) {}
-  inline HighScoreList(HighScoreList&& from) noexcept
-      : HighScoreList(nullptr, ::std::move(from)) {}
-  inline HighScoreList& operator=(const HighScoreList& from) {
+  inline HighScore(const HighScore& from) : HighScore(nullptr, from) {}
+  inline HighScore(HighScore&& from) noexcept
+      : HighScore(nullptr, ::std::move(from)) {}
+  inline HighScore& operator=(const HighScore& from) {
     CopyFrom(from);
     return *this;
   }
-  inline HighScoreList& operator=(HighScoreList&& from) noexcept {
+  inline HighScore& operator=(HighScore&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -2428,13 +2290,13 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScoreList final : public ::goog
   [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  [[nodiscard]] static const HighScoreList& default_instance() {
-    return *reinterpret_cast<const HighScoreList*>(
-        &_HighScoreList_default_instance_);
+  [[nodiscard]] static const HighScore& default_instance() {
+    return *reinterpret_cast<const HighScore*>(
+        &_HighScore_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 14;
-  friend void swap(HighScoreList& a, HighScoreList& b) { a.Swap(&b); }
-  inline void Swap(HighScoreList* PROTOBUF_NONNULL other) {
+  friend void swap(HighScore& a, HighScore& b) { a.Swap(&b); }
+  inline void Swap(HighScore* PROTOBUF_NONNULL other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -2442,7 +2304,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScoreList final : public ::goog
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(HighScoreList* PROTOBUF_NONNULL other) {
+  void UnsafeArenaSwap(HighScore* PROTOBUF_NONNULL other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -2450,14 +2312,14 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScoreList final : public ::goog
 
   // implements Message ----------------------------------------------
 
-  [[nodiscard]] HighScoreList* PROTOBUF_NONNULL
+  [[nodiscard]] HighScore* PROTOBUF_NONNULL
   New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<HighScoreList>(arena);
+    return ::google::protobuf::Message::DefaultConstruct<HighScore>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const HighScoreList& from);
+  void CopyFrom(const HighScore& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const HighScoreList& from) { HighScoreList::MergeImpl(*this, from); }
+  void MergeFrom(const HighScore& from) { HighScore::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(::google::protobuf::MessageLite& to_msg,
@@ -2495,17 +2357,17 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScoreList final : public ::goog
   private:
   void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(HighScoreList* PROTOBUF_NONNULL other);
+  void InternalSwap(HighScore* PROTOBUF_NONNULL other);
  private:
   template <typename T>
   friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "itgmania.profile.HighScoreList"; }
+  static ::absl::string_view FullMessageName() { return "itgmania.profile.HighScore"; }
 
-  explicit HighScoreList(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  HighScoreList(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const HighScoreList& from);
-  HighScoreList(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, HighScoreList&& from) noexcept
-      : HighScoreList(arena) {
+  explicit HighScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  HighScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const HighScore& from);
+  HighScore(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, HighScore&& from) noexcept
+      : HighScore(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
@@ -2522,77 +2384,310 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScoreList final : public ::goog
 
   // accessors -------------------------------------------------------
   enum : int {
-    kHighScoresFieldNumber = 4,
-    kLastPlayedFieldNumber = 2,
-    kHighGradeFieldNumber = 3,
-    kNumTimesPlayedFieldNumber = 1,
+    kTapNoteScoresFieldNumber = 14,
+    kHoldNoteScoresFieldNumber = 15,
+    kRadarValuesFieldNumber = 16,
+    kRoutinePlayersFieldNumber = 20,
+    kNameFieldNumber = 1,
+    kGradeFieldNumber = 2,
+    kStageAwardFieldNumber = 7,
+    kPeakComboAwardFieldNumber = 8,
+    kModifiersFieldNumber = 9,
+    kDateTimeFieldNumber = 10,
+    kPlayerGuidFieldNumber = 11,
+    kMachineGuidFieldNumber = 12,
+    kScoreFieldNumber = 3,
+    kPercentDpFieldNumber = 4,
+    kSurviveSecondsFieldNumber = 5,
+    kMaxComboFieldNumber = 6,
+    kProductIdFieldNumber = 13,
+    kLifeRemainingSecondsFieldNumber = 17,
+    kDisqualifiedFieldNumber = 18,
+    kIsRoutineFieldNumber = 19,
   };
-  // repeated .itgmania.profile.HighScore high_scores = 4;
-  [[nodiscard]] int high_scores_size()
+  // repeated int32 tap_note_scores = 14;
+  [[nodiscard]] int tap_note_scores_size()
       const;
   private:
-  int _internal_high_scores_size() const;
+  int _internal_tap_note_scores_size() const;
 
   public:
-  void clear_high_scores() ;
-  [[nodiscard]] ::itgmania::profile::HighScore* PROTOBUF_NONNULL mutable_high_scores(int index);
-  [[nodiscard]] ::google::protobuf::RepeatedPtrField<::itgmania::profile::HighScore>* PROTOBUF_NONNULL
-  mutable_high_scores();
+  void clear_tap_note_scores() ;
+  [[nodiscard]] ::int32_t tap_note_scores(int index) const;
+  void set_tap_note_scores(int index, ::int32_t value);
+  void add_tap_note_scores(::int32_t value);
+  [[nodiscard]] const ::google::protobuf::RepeatedField<::int32_t>& tap_note_scores() const;
+  ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL mutable_tap_note_scores();
 
   private:
-  const ::google::protobuf::RepeatedPtrField<::itgmania::profile::HighScore>& _internal_high_scores() const;
-  ::google::protobuf::RepeatedPtrField<::itgmania::profile::HighScore>* PROTOBUF_NONNULL _internal_mutable_high_scores();
+  const ::google::protobuf::RepeatedField<::int32_t>& _internal_tap_note_scores() const;
+  ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL _internal_mutable_tap_note_scores();
+
   public:
-  [[nodiscard]] const ::itgmania::profile::HighScore& high_scores(int index) const;
-  ::itgmania::profile::HighScore* PROTOBUF_NONNULL add_high_scores();
-  [[nodiscard]] const ::google::protobuf::RepeatedPtrField<::itgmania::profile::HighScore>& high_scores()
+  // repeated int32 hold_note_scores = 15;
+  [[nodiscard]] int hold_note_scores_size()
       const;
-  // string last_played = 2;
-  void clear_last_played() ;
-  [[nodiscard]] const ::std::string& last_played() const;
+  private:
+  int _internal_hold_note_scores_size() const;
+
+  public:
+  void clear_hold_note_scores() ;
+  [[nodiscard]] ::int32_t hold_note_scores(int index) const;
+  void set_hold_note_scores(int index, ::int32_t value);
+  void add_hold_note_scores(::int32_t value);
+  [[nodiscard]] const ::google::protobuf::RepeatedField<::int32_t>& hold_note_scores() const;
+  ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL mutable_hold_note_scores();
+
+  private:
+  const ::google::protobuf::RepeatedField<::int32_t>& _internal_hold_note_scores() const;
+  ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL _internal_mutable_hold_note_scores();
+
+  public:
+  // repeated float radar_values = 16;
+  [[nodiscard]] int radar_values_size()
+      const;
+  private:
+  int _internal_radar_values_size() const;
+
+  public:
+  void clear_radar_values() ;
+  [[nodiscard]] float radar_values(int index) const;
+  void set_radar_values(int index, float value);
+  void add_radar_values(float value);
+  [[nodiscard]] const ::google::protobuf::RepeatedField<float>& radar_values() const;
+  ::google::protobuf::RepeatedField<float>* PROTOBUF_NONNULL mutable_radar_values();
+
+  private:
+  const ::google::protobuf::RepeatedField<float>& _internal_radar_values() const;
+  ::google::protobuf::RepeatedField<float>* PROTOBUF_NONNULL _internal_mutable_radar_values();
+
+  public:
+  // repeated .itgmania.profile.RoutinePlayerScore routine_players = 20;
+  [[nodiscard]] int routine_players_size()
+      const;
+  private:
+  int _internal_routine_players_size() const;
+
+  public:
+  void clear_routine_players() ;
+  [[nodiscard]] ::itgmania::profile::RoutinePlayerScore* PROTOBUF_NONNULL mutable_routine_players(int index);
+  [[nodiscard]] ::google::protobuf::RepeatedPtrField<::itgmania::profile::RoutinePlayerScore>* PROTOBUF_NONNULL
+  mutable_routine_players();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::itgmania::profile::RoutinePlayerScore>& _internal_routine_players() const;
+  ::google::protobuf::RepeatedPtrField<::itgmania::profile::RoutinePlayerScore>* PROTOBUF_NONNULL _internal_mutable_routine_players();
+  public:
+  [[nodiscard]] const ::itgmania::profile::RoutinePlayerScore& routine_players(int index) const;
+  ::itgmania::profile::RoutinePlayerScore* PROTOBUF_NONNULL add_routine_players();
+  [[nodiscard]] const ::google::protobuf::RepeatedPtrField<::itgmania::profile::RoutinePlayerScore>& routine_players()
+      const;
+  // string name = 1;
+  void clear_name() ;
+  [[nodiscard]] const ::std::string& name() const;
   template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_last_played(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_last_played();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_last_played();
-  void set_allocated_last_played(::std::string* PROTOBUF_NULLABLE value);
+  void set_name(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_name();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_name();
+  void set_allocated_name(::std::string* PROTOBUF_NULLABLE value);
 
   private:
-  const ::std::string& _internal_last_played() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_last_played(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_last_played();
+  const ::std::string& _internal_name() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_name(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_name();
 
   public:
-  // string high_grade = 3;
-  void clear_high_grade() ;
-  [[nodiscard]] const ::std::string& high_grade() const;
+  // string grade = 2;
+  void clear_grade() ;
+  [[nodiscard]] const ::std::string& grade() const;
   template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_high_grade(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_high_grade();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_high_grade();
-  void set_allocated_high_grade(::std::string* PROTOBUF_NULLABLE value);
+  void set_grade(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_grade();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_grade();
+  void set_allocated_grade(::std::string* PROTOBUF_NULLABLE value);
 
   private:
-  const ::std::string& _internal_high_grade() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_high_grade(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_high_grade();
+  const ::std::string& _internal_grade() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_grade(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_grade();
 
   public:
-  // int32 num_times_played = 1;
-  void clear_num_times_played() ;
-  [[nodiscard]] ::int32_t num_times_played() const;
-  void set_num_times_played(::int32_t value);
+  // string stage_award = 7;
+  void clear_stage_award() ;
+  [[nodiscard]] const ::std::string& stage_award() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_stage_award(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_stage_award();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_stage_award();
+  void set_allocated_stage_award(::std::string* PROTOBUF_NULLABLE value);
 
   private:
-  ::int32_t _internal_num_times_played() const;
-  void _internal_set_num_times_played(::int32_t value);
+  const ::std::string& _internal_stage_award() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_stage_award(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_stage_award();
 
   public:
-  // @@protoc_insertion_point(class_scope:itgmania.profile.HighScoreList)
+  // string peak_combo_award = 8;
+  void clear_peak_combo_award() ;
+  [[nodiscard]] const ::std::string& peak_combo_award() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_peak_combo_award(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_peak_combo_award();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_peak_combo_award();
+  void set_allocated_peak_combo_award(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_peak_combo_award() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_peak_combo_award(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_peak_combo_award();
+
+  public:
+  // string modifiers = 9;
+  void clear_modifiers() ;
+  [[nodiscard]] const ::std::string& modifiers() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_modifiers(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_modifiers();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_modifiers();
+  void set_allocated_modifiers(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_modifiers() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_modifiers(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_modifiers();
+
+  public:
+  // string date_time = 10;
+  void clear_date_time() ;
+  [[nodiscard]] const ::std::string& date_time() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_date_time(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_date_time();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_date_time();
+  void set_allocated_date_time(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_date_time() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_date_time(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_date_time();
+
+  public:
+  // string player_guid = 11;
+  void clear_player_guid() ;
+  [[nodiscard]] const ::std::string& player_guid() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_player_guid(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_player_guid();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_player_guid();
+  void set_allocated_player_guid(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_player_guid() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_player_guid(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_player_guid();
+
+  public:
+  // string machine_guid = 12;
+  void clear_machine_guid() ;
+  [[nodiscard]] const ::std::string& machine_guid() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_machine_guid(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_machine_guid();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_machine_guid();
+  void set_allocated_machine_guid(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_machine_guid() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_machine_guid(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_machine_guid();
+
+  public:
+  // uint32 score = 3;
+  void clear_score() ;
+  [[nodiscard]] ::uint32_t score() const;
+  void set_score(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_score() const;
+  void _internal_set_score(::uint32_t value);
+
+  public:
+  // float percent_dp = 4;
+  void clear_percent_dp() ;
+  [[nodiscard]] float percent_dp() const;
+  void set_percent_dp(float value);
+
+  private:
+  float _internal_percent_dp() const;
+  void _internal_set_percent_dp(float value);
+
+  public:
+  // float survive_seconds = 5;
+  void clear_survive_seconds() ;
+  [[nodiscard]] float survive_seconds() const;
+  void set_survive_seconds(float value);
+
+  private:
+  float _internal_survive_seconds() const;
+  void _internal_set_survive_seconds(float value);
+
+  public:
+  // uint32 max_combo = 6;
+  void clear_max_combo() ;
+  [[nodiscard]] ::uint32_t max_combo() const;
+  void set_max_combo(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_max_combo() const;
+  void _internal_set_max_combo(::uint32_t value);
+
+  public:
+  // int32 product_id = 13;
+  void clear_product_id() ;
+  [[nodiscard]] ::int32_t product_id() const;
+  void set_product_id(::int32_t value);
+
+  private:
+  ::int32_t _internal_product_id() const;
+  void _internal_set_product_id(::int32_t value);
+
+  public:
+  // float life_remaining_seconds = 17;
+  void clear_life_remaining_seconds() ;
+  [[nodiscard]] float life_remaining_seconds() const;
+  void set_life_remaining_seconds(float value);
+
+  private:
+  float _internal_life_remaining_seconds() const;
+  void _internal_set_life_remaining_seconds(float value);
+
+  public:
+  // bool disqualified = 18;
+  void clear_disqualified() ;
+  [[nodiscard]] bool disqualified() const;
+  void set_disqualified(bool value);
+
+  private:
+  bool _internal_disqualified() const;
+  void _internal_set_disqualified(bool value);
+
+  public:
+  // bool is_routine = 19;
+  void clear_is_routine() ;
+  [[nodiscard]] bool is_routine() const;
+  void set_is_routine(bool value);
+
+  private:
+  bool _internal_is_routine() const;
+  void _internal_set_is_routine(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:itgmania.profile.HighScore)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<2, 4,
-                                   1, 60,
+  static const ::google::protobuf::internal::TcParseTable<5, 20,
+                                   1, 128,
                                    2>
       _table_;
 
@@ -2612,285 +2707,38 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScoreList final : public ::goog
     inline explicit Impl_(
         ::google::protobuf::internal::InternalVisibility visibility,
         ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const HighScoreList& from_msg);
+        const HighScore& from_msg);
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::RepeatedPtrField< ::itgmania::profile::HighScore > high_scores_;
-    ::google::protobuf::internal::ArenaStringPtr last_played_;
-    ::google::protobuf::internal::ArenaStringPtr high_grade_;
-    ::int32_t num_times_played_;
+    ::google::protobuf::RepeatedField<::int32_t> tap_note_scores_;
+    ::google::protobuf::internal::CachedSize _tap_note_scores_cached_byte_size_;
+    ::google::protobuf::RepeatedField<::int32_t> hold_note_scores_;
+    ::google::protobuf::internal::CachedSize _hold_note_scores_cached_byte_size_;
+    ::google::protobuf::RepeatedField<float> radar_values_;
+    ::google::protobuf::RepeatedPtrField< ::itgmania::profile::RoutinePlayerScore > routine_players_;
+    ::google::protobuf::internal::ArenaStringPtr name_;
+    ::google::protobuf::internal::ArenaStringPtr grade_;
+    ::google::protobuf::internal::ArenaStringPtr stage_award_;
+    ::google::protobuf::internal::ArenaStringPtr peak_combo_award_;
+    ::google::protobuf::internal::ArenaStringPtr modifiers_;
+    ::google::protobuf::internal::ArenaStringPtr date_time_;
+    ::google::protobuf::internal::ArenaStringPtr player_guid_;
+    ::google::protobuf::internal::ArenaStringPtr machine_guid_;
+    ::uint32_t score_;
+    float percent_dp_;
+    float survive_seconds_;
+    ::uint32_t max_combo_;
+    ::int32_t product_id_;
+    float life_remaining_seconds_;
+    bool disqualified_;
+    bool is_routine_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_ProfileStats_2eproto;
 };
 
-extern const ::google::protobuf::internal::ClassDataFull HighScoreList_class_data_;
-// -------------------------------------------------------------------
-
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SongStepsScore final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:itgmania.profile.SongStepsScore) */ {
- public:
-  inline SongStepsScore() : SongStepsScore(nullptr) {}
-  ~SongStepsScore() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(SongStepsScore* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(SongStepsScore));
-  }
-#endif
-
-  template <typename = void>
-  explicit constexpr SongStepsScore(::google::protobuf::internal::ConstantInitialized);
-
-  inline SongStepsScore(const SongStepsScore& from) : SongStepsScore(nullptr, from) {}
-  inline SongStepsScore(SongStepsScore&& from) noexcept
-      : SongStepsScore(nullptr, ::std::move(from)) {}
-  inline SongStepsScore& operator=(const SongStepsScore& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline SongStepsScore& operator=(SongStepsScore&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
-  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
-  GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  [[nodiscard]] static const SongStepsScore& default_instance() {
-    return *reinterpret_cast<const SongStepsScore*>(
-        &_SongStepsScore_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 10;
-  friend void swap(SongStepsScore& a, SongStepsScore& b) { a.Swap(&b); }
-  inline void Swap(SongStepsScore* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(SongStepsScore* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  [[nodiscard]] SongStepsScore* PROTOBUF_NONNULL
-  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<SongStepsScore>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const SongStepsScore& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const SongStepsScore& from) { SongStepsScore::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  [[nodiscard]] bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] ::size_t ByteSizeLong() const final;
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] int GetCachedSize() const {
-    return _impl_._cached_size_.Get();
-  }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(SongStepsScore* PROTOBUF_NONNULL other);
- private:
-  template <typename T>
-  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "itgmania.profile.SongStepsScore"; }
-
-  explicit SongStepsScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  SongStepsScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const SongStepsScore& from);
-  SongStepsScore(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, SongStepsScore&& from) noexcept
-      : SongStepsScore(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_();
-
-  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kStepsTypeFieldNumber = 1,
-    kDifficultyFieldNumber = 2,
-    kDescriptionFieldNumber = 3,
-    kHighScoreListFieldNumber = 5,
-    kHashFieldNumber = 4,
-  };
-  // string steps_type = 1;
-  void clear_steps_type() ;
-  [[nodiscard]] const ::std::string& steps_type() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_steps_type(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_steps_type();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_steps_type();
-  void set_allocated_steps_type(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_steps_type() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_steps_type(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_steps_type();
-
-  public:
-  // string difficulty = 2;
-  void clear_difficulty() ;
-  [[nodiscard]] const ::std::string& difficulty() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_difficulty(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_difficulty();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_difficulty();
-  void set_allocated_difficulty(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_difficulty() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_difficulty(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_difficulty();
-
-  public:
-  // string description = 3;
-  void clear_description() ;
-  [[nodiscard]] const ::std::string& description() const;
-  template <typename Arg_ = const ::std::string&, typename... Args_>
-  void set_description(Arg_&& arg, Args_... args);
-  ::std::string* PROTOBUF_NONNULL mutable_description();
-  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_description();
-  void set_allocated_description(::std::string* PROTOBUF_NULLABLE value);
-
-  private:
-  const ::std::string& _internal_description() const;
-  PROTOBUF_ALWAYS_INLINE void _internal_set_description(const ::std::string& value);
-  ::std::string* PROTOBUF_NONNULL _internal_mutable_description();
-
-  public:
-  // .itgmania.profile.HighScoreList high_score_list = 5;
-  [[nodiscard]] bool has_high_score_list()
-      const;
-  void clear_high_score_list() ;
-  [[nodiscard]] const ::itgmania::profile::HighScoreList& high_score_list() const;
-  [[nodiscard]] ::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE release_high_score_list();
-  ::itgmania::profile::HighScoreList* PROTOBUF_NONNULL mutable_high_score_list();
-  void set_allocated_high_score_list(::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE value);
-  void unsafe_arena_set_allocated_high_score_list(::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE value);
-  ::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE unsafe_arena_release_high_score_list();
-
-  private:
-  const ::itgmania::profile::HighScoreList& _internal_high_score_list() const;
-  ::itgmania::profile::HighScoreList* PROTOBUF_NONNULL _internal_mutable_high_score_list();
-
-  public:
-  // uint32 hash = 4;
-  void clear_hash() ;
-  [[nodiscard]] ::uint32_t hash() const;
-  void set_hash(::uint32_t value);
-
-  private:
-  ::uint32_t _internal_hash() const;
-  void _internal_set_hash(::uint32_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:itgmania.profile.SongStepsScore)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<3, 5,
-                                   1, 71,
-                                   2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  friend ::google::protobuf::internal::PrivateAccess;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const SongStepsScore& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::internal::ArenaStringPtr steps_type_;
-    ::google::protobuf::internal::ArenaStringPtr difficulty_;
-    ::google::protobuf::internal::ArenaStringPtr description_;
-    ::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE high_score_list_;
-    ::uint32_t hash_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_ProfileStats_2eproto;
-};
-
-extern const ::google::protobuf::internal::ClassDataFull SongStepsScore_class_data_;
+extern const ::google::protobuf::internal::ClassDataFull HighScore_class_data_;
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED LegacySections final : public ::google::protobuf::Message
@@ -3149,6 +2997,258 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED LegacySections final : public ::goo
 extern const ::google::protobuf::internal::ClassDataFull LegacySections_class_data_;
 // -------------------------------------------------------------------
 
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED HighScoreList final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:itgmania.profile.HighScoreList) */ {
+ public:
+  inline HighScoreList() : HighScoreList(nullptr) {}
+  ~HighScoreList() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(HighScoreList* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(HighScoreList));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr HighScoreList(::google::protobuf::internal::ConstantInitialized);
+
+  inline HighScoreList(const HighScoreList& from) : HighScoreList(nullptr, from) {}
+  inline HighScoreList(HighScoreList&& from) noexcept
+      : HighScoreList(nullptr, ::std::move(from)) {}
+  inline HighScoreList& operator=(const HighScoreList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline HighScoreList& operator=(HighScoreList&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const HighScoreList& default_instance() {
+    return *reinterpret_cast<const HighScoreList*>(
+        &_HighScoreList_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 15;
+  friend void swap(HighScoreList& a, HighScoreList& b) { a.Swap(&b); }
+  inline void Swap(HighScoreList* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(HighScoreList* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] HighScoreList* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<HighScoreList>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const HighScoreList& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const HighScoreList& from) { HighScoreList::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(HighScoreList* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "itgmania.profile.HighScoreList"; }
+
+  explicit HighScoreList(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  HighScoreList(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const HighScoreList& from);
+  HighScoreList(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, HighScoreList&& from) noexcept
+      : HighScoreList(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kHighScoresFieldNumber = 4,
+    kLastPlayedFieldNumber = 2,
+    kHighGradeFieldNumber = 3,
+    kNumTimesPlayedFieldNumber = 1,
+  };
+  // repeated .itgmania.profile.HighScore high_scores = 4;
+  [[nodiscard]] int high_scores_size()
+      const;
+  private:
+  int _internal_high_scores_size() const;
+
+  public:
+  void clear_high_scores() ;
+  [[nodiscard]] ::itgmania::profile::HighScore* PROTOBUF_NONNULL mutable_high_scores(int index);
+  [[nodiscard]] ::google::protobuf::RepeatedPtrField<::itgmania::profile::HighScore>* PROTOBUF_NONNULL
+  mutable_high_scores();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::itgmania::profile::HighScore>& _internal_high_scores() const;
+  ::google::protobuf::RepeatedPtrField<::itgmania::profile::HighScore>* PROTOBUF_NONNULL _internal_mutable_high_scores();
+  public:
+  [[nodiscard]] const ::itgmania::profile::HighScore& high_scores(int index) const;
+  ::itgmania::profile::HighScore* PROTOBUF_NONNULL add_high_scores();
+  [[nodiscard]] const ::google::protobuf::RepeatedPtrField<::itgmania::profile::HighScore>& high_scores()
+      const;
+  // string last_played = 2;
+  void clear_last_played() ;
+  [[nodiscard]] const ::std::string& last_played() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_last_played(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_last_played();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_last_played();
+  void set_allocated_last_played(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_last_played() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_last_played(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_last_played();
+
+  public:
+  // string high_grade = 3;
+  void clear_high_grade() ;
+  [[nodiscard]] const ::std::string& high_grade() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_high_grade(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_high_grade();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_high_grade();
+  void set_allocated_high_grade(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_high_grade() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_high_grade(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_high_grade();
+
+  public:
+  // int32 num_times_played = 1;
+  void clear_num_times_played() ;
+  [[nodiscard]] ::int32_t num_times_played() const;
+  void set_num_times_played(::int32_t value);
+
+  private:
+  ::int32_t _internal_num_times_played() const;
+  void _internal_set_num_times_played(::int32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:itgmania.profile.HighScoreList)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 4,
+                                   1, 60,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const HighScoreList& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::itgmania::profile::HighScore > high_scores_;
+    ::google::protobuf::internal::ArenaStringPtr last_played_;
+    ::google::protobuf::internal::ArenaStringPtr high_grade_;
+    ::int32_t num_times_played_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_ProfileStats_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull HighScoreList_class_data_;
+// -------------------------------------------------------------------
+
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GeneralDataSection final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:itgmania.profile.GeneralDataSection) */ {
  public:
@@ -3340,6 +3440,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GeneralDataSection final : public :
     kNumSongsPlayedByMeterFieldNumber = 42,
     kNumStagesPassedByPlayModeFieldNumber = 44,
     kNumStagesPassedByGradeFieldNumber = 45,
+    kCreationTimeFieldNumber = 47,
     kUserTableFieldNumber = 46,
     kTotalHoldsFieldNumber = 32,
     kTotalRollsFieldNumber = 33,
@@ -3879,6 +3980,21 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GeneralDataSection final : public :
   ::itgmania::profile::GeneralDataSection_IntPair* PROTOBUF_NONNULL add_num_stages_passed_by_grade();
   [[nodiscard]] const ::google::protobuf::RepeatedPtrField<::itgmania::profile::GeneralDataSection_IntPair>& num_stages_passed_by_grade()
       const;
+  // string creation_time = 47;
+  void clear_creation_time() ;
+  [[nodiscard]] const ::std::string& creation_time() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_creation_time(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_creation_time();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_creation_time();
+  void set_allocated_creation_time(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_creation_time() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_creation_time(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_creation_time();
+
+  public:
   // .itgmania.profile.XmlNode user_table = 46;
   [[nodiscard]] bool has_user_table()
       const;
@@ -3959,8 +4075,8 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GeneralDataSection final : public :
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<5, 46,
-                                   10, 239,
+  static const ::google::protobuf::internal::TcParseTable<5, 47,
+                                   10, 252,
                                    7>
       _table_;
 
@@ -4023,6 +4139,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GeneralDataSection final : public :
     ::google::protobuf::internal::CachedSize _num_songs_played_by_meter_cached_byte_size_;
     ::google::protobuf::RepeatedPtrField< ::itgmania::profile::GeneralDataSection_IntPair > num_stages_passed_by_play_mode_;
     ::google::protobuf::RepeatedPtrField< ::itgmania::profile::GeneralDataSection_IntPair > num_stages_passed_by_grade_;
+    ::google::protobuf::internal::ArenaStringPtr creation_time_;
     ::itgmania::profile::XmlNode* PROTOBUF_NULLABLE user_table_;
     ::int32_t total_holds_;
     ::int32_t total_rolls_;
@@ -4037,6 +4154,271 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED GeneralDataSection final : public :
 };
 
 extern const ::google::protobuf::internal::ClassDataFull GeneralDataSection_class_data_;
+// -------------------------------------------------------------------
+
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED SongStepsScore final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:itgmania.profile.SongStepsScore) */ {
+ public:
+  inline SongStepsScore() : SongStepsScore(nullptr) {}
+  ~SongStepsScore() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(SongStepsScore* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(SongStepsScore));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr SongStepsScore(::google::protobuf::internal::ConstantInitialized);
+
+  inline SongStepsScore(const SongStepsScore& from) : SongStepsScore(nullptr, from) {}
+  inline SongStepsScore(SongStepsScore&& from) noexcept
+      : SongStepsScore(nullptr, ::std::move(from)) {}
+  inline SongStepsScore& operator=(const SongStepsScore& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SongStepsScore& operator=(SongStepsScore&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const SongStepsScore& default_instance() {
+    return *reinterpret_cast<const SongStepsScore*>(
+        &_SongStepsScore_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 10;
+  friend void swap(SongStepsScore& a, SongStepsScore& b) { a.Swap(&b); }
+  inline void Swap(SongStepsScore* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SongStepsScore* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] SongStepsScore* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<SongStepsScore>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const SongStepsScore& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const SongStepsScore& from) { SongStepsScore::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(SongStepsScore* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "itgmania.profile.SongStepsScore"; }
+
+  explicit SongStepsScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  SongStepsScore(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const SongStepsScore& from);
+  SongStepsScore(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, SongStepsScore&& from) noexcept
+      : SongStepsScore(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kStepsTypeFieldNumber = 1,
+    kDifficultyFieldNumber = 2,
+    kDescriptionFieldNumber = 3,
+    kHighScoreListFieldNumber = 5,
+    kHashFieldNumber = 4,
+  };
+  // string steps_type = 1;
+  void clear_steps_type() ;
+  [[nodiscard]] const ::std::string& steps_type() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_steps_type(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_steps_type();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_steps_type();
+  void set_allocated_steps_type(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_steps_type() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_steps_type(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_steps_type();
+
+  public:
+  // string difficulty = 2;
+  void clear_difficulty() ;
+  [[nodiscard]] const ::std::string& difficulty() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_difficulty(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_difficulty();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_difficulty();
+  void set_allocated_difficulty(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_difficulty() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_difficulty(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_difficulty();
+
+  public:
+  // string description = 3;
+  void clear_description() ;
+  [[nodiscard]] const ::std::string& description() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_description(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_description();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_description();
+  void set_allocated_description(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_description() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_description(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_description();
+
+  public:
+  // .itgmania.profile.HighScoreList high_score_list = 5;
+  [[nodiscard]] bool has_high_score_list()
+      const;
+  void clear_high_score_list() ;
+  [[nodiscard]] const ::itgmania::profile::HighScoreList& high_score_list() const;
+  [[nodiscard]] ::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE release_high_score_list();
+  ::itgmania::profile::HighScoreList* PROTOBUF_NONNULL mutable_high_score_list();
+  void set_allocated_high_score_list(::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_high_score_list(::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE value);
+  ::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE unsafe_arena_release_high_score_list();
+
+  private:
+  const ::itgmania::profile::HighScoreList& _internal_high_score_list() const;
+  ::itgmania::profile::HighScoreList* PROTOBUF_NONNULL _internal_mutable_high_score_list();
+
+  public:
+  // uint32 hash = 4;
+  void clear_hash() ;
+  [[nodiscard]] ::uint32_t hash() const;
+  void set_hash(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_hash() const;
+  void _internal_set_hash(::uint32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:itgmania.profile.SongStepsScore)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<3, 5,
+                                   1, 71,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const SongStepsScore& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr steps_type_;
+    ::google::protobuf::internal::ArenaStringPtr difficulty_;
+    ::google::protobuf::internal::ArenaStringPtr description_;
+    ::itgmania::profile::HighScoreList* PROTOBUF_NULLABLE high_score_list_;
+    ::uint32_t hash_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_ProfileStats_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull SongStepsScore_class_data_;
 // -------------------------------------------------------------------
 
 class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CourseTrailScore final : public ::google::protobuf::Message
@@ -4095,7 +4477,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CourseTrailScore final : public ::g
     return *reinterpret_cast<const CourseTrailScore*>(
         &_CourseTrailScore_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 15;
+  static constexpr int kIndexInFileMessages = 16;
   friend void swap(CourseTrailScore& a, CourseTrailScore& b) { a.Swap(&b); }
   inline void Swap(CourseTrailScore* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4554,7 +4936,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CourseScoreEntry final : public ::g
     return *reinterpret_cast<const CourseScoreEntry*>(
         &_CourseScoreEntry_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 16;
+  static constexpr int kIndexInFileMessages = 17;
   friend void swap(CourseScoreEntry& a, CourseScoreEntry& b) { a.Swap(&b); }
   inline void Swap(CourseScoreEntry* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5000,7 +5382,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED CourseScoresSection final : public 
     return *reinterpret_cast<const CourseScoresSection*>(
         &_CourseScoresSection_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 17;
+  static constexpr int kIndexInFileMessages = 18;
   friend void swap(CourseScoresSection& a, CourseScoresSection& b) { a.Swap(&b); }
   inline void Swap(CourseScoresSection* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5206,7 +5588,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED ProfileStatsDocument final : public
     return *reinterpret_cast<const ProfileStatsDocument*>(
         &_ProfileStatsDocument_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 18;
+  static constexpr int kIndexInFileMessages = 19;
   friend void swap(ProfileStatsDocument& a, ProfileStatsDocument& b) { a.Swap(&b); }
   inline void Swap(ProfileStatsDocument* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -8200,7 +8582,7 @@ inline void GeneralDataSection::clear_total_holds() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.total_holds_ = 0;
   ClearHasBit(_impl_._has_bits_[1],
-                  0x00000100U);
+                  0x00000200U);
 }
 inline ::int32_t GeneralDataSection::total_holds() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.GeneralDataSection.total_holds)
@@ -8208,7 +8590,7 @@ inline ::int32_t GeneralDataSection::total_holds() const {
 }
 inline void GeneralDataSection::set_total_holds(::int32_t value) {
   _internal_set_total_holds(value);
-  SetHasBit(_impl_._has_bits_[1], 0x00000100U);
+  SetHasBit(_impl_._has_bits_[1], 0x00000200U);
   // @@protoc_insertion_point(field_set:itgmania.profile.GeneralDataSection.total_holds)
 }
 inline ::int32_t GeneralDataSection::_internal_total_holds() const {
@@ -8225,7 +8607,7 @@ inline void GeneralDataSection::clear_total_rolls() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.total_rolls_ = 0;
   ClearHasBit(_impl_._has_bits_[1],
-                  0x00000200U);
+                  0x00000400U);
 }
 inline ::int32_t GeneralDataSection::total_rolls() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.GeneralDataSection.total_rolls)
@@ -8233,7 +8615,7 @@ inline ::int32_t GeneralDataSection::total_rolls() const {
 }
 inline void GeneralDataSection::set_total_rolls(::int32_t value) {
   _internal_set_total_rolls(value);
-  SetHasBit(_impl_._has_bits_[1], 0x00000200U);
+  SetHasBit(_impl_._has_bits_[1], 0x00000400U);
   // @@protoc_insertion_point(field_set:itgmania.profile.GeneralDataSection.total_rolls)
 }
 inline ::int32_t GeneralDataSection::_internal_total_rolls() const {
@@ -8250,7 +8632,7 @@ inline void GeneralDataSection::clear_total_mines() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.total_mines_ = 0;
   ClearHasBit(_impl_._has_bits_[1],
-                  0x00000400U);
+                  0x00000800U);
 }
 inline ::int32_t GeneralDataSection::total_mines() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.GeneralDataSection.total_mines)
@@ -8258,7 +8640,7 @@ inline ::int32_t GeneralDataSection::total_mines() const {
 }
 inline void GeneralDataSection::set_total_mines(::int32_t value) {
   _internal_set_total_mines(value);
-  SetHasBit(_impl_._has_bits_[1], 0x00000400U);
+  SetHasBit(_impl_._has_bits_[1], 0x00000800U);
   // @@protoc_insertion_point(field_set:itgmania.profile.GeneralDataSection.total_mines)
 }
 inline ::int32_t GeneralDataSection::_internal_total_mines() const {
@@ -8275,7 +8657,7 @@ inline void GeneralDataSection::clear_total_hands() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.total_hands_ = 0;
   ClearHasBit(_impl_._has_bits_[1],
-                  0x00000800U);
+                  0x00001000U);
 }
 inline ::int32_t GeneralDataSection::total_hands() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.GeneralDataSection.total_hands)
@@ -8283,7 +8665,7 @@ inline ::int32_t GeneralDataSection::total_hands() const {
 }
 inline void GeneralDataSection::set_total_hands(::int32_t value) {
   _internal_set_total_hands(value);
-  SetHasBit(_impl_._has_bits_[1], 0x00000800U);
+  SetHasBit(_impl_._has_bits_[1], 0x00001000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.GeneralDataSection.total_hands)
 }
 inline ::int32_t GeneralDataSection::_internal_total_hands() const {
@@ -8300,7 +8682,7 @@ inline void GeneralDataSection::clear_total_lifts() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.total_lifts_ = 0;
   ClearHasBit(_impl_._has_bits_[1],
-                  0x00001000U);
+                  0x00002000U);
 }
 inline ::int32_t GeneralDataSection::total_lifts() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.GeneralDataSection.total_lifts)
@@ -8308,7 +8690,7 @@ inline ::int32_t GeneralDataSection::total_lifts() const {
 }
 inline void GeneralDataSection::set_total_lifts(::int32_t value) {
   _internal_set_total_lifts(value);
-  SetHasBit(_impl_._has_bits_[1], 0x00001000U);
+  SetHasBit(_impl_._has_bits_[1], 0x00002000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.GeneralDataSection.total_lifts)
 }
 inline ::int32_t GeneralDataSection::_internal_total_lifts() const {
@@ -8656,7 +9038,7 @@ inline void GeneralDataSection::clear_num_total_songs_played() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.num_total_songs_played_ = 0;
   ClearHasBit(_impl_._has_bits_[1],
-                  0x00002000U);
+                  0x00004000U);
 }
 inline ::int32_t GeneralDataSection::num_total_songs_played() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.GeneralDataSection.num_total_songs_played)
@@ -8664,7 +9046,7 @@ inline ::int32_t GeneralDataSection::num_total_songs_played() const {
 }
 inline void GeneralDataSection::set_num_total_songs_played(::int32_t value) {
   _internal_set_num_total_songs_played(value);
-  SetHasBit(_impl_._has_bits_[1], 0x00002000U);
+  SetHasBit(_impl_._has_bits_[1], 0x00004000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.GeneralDataSection.num_total_songs_played)
 }
 inline ::int32_t GeneralDataSection::_internal_num_total_songs_played() const {
@@ -8790,7 +9172,7 @@ GeneralDataSection::_internal_mutable_num_stages_passed_by_grade() {
 
 // .itgmania.profile.XmlNode user_table = 46;
 inline bool GeneralDataSection::has_user_table() const {
-  bool value = CheckHasBit(_impl_._has_bits_[1], 0x00000080U);
+  bool value = CheckHasBit(_impl_._has_bits_[1], 0x00000100U);
   PROTOBUF_ASSUME(!value || _impl_.user_table_ != nullptr);
   return value;
 }
@@ -8798,7 +9180,7 @@ inline void GeneralDataSection::clear_user_table() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.user_table_ != nullptr) _impl_.user_table_->Clear();
   ClearHasBit(_impl_._has_bits_[1],
-                  0x00000080U);
+                  0x00000100U);
 }
 inline const ::itgmania::profile::XmlNode& GeneralDataSection::_internal_user_table() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
@@ -8817,16 +9199,16 @@ inline void GeneralDataSection::unsafe_arena_set_allocated_user_table(
   }
   _impl_.user_table_ = reinterpret_cast<::itgmania::profile::XmlNode*>(value);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[1], 0x00000080U);
+    SetHasBit(_impl_._has_bits_[1], 0x00000100U);
   } else {
-    ClearHasBit(_impl_._has_bits_[1], 0x00000080U);
+    ClearHasBit(_impl_._has_bits_[1], 0x00000100U);
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:itgmania.profile.GeneralDataSection.user_table)
 }
 inline ::itgmania::profile::XmlNode* PROTOBUF_NULLABLE GeneralDataSection::release_user_table() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
 
-  ClearHasBit(_impl_._has_bits_[1], 0x00000080U);
+  ClearHasBit(_impl_._has_bits_[1], 0x00000100U);
   ::itgmania::profile::XmlNode* released = _impl_.user_table_;
   _impl_.user_table_ = nullptr;
   if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
@@ -8846,7 +9228,7 @@ inline ::itgmania::profile::XmlNode* PROTOBUF_NULLABLE GeneralDataSection::unsaf
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.GeneralDataSection.user_table)
 
-  ClearHasBit(_impl_._has_bits_[1], 0x00000080U);
+  ClearHasBit(_impl_._has_bits_[1], 0x00000100U);
   ::itgmania::profile::XmlNode* temp = _impl_.user_table_;
   _impl_.user_table_ = nullptr;
   return temp;
@@ -8861,7 +9243,7 @@ inline ::itgmania::profile::XmlNode* PROTOBUF_NONNULL GeneralDataSection::_inter
 }
 inline ::itgmania::profile::XmlNode* PROTOBUF_NONNULL GeneralDataSection::mutable_user_table()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[1], 0x00000080U);
+  SetHasBit(_impl_._has_bits_[1], 0x00000100U);
   ::itgmania::profile::XmlNode* _msg = _internal_mutable_user_table();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.GeneralDataSection.user_table)
   return _msg;
@@ -8878,13 +9260,78 @@ inline void GeneralDataSection::set_allocated_user_table(::itgmania::profile::Xm
     if (message_arena != submessage_arena) {
       value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
     }
-    SetHasBit(_impl_._has_bits_[1], 0x00000080U);
+    SetHasBit(_impl_._has_bits_[1], 0x00000100U);
   } else {
-    ClearHasBit(_impl_._has_bits_[1], 0x00000080U);
+    ClearHasBit(_impl_._has_bits_[1], 0x00000100U);
   }
 
   _impl_.user_table_ = reinterpret_cast<::itgmania::profile::XmlNode*>(value);
   // @@protoc_insertion_point(field_set_allocated:itgmania.profile.GeneralDataSection.user_table)
+}
+
+// string creation_time = 47;
+inline void GeneralDataSection::clear_creation_time() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.creation_time_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[1],
+                  0x00000080U);
+}
+inline const ::std::string& GeneralDataSection::creation_time() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:itgmania.profile.GeneralDataSection.creation_time)
+  return _internal_creation_time();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void GeneralDataSection::set_creation_time(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[1], 0x00000080U);
+  _impl_.creation_time_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:itgmania.profile.GeneralDataSection.creation_time)
+}
+inline ::std::string* PROTOBUF_NONNULL GeneralDataSection::mutable_creation_time()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[1], 0x00000080U);
+  ::std::string* _s = _internal_mutable_creation_time();
+  // @@protoc_insertion_point(field_mutable:itgmania.profile.GeneralDataSection.creation_time)
+  return _s;
+}
+inline const ::std::string& GeneralDataSection::_internal_creation_time() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.creation_time_.Get();
+}
+inline void GeneralDataSection::_internal_set_creation_time(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.creation_time_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL GeneralDataSection::_internal_mutable_creation_time() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.creation_time_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE GeneralDataSection::release_creation_time() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:itgmania.profile.GeneralDataSection.creation_time)
+  if (!CheckHasBit(_impl_._has_bits_[1], 0x00000080U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[1], 0x00000080U);
+  auto* released = _impl_.creation_time_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.creation_time_.Set("", GetArena());
+  }
+  return released;
+}
+inline void GeneralDataSection::set_allocated_creation_time(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[1], 0x00000080U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[1], 0x00000080U);
+  }
+  _impl_.creation_time_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.creation_time_.IsDefault()) {
+    _impl_.creation_time_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:itgmania.profile.GeneralDataSection.creation_time)
 }
 
 // -------------------------------------------------------------------
@@ -9397,6 +9844,407 @@ SongScoresSection::_internal_mutable_songs() {
 
 // -------------------------------------------------------------------
 
+// RoutinePlayerScore
+
+// uint32 player_index = 1;
+inline void RoutinePlayerScore::clear_player_index() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.player_index_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000020U);
+}
+inline ::uint32_t RoutinePlayerScore::player_index() const {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.player_index)
+  return _internal_player_index();
+}
+inline void RoutinePlayerScore::set_player_index(::uint32_t value) {
+  _internal_set_player_index(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.player_index)
+}
+inline ::uint32_t RoutinePlayerScore::_internal_player_index() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.player_index_;
+}
+inline void RoutinePlayerScore::_internal_set_player_index(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.player_index_ = value;
+}
+
+// string name = 2;
+inline void RoutinePlayerScore::clear_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline const ::std::string& RoutinePlayerScore::name() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.name)
+  return _internal_name();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void RoutinePlayerScore::set_name(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  _impl_.name_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.name)
+}
+inline ::std::string* PROTOBUF_NONNULL RoutinePlayerScore::mutable_name()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  ::std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:itgmania.profile.RoutinePlayerScore.name)
+  return _s;
+}
+inline const ::std::string& RoutinePlayerScore::_internal_name() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.name_.Get();
+}
+inline void RoutinePlayerScore::_internal_set_name(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.name_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL RoutinePlayerScore::_internal_mutable_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.name_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE RoutinePlayerScore::release_name() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:itgmania.profile.RoutinePlayerScore.name)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000004U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  auto* released = _impl_.name_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.name_.Set("", GetArena());
+  }
+  return released;
+}
+inline void RoutinePlayerScore::set_allocated_name(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  }
+  _impl_.name_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:itgmania.profile.RoutinePlayerScore.name)
+}
+
+// string grade = 3;
+inline void RoutinePlayerScore::clear_grade() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.grade_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline const ::std::string& RoutinePlayerScore::grade() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.grade)
+  return _internal_grade();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void RoutinePlayerScore::set_grade(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  _impl_.grade_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.grade)
+}
+inline ::std::string* PROTOBUF_NONNULL RoutinePlayerScore::mutable_grade()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  ::std::string* _s = _internal_mutable_grade();
+  // @@protoc_insertion_point(field_mutable:itgmania.profile.RoutinePlayerScore.grade)
+  return _s;
+}
+inline const ::std::string& RoutinePlayerScore::_internal_grade() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.grade_.Get();
+}
+inline void RoutinePlayerScore::_internal_set_grade(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.grade_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL RoutinePlayerScore::_internal_mutable_grade() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.grade_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE RoutinePlayerScore::release_grade() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:itgmania.profile.RoutinePlayerScore.grade)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000008U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+  auto* released = _impl_.grade_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.grade_.Set("", GetArena());
+  }
+  return released;
+}
+inline void RoutinePlayerScore::set_allocated_grade(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+  }
+  _impl_.grade_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.grade_.IsDefault()) {
+    _impl_.grade_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:itgmania.profile.RoutinePlayerScore.grade)
+}
+
+// uint32 score = 4;
+inline void RoutinePlayerScore::clear_score() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.score_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000040U);
+}
+inline ::uint32_t RoutinePlayerScore::score() const {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.score)
+  return _internal_score();
+}
+inline void RoutinePlayerScore::set_score(::uint32_t value) {
+  _internal_set_score(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.score)
+}
+inline ::uint32_t RoutinePlayerScore::_internal_score() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.score_;
+}
+inline void RoutinePlayerScore::_internal_set_score(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.score_ = value;
+}
+
+// float percent_dp = 5;
+inline void RoutinePlayerScore::clear_percent_dp() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.percent_dp_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000080U);
+}
+inline float RoutinePlayerScore::percent_dp() const {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.percent_dp)
+  return _internal_percent_dp();
+}
+inline void RoutinePlayerScore::set_percent_dp(float value) {
+  _internal_set_percent_dp(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.percent_dp)
+}
+inline float RoutinePlayerScore::_internal_percent_dp() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.percent_dp_;
+}
+inline void RoutinePlayerScore::_internal_set_percent_dp(float value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.percent_dp_ = value;
+}
+
+// uint32 max_combo = 6;
+inline void RoutinePlayerScore::clear_max_combo() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.max_combo_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000100U);
+}
+inline ::uint32_t RoutinePlayerScore::max_combo() const {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.max_combo)
+  return _internal_max_combo();
+}
+inline void RoutinePlayerScore::set_max_combo(::uint32_t value) {
+  _internal_set_max_combo(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.max_combo)
+}
+inline ::uint32_t RoutinePlayerScore::_internal_max_combo() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.max_combo_;
+}
+inline void RoutinePlayerScore::_internal_set_max_combo(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.max_combo_ = value;
+}
+
+// string player_guid = 7;
+inline void RoutinePlayerScore::clear_player_guid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.player_guid_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000010U);
+}
+inline const ::std::string& RoutinePlayerScore::player_guid() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.player_guid)
+  return _internal_player_guid();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void RoutinePlayerScore::set_player_guid(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  _impl_.player_guid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.player_guid)
+}
+inline ::std::string* PROTOBUF_NONNULL RoutinePlayerScore::mutable_player_guid()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  ::std::string* _s = _internal_mutable_player_guid();
+  // @@protoc_insertion_point(field_mutable:itgmania.profile.RoutinePlayerScore.player_guid)
+  return _s;
+}
+inline const ::std::string& RoutinePlayerScore::_internal_player_guid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.player_guid_.Get();
+}
+inline void RoutinePlayerScore::_internal_set_player_guid(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.player_guid_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL RoutinePlayerScore::_internal_mutable_player_guid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.player_guid_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE RoutinePlayerScore::release_player_guid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:itgmania.profile.RoutinePlayerScore.player_guid)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000010U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+  auto* released = _impl_.player_guid_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.player_guid_.Set("", GetArena());
+  }
+  return released;
+}
+inline void RoutinePlayerScore::set_allocated_player_guid(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+  }
+  _impl_.player_guid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.player_guid_.IsDefault()) {
+    _impl_.player_guid_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:itgmania.profile.RoutinePlayerScore.player_guid)
+}
+
+// repeated int32 tap_note_scores = 8;
+inline int RoutinePlayerScore::_internal_tap_note_scores_size() const {
+  return _internal_tap_note_scores().size();
+}
+inline int RoutinePlayerScore::tap_note_scores_size() const {
+  return _internal_tap_note_scores_size();
+}
+inline void RoutinePlayerScore::clear_tap_note_scores() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.tap_note_scores_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline ::int32_t RoutinePlayerScore::tap_note_scores(int index) const {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.tap_note_scores)
+  return _internal_tap_note_scores().Get(index);
+}
+inline void RoutinePlayerScore::set_tap_note_scores(int index, ::int32_t value) {
+  _internal_mutable_tap_note_scores()->Set(index, value);
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.tap_note_scores)
+}
+inline void RoutinePlayerScore::add_tap_note_scores(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _internal_mutable_tap_note_scores()->InternalAddWithArena(
+      internal_visibility(), GetArena(), value);
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add:itgmania.profile.RoutinePlayerScore.tap_note_scores)
+}
+inline const ::google::protobuf::RepeatedField<::int32_t>& RoutinePlayerScore::tap_note_scores() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:itgmania.profile.RoutinePlayerScore.tap_note_scores)
+  return _internal_tap_note_scores();
+}
+inline ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL RoutinePlayerScore::mutable_tap_note_scores()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_mutable_list:itgmania.profile.RoutinePlayerScore.tap_note_scores)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_tap_note_scores();
+}
+inline const ::google::protobuf::RepeatedField<::int32_t>&
+RoutinePlayerScore::_internal_tap_note_scores() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.tap_note_scores_;
+}
+inline ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL
+RoutinePlayerScore::_internal_mutable_tap_note_scores() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.tap_note_scores_;
+}
+
+// repeated int32 hold_note_scores = 9;
+inline int RoutinePlayerScore::_internal_hold_note_scores_size() const {
+  return _internal_hold_note_scores().size();
+}
+inline int RoutinePlayerScore::hold_note_scores_size() const {
+  return _internal_hold_note_scores_size();
+}
+inline void RoutinePlayerScore::clear_hold_note_scores() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hold_note_scores_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline ::int32_t RoutinePlayerScore::hold_note_scores(int index) const {
+  // @@protoc_insertion_point(field_get:itgmania.profile.RoutinePlayerScore.hold_note_scores)
+  return _internal_hold_note_scores().Get(index);
+}
+inline void RoutinePlayerScore::set_hold_note_scores(int index, ::int32_t value) {
+  _internal_mutable_hold_note_scores()->Set(index, value);
+  // @@protoc_insertion_point(field_set:itgmania.profile.RoutinePlayerScore.hold_note_scores)
+}
+inline void RoutinePlayerScore::add_hold_note_scores(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _internal_mutable_hold_note_scores()->InternalAddWithArena(
+      internal_visibility(), GetArena(), value);
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_add:itgmania.profile.RoutinePlayerScore.hold_note_scores)
+}
+inline const ::google::protobuf::RepeatedField<::int32_t>& RoutinePlayerScore::hold_note_scores() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:itgmania.profile.RoutinePlayerScore.hold_note_scores)
+  return _internal_hold_note_scores();
+}
+inline ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL RoutinePlayerScore::mutable_hold_note_scores()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_mutable_list:itgmania.profile.RoutinePlayerScore.hold_note_scores)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_hold_note_scores();
+}
+inline const ::google::protobuf::RepeatedField<::int32_t>&
+RoutinePlayerScore::_internal_hold_note_scores() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hold_note_scores_;
+}
+inline ::google::protobuf::RepeatedField<::int32_t>* PROTOBUF_NONNULL
+RoutinePlayerScore::_internal_mutable_hold_note_scores() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.hold_note_scores_;
+}
+
+// -------------------------------------------------------------------
+
 // HighScore
 
 // string name = 1;
@@ -9404,7 +10252,7 @@ inline void HighScore::clear_name() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.name_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000008U);
+                  0x00000010U);
 }
 inline const ::std::string& HighScore::name() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -9414,13 +10262,13 @@ inline const ::std::string& HighScore::name() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void HighScore::set_name(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
   _impl_.name_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.name)
 }
 inline ::std::string* PROTOBUF_NONNULL HighScore::mutable_name()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
   ::std::string* _s = _internal_mutable_name();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.name)
   return _s;
@@ -9440,10 +10288,10 @@ inline ::std::string* PROTOBUF_NONNULL HighScore::_internal_mutable_name() {
 inline ::std::string* PROTOBUF_NULLABLE HighScore::release_name() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.HighScore.name)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000008U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000010U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
   auto* released = _impl_.name_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.name_.Set("", GetArena());
@@ -9453,9 +10301,9 @@ inline ::std::string* PROTOBUF_NULLABLE HighScore::release_name() {
 inline void HighScore::set_allocated_name(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000010U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
   }
   _impl_.name_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.name_.IsDefault()) {
@@ -9469,7 +10317,7 @@ inline void HighScore::clear_grade() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.grade_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000010U);
+                  0x00000020U);
 }
 inline const ::std::string& HighScore::grade() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -9479,13 +10327,13 @@ inline const ::std::string& HighScore::grade() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void HighScore::set_grade(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
   _impl_.grade_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.grade)
 }
 inline ::std::string* PROTOBUF_NONNULL HighScore::mutable_grade()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
   ::std::string* _s = _internal_mutable_grade();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.grade)
   return _s;
@@ -9505,10 +10353,10 @@ inline ::std::string* PROTOBUF_NONNULL HighScore::_internal_mutable_grade() {
 inline ::std::string* PROTOBUF_NULLABLE HighScore::release_grade() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.HighScore.grade)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000010U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000020U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
   auto* released = _impl_.grade_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.grade_.Set("", GetArena());
@@ -9518,9 +10366,9 @@ inline ::std::string* PROTOBUF_NULLABLE HighScore::release_grade() {
 inline void HighScore::set_allocated_grade(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000020U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
   }
   _impl_.grade_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.grade_.IsDefault()) {
@@ -9534,7 +10382,7 @@ inline void HighScore::clear_score() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.score_ = 0u;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000800U);
+                  0x00001000U);
 }
 inline ::uint32_t HighScore::score() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.score)
@@ -9542,7 +10390,7 @@ inline ::uint32_t HighScore::score() const {
 }
 inline void HighScore::set_score(::uint32_t value) {
   _internal_set_score(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000800U);
+  SetHasBit(_impl_._has_bits_[0], 0x00001000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.score)
 }
 inline ::uint32_t HighScore::_internal_score() const {
@@ -9559,7 +10407,7 @@ inline void HighScore::clear_percent_dp() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.percent_dp_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00001000U);
+                  0x00002000U);
 }
 inline float HighScore::percent_dp() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.percent_dp)
@@ -9567,7 +10415,7 @@ inline float HighScore::percent_dp() const {
 }
 inline void HighScore::set_percent_dp(float value) {
   _internal_set_percent_dp(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00001000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00002000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.percent_dp)
 }
 inline float HighScore::_internal_percent_dp() const {
@@ -9584,7 +10432,7 @@ inline void HighScore::clear_survive_seconds() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.survive_seconds_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00002000U);
+                  0x00004000U);
 }
 inline float HighScore::survive_seconds() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.survive_seconds)
@@ -9592,7 +10440,7 @@ inline float HighScore::survive_seconds() const {
 }
 inline void HighScore::set_survive_seconds(float value) {
   _internal_set_survive_seconds(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00002000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00004000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.survive_seconds)
 }
 inline float HighScore::_internal_survive_seconds() const {
@@ -9609,7 +10457,7 @@ inline void HighScore::clear_max_combo() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.max_combo_ = 0u;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00004000U);
+                  0x00008000U);
 }
 inline ::uint32_t HighScore::max_combo() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.max_combo)
@@ -9617,7 +10465,7 @@ inline ::uint32_t HighScore::max_combo() const {
 }
 inline void HighScore::set_max_combo(::uint32_t value) {
   _internal_set_max_combo(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00004000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00008000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.max_combo)
 }
 inline ::uint32_t HighScore::_internal_max_combo() const {
@@ -9634,7 +10482,7 @@ inline void HighScore::clear_stage_award() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.stage_award_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000020U);
+                  0x00000040U);
 }
 inline const ::std::string& HighScore::stage_award() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -9644,13 +10492,13 @@ inline const ::std::string& HighScore::stage_award() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void HighScore::set_stage_award(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
   _impl_.stage_award_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.stage_award)
 }
 inline ::std::string* PROTOBUF_NONNULL HighScore::mutable_stage_award()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
   ::std::string* _s = _internal_mutable_stage_award();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.stage_award)
   return _s;
@@ -9670,10 +10518,10 @@ inline ::std::string* PROTOBUF_NONNULL HighScore::_internal_mutable_stage_award(
 inline ::std::string* PROTOBUF_NULLABLE HighScore::release_stage_award() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.HighScore.stage_award)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000020U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000040U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000040U);
   auto* released = _impl_.stage_award_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.stage_award_.Set("", GetArena());
@@ -9683,9 +10531,9 @@ inline ::std::string* PROTOBUF_NULLABLE HighScore::release_stage_award() {
 inline void HighScore::set_allocated_stage_award(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000040U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000040U);
   }
   _impl_.stage_award_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.stage_award_.IsDefault()) {
@@ -9699,7 +10547,7 @@ inline void HighScore::clear_peak_combo_award() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.peak_combo_award_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000040U);
+                  0x00000080U);
 }
 inline const ::std::string& HighScore::peak_combo_award() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -9709,13 +10557,13 @@ inline const ::std::string& HighScore::peak_combo_award() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void HighScore::set_peak_combo_award(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
   _impl_.peak_combo_award_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.peak_combo_award)
 }
 inline ::std::string* PROTOBUF_NONNULL HighScore::mutable_peak_combo_award()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
   ::std::string* _s = _internal_mutable_peak_combo_award();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.peak_combo_award)
   return _s;
@@ -9735,10 +10583,10 @@ inline ::std::string* PROTOBUF_NONNULL HighScore::_internal_mutable_peak_combo_a
 inline ::std::string* PROTOBUF_NULLABLE HighScore::release_peak_combo_award() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.HighScore.peak_combo_award)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000040U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000080U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000040U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000080U);
   auto* released = _impl_.peak_combo_award_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.peak_combo_award_.Set("", GetArena());
@@ -9748,9 +10596,9 @@ inline ::std::string* PROTOBUF_NULLABLE HighScore::release_peak_combo_award() {
 inline void HighScore::set_allocated_peak_combo_award(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000080U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000040U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000080U);
   }
   _impl_.peak_combo_award_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.peak_combo_award_.IsDefault()) {
@@ -9764,7 +10612,7 @@ inline void HighScore::clear_modifiers() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.modifiers_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000080U);
+                  0x00000100U);
 }
 inline const ::std::string& HighScore::modifiers() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -9774,13 +10622,13 @@ inline const ::std::string& HighScore::modifiers() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void HighScore::set_modifiers(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
   _impl_.modifiers_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.modifiers)
 }
 inline ::std::string* PROTOBUF_NONNULL HighScore::mutable_modifiers()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
   ::std::string* _s = _internal_mutable_modifiers();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.modifiers)
   return _s;
@@ -9800,10 +10648,10 @@ inline ::std::string* PROTOBUF_NONNULL HighScore::_internal_mutable_modifiers() 
 inline ::std::string* PROTOBUF_NULLABLE HighScore::release_modifiers() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.HighScore.modifiers)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000080U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000100U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000080U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000100U);
   auto* released = _impl_.modifiers_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.modifiers_.Set("", GetArena());
@@ -9813,9 +10661,9 @@ inline ::std::string* PROTOBUF_NULLABLE HighScore::release_modifiers() {
 inline void HighScore::set_allocated_modifiers(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000100U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000080U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000100U);
   }
   _impl_.modifiers_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.modifiers_.IsDefault()) {
@@ -9829,7 +10677,7 @@ inline void HighScore::clear_date_time() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.date_time_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000100U);
+                  0x00000200U);
 }
 inline const ::std::string& HighScore::date_time() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -9839,13 +10687,13 @@ inline const ::std::string& HighScore::date_time() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void HighScore::set_date_time(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000200U);
   _impl_.date_time_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.date_time)
 }
 inline ::std::string* PROTOBUF_NONNULL HighScore::mutable_date_time()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000200U);
   ::std::string* _s = _internal_mutable_date_time();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.date_time)
   return _s;
@@ -9865,10 +10713,10 @@ inline ::std::string* PROTOBUF_NONNULL HighScore::_internal_mutable_date_time() 
 inline ::std::string* PROTOBUF_NULLABLE HighScore::release_date_time() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.HighScore.date_time)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000100U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000200U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000100U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000200U);
   auto* released = _impl_.date_time_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.date_time_.Set("", GetArena());
@@ -9878,9 +10726,9 @@ inline ::std::string* PROTOBUF_NULLABLE HighScore::release_date_time() {
 inline void HighScore::set_allocated_date_time(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000100U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000200U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000100U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000200U);
   }
   _impl_.date_time_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.date_time_.IsDefault()) {
@@ -9894,7 +10742,7 @@ inline void HighScore::clear_player_guid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.player_guid_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000200U);
+                  0x00000400U);
 }
 inline const ::std::string& HighScore::player_guid() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -9904,13 +10752,13 @@ inline const ::std::string& HighScore::player_guid() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void HighScore::set_player_guid(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000200U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000400U);
   _impl_.player_guid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.player_guid)
 }
 inline ::std::string* PROTOBUF_NONNULL HighScore::mutable_player_guid()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000200U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000400U);
   ::std::string* _s = _internal_mutable_player_guid();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.player_guid)
   return _s;
@@ -9930,10 +10778,10 @@ inline ::std::string* PROTOBUF_NONNULL HighScore::_internal_mutable_player_guid(
 inline ::std::string* PROTOBUF_NULLABLE HighScore::release_player_guid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.HighScore.player_guid)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000200U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000400U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000200U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000400U);
   auto* released = _impl_.player_guid_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.player_guid_.Set("", GetArena());
@@ -9943,9 +10791,9 @@ inline ::std::string* PROTOBUF_NULLABLE HighScore::release_player_guid() {
 inline void HighScore::set_allocated_player_guid(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000200U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000400U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000200U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000400U);
   }
   _impl_.player_guid_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.player_guid_.IsDefault()) {
@@ -9959,7 +10807,7 @@ inline void HighScore::clear_machine_guid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.machine_guid_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000400U);
+                  0x00000800U);
 }
 inline const ::std::string& HighScore::machine_guid() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -9969,13 +10817,13 @@ inline const ::std::string& HighScore::machine_guid() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void HighScore::set_machine_guid(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000400U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000800U);
   _impl_.machine_guid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.machine_guid)
 }
 inline ::std::string* PROTOBUF_NONNULL HighScore::mutable_machine_guid()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000400U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000800U);
   ::std::string* _s = _internal_mutable_machine_guid();
   // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.machine_guid)
   return _s;
@@ -9995,10 +10843,10 @@ inline ::std::string* PROTOBUF_NONNULL HighScore::_internal_mutable_machine_guid
 inline ::std::string* PROTOBUF_NULLABLE HighScore::release_machine_guid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:itgmania.profile.HighScore.machine_guid)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000400U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000800U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000400U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000800U);
   auto* released = _impl_.machine_guid_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.machine_guid_.Set("", GetArena());
@@ -10008,9 +10856,9 @@ inline ::std::string* PROTOBUF_NULLABLE HighScore::release_machine_guid() {
 inline void HighScore::set_allocated_machine_guid(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000400U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000800U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000400U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000800U);
   }
   _impl_.machine_guid_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.machine_guid_.IsDefault()) {
@@ -10024,7 +10872,7 @@ inline void HighScore::clear_product_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.product_id_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00008000U);
+                  0x00010000U);
 }
 inline ::int32_t HighScore::product_id() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.product_id)
@@ -10032,7 +10880,7 @@ inline ::int32_t HighScore::product_id() const {
 }
 inline void HighScore::set_product_id(::int32_t value) {
   _internal_set_product_id(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00008000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00010000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.product_id)
 }
 inline ::int32_t HighScore::_internal_product_id() const {
@@ -10202,7 +11050,7 @@ inline void HighScore::clear_life_remaining_seconds() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.life_remaining_seconds_ = 0;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00010000U);
+                  0x00020000U);
 }
 inline float HighScore::life_remaining_seconds() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.life_remaining_seconds)
@@ -10210,7 +11058,7 @@ inline float HighScore::life_remaining_seconds() const {
 }
 inline void HighScore::set_life_remaining_seconds(float value) {
   _internal_set_life_remaining_seconds(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00010000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00020000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.life_remaining_seconds)
 }
 inline float HighScore::_internal_life_remaining_seconds() const {
@@ -10227,7 +11075,7 @@ inline void HighScore::clear_disqualified() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.disqualified_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00020000U);
+                  0x00040000U);
 }
 inline bool HighScore::disqualified() const {
   // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.disqualified)
@@ -10235,7 +11083,7 @@ inline bool HighScore::disqualified() const {
 }
 inline void HighScore::set_disqualified(bool value) {
   _internal_set_disqualified(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00020000U);
+  SetHasBit(_impl_._has_bits_[0], 0x00040000U);
   // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.disqualified)
 }
 inline bool HighScore::_internal_disqualified() const {
@@ -10245,6 +11093,87 @@ inline bool HighScore::_internal_disqualified() const {
 inline void HighScore::_internal_set_disqualified(bool value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.disqualified_ = value;
+}
+
+// bool is_routine = 19;
+inline void HighScore::clear_is_routine() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_routine_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00080000U);
+}
+inline bool HighScore::is_routine() const {
+  // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.is_routine)
+  return _internal_is_routine();
+}
+inline void HighScore::set_is_routine(bool value) {
+  _internal_set_is_routine(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00080000U);
+  // @@protoc_insertion_point(field_set:itgmania.profile.HighScore.is_routine)
+}
+inline bool HighScore::_internal_is_routine() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.is_routine_;
+}
+inline void HighScore::_internal_set_is_routine(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_routine_ = value;
+}
+
+// repeated .itgmania.profile.RoutinePlayerScore routine_players = 20;
+inline int HighScore::_internal_routine_players_size() const {
+  return _internal_routine_players().size();
+}
+inline int HighScore::routine_players_size() const {
+  return _internal_routine_players_size();
+}
+inline void HighScore::clear_routine_players() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.routine_players_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline ::itgmania::profile::RoutinePlayerScore* PROTOBUF_NONNULL HighScore::mutable_routine_players(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:itgmania.profile.HighScore.routine_players)
+  return _internal_mutable_routine_players()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::itgmania::profile::RoutinePlayerScore>* PROTOBUF_NONNULL HighScore::mutable_routine_players()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000008U);
+  // @@protoc_insertion_point(field_mutable_list:itgmania.profile.HighScore.routine_players)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_routine_players();
+}
+inline const ::itgmania::profile::RoutinePlayerScore& HighScore::routine_players(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:itgmania.profile.HighScore.routine_players)
+  return _internal_routine_players().Get(index);
+}
+inline ::itgmania::profile::RoutinePlayerScore* PROTOBUF_NONNULL HighScore::add_routine_players()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::itgmania::profile::RoutinePlayerScore* _add =
+      _internal_mutable_routine_players()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000008U);
+  // @@protoc_insertion_point(field_add:itgmania.profile.HighScore.routine_players)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::itgmania::profile::RoutinePlayerScore>& HighScore::routine_players() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:itgmania.profile.HighScore.routine_players)
+  return _internal_routine_players();
+}
+inline const ::google::protobuf::RepeatedPtrField<::itgmania::profile::RoutinePlayerScore>&
+HighScore::_internal_routine_players() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.routine_players_;
+}
+inline ::google::protobuf::RepeatedPtrField<::itgmania::profile::RoutinePlayerScore>* PROTOBUF_NONNULL
+HighScore::_internal_mutable_routine_players() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.routine_players_;
 }
 
 // -------------------------------------------------------------------
