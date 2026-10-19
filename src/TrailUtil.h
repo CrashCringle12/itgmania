@@ -40,6 +40,8 @@ class TrailID {
   XNode* CreateNode() const;
   void LoadFromNode(const XNode* pNode);
   bool IsValid() const;
+  StepsType GetStepsType() const { return st; }
+  CourseDifficulty GetCourseDifficulty() const { return cd; }
   static void Invalidate(Song* pStaleSong);
 };
 

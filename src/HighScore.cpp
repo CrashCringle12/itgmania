@@ -346,6 +346,9 @@ float HighScore::GetSurvivalSeconds() const {
 }
 std::string HighScore::GetModifiers() const { return m_Impl->sModifiers; }
 DateTime HighScore::GetDateTime() const { return m_Impl->dateTime; }
+std::string HighScore::GetPlayerGuid() const { return m_Impl->sPlayerGuid; }
+std::string HighScore::GetMachineGuid() const { return m_Impl->sMachineGuid; }
+int HighScore::GetProductID() const { return m_Impl->iProductID; }
 int HighScore::GetTapNoteScore(TapNoteScore tns) const {
   return m_Impl->iTapNoteScores[tns];
 }
@@ -508,6 +511,14 @@ void HighScoreList::AddHighScore(
     }
   }
   HighGrade = std::min(hs.GetGrade(), HighGrade);
+}
+
+void HighScoreList::SetPlayCount(int count, const std::string& lastPlayed) {
+  iNumTimesPlayed = std::max(0, count);
+  dtLastPlayed.Init();
+  if (!lastPlayed.empty()) {
+    dtLastPlayed.FromString(lastPlayed);
+  }
 }
 
 void HighScoreList::IncrementPlayCount(DateTime _dtLastPlayed) {

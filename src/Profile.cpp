@@ -57,8 +57,14 @@
 #include "XmlFileUtil.h"
 #include "global.h"
 
+#if defined(ITGMANIA_HAS_PROFILE_STATS_PROTOBUF)
+#include "ProfileStats.pb.h"
+#endif
+
 const std::string STATS_XML = "Stats.xml";
 const std::string STATS_XML_GZ = "Stats.xml.gz";
+const std::string STATS_PROTOBUF = "Stats.pb";
+constexpr unsigned int PROFILE_STATS_PROTOBUF_SCHEMA_VERSION = 5;
 /** @brief The filename for where one can edit their personal profile
  * information. */
 const std::string EDITABLE_INI = "Editable.ini";
@@ -82,6 +88,155 @@ static ThemeMetric<std::string> UNLOCK_AUTH_STRING(
 
 #define MAX_EDITABLE_INI_SIZE_BYTES 2 * 1024               // 2KB
 #define MAX_PLAYER_STATS_XML_SIZE_BYTES 100 * 1024 * 1024  // 100MB
+
+static thread_local std::string g_sProfileStatsLoadContextDir;
+
+#if defined(ITGMANIA_HAS_PROFILE_STATS_PROTOBUF)
+static void SaveXNodeToProtobuf(
+    const XNode& node, itgmania::profile::XmlNode* out) {
+  out->set_name(node.GetName());
+
+  FOREACH_CONST_Attr(&node, attr) {
+    std::string value;
+    attr->second->GetValue(value);
+    auto* out_attr = out->add_attrs();
+    out_attr->set_key(attr->first);
+    out_attr->set_value(value);
+  }
+
+  FOREACH_CONST_Child(&node, child) {
+    SaveXNodeToProtobuf(*child, out->add_children());
+  }
+}
+
+static void LoadXNodeFromProtobuf(
+    const itgmania::profile::XmlNode& in, XNode& out) {
+  out.SetName(in.name());
+
+  for (const auto& attr : in.attrs()) {
+    out.AppendAttr(attr.key(), attr.value());
+  }
+
+  for (const auto& child : in.children()) {
+    XNode* child_node = new XNode;
+    LoadXNodeFromProtobuf(child, *child_node);
+    out.AppendChild(child_node);
+  }
+}
+
+static void SaveHighScoreToProtobuf(
+    const HighScore& hs, itgmania::profile::HighScore* out) {
+  out->set_name(hs.GetName());
+  out->set_grade(GradeToString(hs.GetGrade()));
+  out->set_score(hs.GetScore());
+  out->set_percent_dp(hs.GetPercentDP());
+  out->set_survive_seconds(hs.GetSurviveSeconds());
+  out->set_max_combo(hs.GetMaxCombo());
+  out->set_stage_award(StageAwardToString(hs.GetStageAward()));
+  out->set_peak_combo_award(PeakComboAwardToString(hs.GetPeakComboAward()));
+  out->set_modifiers(hs.GetModifiers());
+  out->set_date_time(hs.GetDateTime().GetString());
+  out->set_player_guid(hs.GetPlayerGuid());
+  out->set_machine_guid(hs.GetMachineGuid());
+  out->set_product_id(hs.GetProductID());
+
+  FOREACH_ENUM(TapNoteScore, tns) {
+    out->add_tap_note_scores(hs.GetTapNoteScore(tns));
+  }
+  FOREACH_ENUM(HoldNoteScore, hns) {
+    out->add_hold_note_scores(hs.GetHoldNoteScore(hns));
+  }
+  FOREACH_ENUM(RadarCategory, rc) {
+    out->add_radar_values(hs.GetRadarValues()[rc]);
+  }
+
+  out->set_life_remaining_seconds(hs.GetLifeRemainingSeconds());
+  out->set_disqualified(hs.GetDisqualified());
+}
+
+static void LoadHighScoreFromProtobuf(
+    const itgmania::profile::HighScore& in, HighScore& out) {
+  out.SetName(in.name());
+  out.SetGrade(
+      std::clamp(StringToGrade(in.grade()), Grade_Tier01, Grade_Failed));
+  out.SetScore(in.score());
+  out.SetPercentDP(in.percent_dp());
+  out.SetAliveSeconds(in.survive_seconds());
+  out.SetMaxCombo(in.max_combo());
+  out.SetStageAward(StringToStageAward(in.stage_award()));
+  out.SetPeakComboAward(StringToPeakComboAward(in.peak_combo_award()));
+  out.SetModifiers(in.modifiers());
+  if (!in.date_time().empty()) {
+    DateTime date_time;
+    date_time.FromString(in.date_time());
+    out.SetDateTime(date_time);
+  }
+  out.SetPlayerGuid(in.player_guid());
+  out.SetMachineGuid(in.machine_guid());
+  out.SetProductID(in.product_id());
+
+  int tap_index = 0;
+  FOREACH_ENUM(TapNoteScore, tns) {
+    if (tap_index < in.tap_note_scores_size()) {
+      out.SetTapNoteScore(tns, in.tap_note_scores(tap_index));
+    }
+    ++tap_index;
+  }
+
+  int hold_index = 0;
+  FOREACH_ENUM(HoldNoteScore, hns) {
+    if (hold_index < in.hold_note_scores_size()) {
+      out.SetHoldNoteScore(hns, in.hold_note_scores(hold_index));
+    }
+    ++hold_index;
+  }
+
+  RadarValues radar_values;
+  radar_values.MakeUnknown();
+  int radar_index = 0;
+  FOREACH_ENUM(RadarCategory, rc) {
+    if (radar_index < in.radar_values_size()) {
+      radar_values[rc] = in.radar_values(radar_index);
+    }
+    ++radar_index;
+  }
+  out.SetRadarValues(radar_values);
+
+  out.SetLifeRemainingSeconds(in.life_remaining_seconds());
+  out.SetDisqualified(in.disqualified());
+}
+
+static void SaveHighScoreListToProtobuf(
+    const HighScoreList& hsl, itgmania::profile::HighScoreList* out) {
+  out->set_num_times_played(hsl.GetNumTimesPlayed());
+  if (hsl.GetNumTimesPlayed() > 0) {
+    out->set_last_played(hsl.GetLastPlayed().GetString());
+  }
+  if (hsl.HighGrade != Grade_NoData) {
+    out->set_high_grade(GradeToString(hsl.HighGrade));
+  }
+  for (const HighScore& hs : hsl.vHighScores) {
+    SaveHighScoreToProtobuf(hs, out->add_high_scores());
+  }
+}
+
+static void LoadHighScoreListFromProtobuf(
+    const itgmania::profile::HighScoreList& in, HighScoreList& out) {
+  out.Init();
+  if (!in.high_grade().empty()) {
+    out.HighGrade = StringToGrade(in.high_grade());
+  }
+
+  for (const auto& high_score : in.high_scores()) {
+    HighScore hs;
+    LoadHighScoreFromProtobuf(high_score, hs);
+    out.vHighScores.push_back(hs);
+    out.HighGrade = std::min(out.HighGrade, hs.GetGrade());
+  }
+
+  out.SetPlayCount(std::max(0, in.num_times_played()), in.last_played());
+}
+#endif
 
 const int DEFAULT_WEIGHT_POUNDS = 120;
 const float DEFAULT_BIRTH_YEAR = 1995;
@@ -1055,13 +1210,18 @@ void Profile::IncrementCategoryPlayCount(StepsType st, RankingCategory rc) {
     WARN_M(m);                 \
     continue;                  \
   }
-#define LOAD_NODE(X)                           \
-  {                                            \
-    const XNode* X = xml->GetChild(#X);        \
-    if (X == nullptr)                          \
-      LOG->Warn("Failed to read section " #X); \
-    else                                       \
-      Load##X##FromNode(X);                    \
+#define LOAD_NODE(X)                                          \
+  {                                                           \
+    const XNode* X = xml->GetChild(#X);                       \
+    if (X == nullptr) {                                       \
+      if (bWarnOnMissingSections) {                           \
+        LOG->Warn(                                            \
+            "Failed to read section " #X " for profile '%s'", \
+            g_sProfileStatsLoadContextDir.c_str());           \
+      }                                                       \
+    } else {                                                  \
+      Load##X##FromNode(X);                                   \
+    }                                                         \
   }
 
 void Profile::LoadCustomFunction(std::string sDir, PlayerNumber pn) {
@@ -1119,7 +1279,9 @@ bool Profile::HandleStatsPrefixChange(std::string dir, bool require_signature) {
   float total_calories_burned = m_fTotalCaloriesBurned;
   LuaTable user_table = m_UserTable;
   bool need_to_create_file = false;
-  if (IsAFile(dir + PROFILEMAN->GetStatsPrefix() + STATS_XML)) {
+  const std::string stats_dir = dir + PROFILEMAN->GetStatsPrefix();
+  if (IsAFile(stats_dir + STATS_XML) || IsAFile(stats_dir + STATS_XML_GZ) ||
+      IsAFile(stats_dir + STATS_PROTOBUF)) {
     LoadAllFromDir(dir, require_signature);
   } else {
     ClearStats();
@@ -1300,6 +1462,8 @@ void Profile::LoadSongsFromDir(
 
 ProfileLoadResult Profile::LoadStatsFromDir(
     std::string dir, bool require_signature) {
+  g_sProfileStatsLoadContextDir = dir;
+
   dir = dir + PROFILEMAN->GetStatsPrefix();
   // Check for the existance of stats.xml
   std::string fn = dir + STATS_XML;
@@ -1309,6 +1473,7 @@ ProfileLoadResult Profile::LoadStatsFromDir(
     fn = dir + STATS_XML_GZ;
     compressed = true;
     if (!IsAFile(fn)) {
+      LOG->Trace("No XML stats found in '%s'", dir.c_str());
       return ProfileLoadResult_FailedNoProfile;
     }
   }
@@ -1382,6 +1547,372 @@ ProfileLoadResult Profile::LoadStatsFromDir(
   return LoadStatsXmlFromNode(&xml);
 }
 
+ProfileLoadResult Profile::LoadStatsProtobufFromDir(
+    std::string sDir, bool bRequireSignature) {
+#if !defined(ITGMANIA_HAS_PROFILE_STATS_PROTOBUF)
+  (void)sDir;
+  (void)bRequireSignature;
+  return ProfileLoadResult_FailedNoProfile;
+#else
+  g_sProfileStatsLoadContextDir = sDir;
+  sDir = sDir + PROFILEMAN->GetStatsPrefix();
+  std::string sStatsFile = sDir + STATS_PROTOBUF;
+  if (!IsAFile(sStatsFile)) {
+    LOG->Trace("Protobuf stats file missing: %s", sStatsFile.c_str());
+    return ProfileLoadResult_FailedNoProfile;
+  }
+
+  int iError;
+  std::unique_ptr<RageFileBasic> pFile(
+      FILEMAN->Open(sStatsFile, RageFile::READ, iError));
+  if (pFile.get() == nullptr) {
+    LOG->Trace("Error opening %s: %s", sStatsFile.c_str(), strerror(iError));
+    return ProfileLoadResult_FailedTampered;
+  }
+
+  if (!IsMachine()) {
+    int iBytes = pFile->GetFileSize();
+    if (iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES) {
+      LuaHelpers::ReportScriptErrorFmt(
+          "The file '%s' is unreasonably large. It won't be loaded.",
+          sStatsFile.c_str());
+      return ProfileLoadResult_FailedTampered;
+    }
+  }
+
+  if (bRequireSignature) {
+    std::string sStatsSigFile = sStatsFile + SIGNATURE_APPEND;
+    std::string sDontShareFile = sDir + DONT_SHARE_SIG;
+
+    LOG->Trace(
+        "Verifying don't share signature \"%s\" against \"%s\"",
+        sDontShareFile.c_str(), sStatsSigFile.c_str());
+    if (!CryptManager::VerifyFileWithFile(sStatsSigFile, sDontShareFile)) {
+      LuaHelpers::ReportScriptErrorFmt(
+          "The don't share check for '%s' failed. Data will be ignored.",
+          sStatsSigFile.c_str());
+      return ProfileLoadResult_FailedTampered;
+    }
+
+    LOG->Trace("Verifying protobuf stats signature");
+    if (!CryptManager::VerifyFileWithFile(sStatsFile, sStatsSigFile)) {
+      LuaHelpers::ReportScriptErrorFmt(
+          "The signature check for '%s' failed. Data will be ignored.",
+          sStatsFile.c_str());
+      return ProfileLoadResult_FailedTampered;
+    }
+  }
+
+  std::string serialized_proto;
+  if (pFile->Read(serialized_proto) == -1) {
+    LOG->Trace(
+        "Error reading %s: %s", sStatsFile.c_str(), pFile->GetError().c_str());
+    return ProfileLoadResult_FailedTampered;
+  }
+
+  itgmania::profile::ProfileStatsDocument doc;
+  if (!doc.ParseFromString(serialized_proto)) {
+    LOG->Warn("Failed to parse protobuf stats from '%s'", sStatsFile.c_str());
+    return ProfileLoadResult_FailedTampered;
+  }
+
+  const unsigned int iSchemaVersion = doc.schema_version();
+  if (iSchemaVersion == 0) {
+    LOG->Warn(
+        "Protobuf stats file '%s' is missing a valid schema_version",
+        sStatsFile.c_str());
+    return ProfileLoadResult_FailedTampered;
+  }
+  if (iSchemaVersion != PROFILE_STATS_PROTOBUF_SCHEMA_VERSION) {
+    LOG->Warn(
+        "Unsupported protobuf stats schema_version=%u for '%s' "
+        "(supported=%u)",
+        iSchemaVersion, sStatsFile.c_str(),
+        PROFILE_STATS_PROTOBUF_SCHEMA_VERSION);
+    return ProfileLoadResult_FailedTampered;
+  }
+
+  // Match XML load behavior: Editable.ini values should remain authoritative.
+  std::string sName = m_sDisplayName;
+  std::string sCharacterID = m_sCharacterID;
+  std::string sLastUsedHighScoreName = m_sLastUsedHighScoreName;
+  int iWeightPounds = m_iWeightPounds;
+  float Voomax = m_Voomax;
+  int BirthYear = m_BirthYear;
+  bool IgnoreStepCountCalories = m_IgnoreStepCountCalories;
+  bool IsMale = m_IsMale;
+
+  bool bLoadedAnyPayload = false;
+
+  if (doc.has_legacy_sections()) {
+    const auto& legacy = doc.legacy_sections();
+
+    if (legacy.has_category_scores()) {
+      XNode node;
+      LoadXNodeFromProtobuf(legacy.category_scores(), node);
+      if (node.GetName() == "CategoryScores") {
+        LoadCategoryScoresFromNode(&node);
+      }
+    }
+
+    if (legacy.has_screenshot_data()) {
+      XNode node;
+      LoadXNodeFromProtobuf(legacy.screenshot_data(), node);
+      if (node.GetName() == "ScreenshotData") {
+        LoadScreenshotDataFromNode(&node);
+      }
+    }
+
+    if (legacy.has_calorie_data()) {
+      XNode node;
+      LoadXNodeFromProtobuf(legacy.calorie_data(), node);
+      if (node.GetName() == "CalorieData") {
+        LoadCalorieDataFromNode(&node);
+      }
+    }
+    bLoadedAnyPayload = true;
+  }
+
+  if (doc.has_general_data()) {
+    const auto& general = doc.general_data();
+
+    m_sDisplayName = general.display_name();
+    m_sCharacterID = general.character_id();
+    m_sLastUsedHighScoreName = general.last_used_high_score_name();
+    m_iWeightPounds = general.weight_pounds();
+    m_Voomax = general.voomax();
+    m_BirthYear = general.birth_year();
+    m_IgnoreStepCountCalories = general.ignore_step_count_calories();
+    m_IsMale = general.is_male();
+    m_sGuid = general.guid();
+
+    m_SortOrder = StringToSortOrder(general.sort_order());
+    m_LastDifficulty = StringToDifficulty(general.last_difficulty());
+    m_LastCourseDifficulty =
+        StringToDifficulty(general.last_course_difficulty());
+    m_LastStepsType = GAMEMAN->StringToStepsType(general.last_steps_type());
+
+    m_lastSong.FromString(general.last_song().dir());
+    if (!general.last_course().path().empty()) {
+      m_lastCourse.FromPath(general.last_course().path());
+    } else if (!general.last_course().full_title().empty()) {
+      XNode last_course_node("Course");
+      last_course_node.AppendAttr(
+          "FullTitle", general.last_course().full_title());
+      m_lastCourse.LoadFromNode(&last_course_node);
+    }
+
+    m_iCurrentCombo = general.current_combo();
+    m_iTotalSessions = general.total_sessions();
+    m_iTotalSessionSeconds = general.total_session_seconds();
+    m_iTotalGameplaySeconds = general.total_gameplay_seconds();
+    m_fTotalCaloriesBurned = general.total_calories_burned();
+    m_GoalType = GoalType(general.goal_type());
+    m_iGoalCalories = general.goal_calories();
+    m_iGoalSeconds = general.goal_seconds();
+    m_sLastPlayedMachineGuid = general.last_played_machine_guid();
+    m_LastPlayedDate.FromString(general.last_played_date());
+    m_iTotalDancePoints = general.total_dance_points();
+    m_iNumExtraStagesPassed = general.num_extra_stages_passed();
+    m_iNumExtraStagesFailed = general.num_extra_stages_failed();
+    m_iNumToasties = general.num_toasties();
+    m_iTotalTapsAndHolds = general.total_taps_and_holds();
+    m_iTotalJumps = general.total_jumps();
+    m_iTotalHolds = general.total_holds();
+    m_iTotalRolls = general.total_rolls();
+    m_iTotalMines = general.total_mines();
+    m_iTotalHands = general.total_hands();
+    m_iTotalLifts = general.total_lifts();
+
+    m_sDefaultModifiers.clear();
+    for (const auto& pair : general.default_modifiers()) {
+      if (!pair.key().empty()) {
+        m_sDefaultModifiers[pair.key()] = pair.value();
+      }
+    }
+
+    m_UnlockedEntryIDs.clear();
+    for (const auto& unlock_entry : general.unlock_entries()) {
+      const std::string& sUnlockEntryID = unlock_entry.unlock_entry_id();
+      if (sUnlockEntryID.empty()) {
+        continue;
+      }
+
+      if (!UNLOCK_AUTH_STRING.GetValue().empty()) {
+        const std::string& sUnlockAuth = unlock_entry.auth();
+        if (sUnlockAuth.empty()) {
+          continue;
+        }
+
+        std::string sExpectedUnlockAuth = BinaryToHex(CRYPTMAN->GetMD5ForString(
+            sUnlockEntryID + UNLOCK_AUTH_STRING.GetValue()));
+        if (sUnlockAuth != sExpectedUnlockAuth) {
+          continue;
+        }
+      }
+
+      m_UnlockedEntryIDs.insert(sUnlockEntryID);
+    }
+
+    FOREACH_ENUM(PlayMode, pm) { m_iNumSongsPlayedByPlayMode[pm] = 0; }
+    for (const auto& pair : general.num_songs_played_by_play_mode()) {
+      PlayMode pm = StringToPlayMode(pair.key());
+      if (pm >= 0 && pm < NUM_PlayMode) {
+        m_iNumSongsPlayedByPlayMode[pm] = pair.value();
+      }
+    }
+
+    m_iNumSongsPlayedByStyle.clear();
+    for (const auto& style_count : general.num_songs_played_by_style()) {
+      XNode style_node("Style");
+      style_node.AppendAttr("Game", style_count.game());
+      style_node.AppendAttr("Style", style_count.style());
+      StyleID style_id;
+      style_id.LoadFromNode(&style_node);
+      if (style_id.IsValid()) {
+        m_iNumSongsPlayedByStyle[style_id] = style_count.count();
+      }
+    }
+
+    FOREACH_ENUM(Difficulty, dc) { m_iNumSongsPlayedByDifficulty[dc] = 0; }
+    for (const auto& pair : general.num_songs_played_by_difficulty()) {
+      Difficulty dc = StringToDifficulty(pair.key());
+      if (dc >= 0 && dc < NUM_Difficulty) {
+        m_iNumSongsPlayedByDifficulty[dc] = pair.value();
+      }
+    }
+
+    for (int i = 0; i < MAX_METER + 1; ++i) {
+      m_iNumSongsPlayedByMeter[i] = 0;
+    }
+    const int meter_count =
+        std::min(general.num_songs_played_by_meter_size(), MAX_METER + 1);
+    for (int i = 0; i < meter_count; ++i) {
+      m_iNumSongsPlayedByMeter[i] = general.num_songs_played_by_meter(i);
+    }
+
+    m_iNumTotalSongsPlayed = general.num_total_songs_played();
+
+    FOREACH_ENUM(PlayMode, pm) { m_iNumStagesPassedByPlayMode[pm] = 0; }
+    for (const auto& pair : general.num_stages_passed_by_play_mode()) {
+      PlayMode pm = StringToPlayMode(pair.key());
+      if (pm >= 0 && pm < NUM_PlayMode) {
+        m_iNumStagesPassedByPlayMode[pm] = pair.value();
+      }
+    }
+
+    FOREACH_ENUM(Grade, g) { m_iNumStagesPassedByGrade[g] = 0; }
+    for (const auto& pair : general.num_stages_passed_by_grade()) {
+      Grade g = StringToGrade(pair.key());
+      if (g >= 0 && g < NUM_Grade) {
+        m_iNumStagesPassedByGrade[g] = pair.value();
+      }
+    }
+
+    if (!IsMachine()) {
+      Lua* L = LUA->Get();
+      if (general.has_user_table()) {
+        XNode user_table_node;
+        LoadXNodeFromProtobuf(general.user_table(), user_table_node);
+        LuaHelpers::CreateTableFromXNode(L, &user_table_node);
+      } else {
+        lua_newtable(L);
+      }
+      m_UserTable.SetFromStack(L);
+      LUA->Release(L);
+    }
+
+    bLoadedAnyPayload = true;
+  }
+
+  if (doc.has_song_scores()) {
+    if (doc.song_scores().songs_size() > 0) {
+      for (const auto& song_entry : doc.song_scores().songs()) {
+        if (song_entry.dir().empty()) {
+          continue;
+        }
+
+        SongID songID;
+        songID.FromString(song_entry.dir());
+
+        for (const auto& steps_entry : song_entry.steps_scores()) {
+          XNode steps_node("Steps");
+          steps_node.AppendAttr("StepsType", steps_entry.steps_type());
+          steps_node.AppendAttr("Difficulty", steps_entry.difficulty());
+          if (StringToDifficulty(steps_entry.difficulty()) == Difficulty_Edit) {
+            steps_node.AppendAttr("Description", steps_entry.description());
+            steps_node.AppendAttr("Hash", int(steps_entry.hash()));
+          }
+
+          StepsID stepsID;
+          stepsID.LoadFromNode(&steps_node);
+          if (!stepsID.IsValid()) {
+            LOG->Warn(
+                "Invalid StepsID in protobuf song scores for dir '%s'",
+                song_entry.dir().c_str());
+            continue;
+          }
+          HighScoreList hsl;
+          LoadHighScoreListFromProtobuf(steps_entry.high_score_list(), hsl);
+          m_SongHighScores[songID].m_StepsHighScores[stepsID].hsl = hsl;
+        }
+      }
+      bLoadedAnyPayload = true;
+    }
+  }
+
+  if (doc.has_course_scores()) {
+    if (doc.course_scores().courses_size() > 0) {
+      for (const auto& course_entry : doc.course_scores().courses()) {
+        CourseID courseID;
+        if (!course_entry.path().empty()) {
+          courseID.FromPath(course_entry.path());
+        } else {
+          XNode course_node("Course");
+          course_node.AppendAttr("FullTitle", course_entry.full_title());
+          courseID.LoadFromNode(&course_node);
+        }
+
+        for (const auto& trail_entry : course_entry.trail_scores()) {
+          XNode trail_node("Trail");
+          trail_node.AppendAttr("StepsType", trail_entry.steps_type());
+          trail_node.AppendAttr(
+              "CourseDifficulty", trail_entry.course_difficulty());
+
+          TrailID trailID;
+          trailID.LoadFromNode(&trail_node);
+          if (!trailID.IsValid()) {
+            continue;
+          }
+
+          HighScoreList hsl;
+          LoadHighScoreListFromProtobuf(trail_entry.high_score_list(), hsl);
+          m_CourseHighScores[courseID].m_TrailHighScores[trailID].hsl = hsl;
+        }
+      }
+      bLoadedAnyPayload = true;
+    }
+  }
+
+  if (!bLoadedAnyPayload) {
+    LOG->Warn(
+        "Protobuf stats file '%s' had no loadable payload", sStatsFile.c_str());
+    return ProfileLoadResult_FailedTampered;
+  }
+
+  m_sDisplayName = sName;
+  m_sCharacterID = sCharacterID;
+  m_sLastUsedHighScoreName = sLastUsedHighScoreName;
+  m_iWeightPounds = iWeightPounds;
+  m_Voomax = Voomax;
+  m_BirthYear = BirthYear;
+  m_IgnoreStepCountCalories = IgnoreStepCountCalories;
+  m_IsMale = IsMale;
+
+  return ProfileLoadResult_Success;
+#endif
+}
+
 void Profile::LoadTypeFromDir(std::string dir) {
   m_Type = ProfileType_Normal;
   m_ListPriority = 0;
@@ -1420,7 +1951,7 @@ void Profile::LoadTypeFromDir(std::string dir) {
 }
 
 ProfileLoadResult Profile::LoadStatsXmlFromNode(
-    const XNode* xml, bool bIgnoreEditable) {
+    const XNode* xml, bool bIgnoreEditable, bool bWarnOnMissingSections) {
   /* The placeholder stats.xml file has an <html> tag. Don't load it,
    * but don't warn about it. */
   if (xml->GetName() == "html") {
@@ -1581,6 +2112,264 @@ bool Profile::SaveStatsXmlToDir(std::string sDir, bool bSignData) const {
   }
 
   return true;
+}
+
+bool Profile::SaveStatsProtobufToDir(std::string sDir, bool bSignData) const {
+#if !defined(ITGMANIA_HAS_PROFILE_STATS_PROTOBUF)
+  (void)sDir;
+  (void)bSignData;
+  return false;
+#else
+  LOG->Trace("SaveStatsProtobufToDir: %s", sDir.c_str());
+  std::unique_ptr<XNode> category_scores_xml(SaveCategoryScoresCreateNode());
+  std::unique_ptr<XNode> screenshot_data_xml(SaveScreenshotDataCreateNode());
+  std::unique_ptr<XNode> calorie_data_xml(SaveCalorieDataCreateNode());
+  itgmania::profile::ProfileStatsDocument doc;
+  doc.set_schema_version(PROFILE_STATS_PROTOBUF_SCHEMA_VERSION);
+  auto* general_data_pb = doc.mutable_general_data();
+  general_data_pb->set_display_name(GetDisplayNameOrHighScoreName());
+  general_data_pb->set_character_id(m_sCharacterID);
+  general_data_pb->set_last_used_high_score_name(m_sLastUsedHighScoreName);
+  general_data_pb->set_weight_pounds(m_iWeightPounds);
+  general_data_pb->set_voomax(m_Voomax);
+  general_data_pb->set_birth_year(m_BirthYear);
+  general_data_pb->set_ignore_step_count_calories(m_IgnoreStepCountCalories);
+  general_data_pb->set_is_male(m_IsMale);
+  general_data_pb->set_guid(m_sGuid);
+  general_data_pb->set_sort_order(SortOrderToString(m_SortOrder));
+  general_data_pb->set_last_difficulty(DifficultyToString(m_LastDifficulty));
+  general_data_pb->set_last_course_difficulty(
+      DifficultyToString(m_LastCourseDifficulty));
+  if (m_LastStepsType != StepsType_Invalid) {
+    general_data_pb->set_last_steps_type(
+        GAMEMAN->GetStepsTypeInfo(m_LastStepsType).szName);
+  }
+  general_data_pb->mutable_last_song()->set_dir(m_lastSong.ToString());
+  general_data_pb->mutable_last_course()->set_path(m_lastCourse.GetPath());
+  general_data_pb->mutable_last_course()->set_full_title(
+      m_lastCourse.GetFullTitle());
+  general_data_pb->set_current_combo(m_iCurrentCombo);
+  general_data_pb->set_total_sessions(m_iTotalSessions);
+  general_data_pb->set_total_session_seconds(m_iTotalSessionSeconds);
+  general_data_pb->set_total_gameplay_seconds(m_iTotalGameplaySeconds);
+  general_data_pb->set_total_calories_burned(m_fTotalCaloriesBurned);
+  general_data_pb->set_goal_type(int(m_GoalType));
+  general_data_pb->set_goal_calories(m_iGoalCalories);
+  general_data_pb->set_goal_seconds(m_iGoalSeconds);
+  general_data_pb->set_last_played_machine_guid(m_sLastPlayedMachineGuid);
+  general_data_pb->set_last_played_date(m_LastPlayedDate.GetString());
+  general_data_pb->set_total_dance_points(m_iTotalDancePoints);
+  general_data_pb->set_num_extra_stages_passed(m_iNumExtraStagesPassed);
+  general_data_pb->set_num_extra_stages_failed(m_iNumExtraStagesFailed);
+  general_data_pb->set_num_toasties(m_iNumToasties);
+  general_data_pb->set_total_taps_and_holds(m_iTotalTapsAndHolds);
+  general_data_pb->set_total_jumps(m_iTotalJumps);
+  general_data_pb->set_total_holds(m_iTotalHolds);
+  general_data_pb->set_total_rolls(m_iTotalRolls);
+  general_data_pb->set_total_mines(m_iTotalMines);
+  general_data_pb->set_total_hands(m_iTotalHands);
+  general_data_pb->set_total_lifts(m_iTotalLifts);
+
+  for (const auto& pair : m_sDefaultModifiers) {
+    auto* out_pair = general_data_pb->add_default_modifiers();
+    out_pair->set_key(pair.first);
+    out_pair->set_value(pair.second);
+  }
+
+  for (const auto& unlock_entry_id : m_UnlockedEntryIDs) {
+    auto* out_unlock_entry = general_data_pb->add_unlock_entries();
+    out_unlock_entry->set_unlock_entry_id(unlock_entry_id);
+    if (!UNLOCK_AUTH_STRING.GetValue().empty()) {
+      std::string sUnlockAuth = BinaryToHex(CRYPTMAN->GetMD5ForString(
+          unlock_entry_id + UNLOCK_AUTH_STRING.GetValue()));
+      out_unlock_entry->set_auth(sUnlockAuth);
+    }
+  }
+
+  FOREACH_ENUM(PlayMode, pm) {
+    if (!m_iNumSongsPlayedByPlayMode[pm]) {
+      continue;
+    }
+    auto* out_pair = general_data_pb->add_num_songs_played_by_play_mode();
+    out_pair->set_key(PlayModeToString(pm));
+    out_pair->set_value(m_iNumSongsPlayedByPlayMode[pm]);
+  }
+
+  for (const auto& iter : m_iNumSongsPlayedByStyle) {
+    std::unique_ptr<XNode> style_node(iter.first.CreateNode());
+    std::string game;
+    std::string style;
+    style_node->GetAttrValue("Game", game);
+    style_node->GetAttrValue("Style", style);
+
+    auto* out_style = general_data_pb->add_num_songs_played_by_style();
+    out_style->set_game(game);
+    out_style->set_style(style);
+    out_style->set_count(iter.second);
+  }
+
+  FOREACH_ENUM(Difficulty, dc) {
+    if (!m_iNumSongsPlayedByDifficulty[dc]) {
+      continue;
+    }
+    auto* out_pair = general_data_pb->add_num_songs_played_by_difficulty();
+    out_pair->set_key(DifficultyToString(dc));
+    out_pair->set_value(m_iNumSongsPlayedByDifficulty[dc]);
+  }
+
+  for (int i = 0; i < MAX_METER + 1; ++i) {
+    general_data_pb->add_num_songs_played_by_meter(m_iNumSongsPlayedByMeter[i]);
+  }
+
+  general_data_pb->set_num_total_songs_played(m_iNumTotalSongsPlayed);
+
+  FOREACH_ENUM(PlayMode, pm) {
+    if (!m_iNumStagesPassedByPlayMode[pm]) {
+      continue;
+    }
+    auto* out_pair = general_data_pb->add_num_stages_passed_by_play_mode();
+    out_pair->set_key(PlayModeToString(pm));
+    out_pair->set_value(m_iNumStagesPassedByPlayMode[pm]);
+  }
+
+  FOREACH_ENUM(Grade, g) {
+    if (!m_iNumStagesPassedByGrade[g]) {
+      continue;
+    }
+    auto* out_pair = general_data_pb->add_num_stages_passed_by_grade();
+    out_pair->set_key(GradeToString(g));
+    out_pair->set_value(m_iNumStagesPassedByGrade[g]);
+  }
+
+  if (!IsMachine() && m_UserTable.IsSet()) {
+    Lua* L = LUA->Get();
+    m_UserTable.PushSelf(L);
+    XNode* pUserTable = XmlFileUtil::XNodeFromTable(L);
+    LUA->Release(L);
+    pUserTable->m_sName = "UserTable";
+    SaveXNodeToProtobuf(*pUserTable, general_data_pb->mutable_user_table());
+    delete pUserTable;
+  }
+  auto* song_scores_pb = doc.mutable_song_scores();
+  for (const std::pair<const SongID, HighScoresForASong>& i :
+       m_SongHighScores) {
+    const SongID& songID = i.first;
+    const HighScoresForASong& hsSong = i.second;
+
+    if (GetSongNumTimesPlayed(songID) == 0) {
+      continue;
+    }
+
+    auto* song_entry = song_scores_pb->add_songs();
+    song_entry->set_dir(songID.ToString());
+
+    for (const std::pair<const StepsID, HighScoresForASteps>& j :
+         hsSong.m_StepsHighScores) {
+      const StepsID& stepsID = j.first;
+      const HighScoresForASteps& hsSteps = j.second;
+      const HighScoreList& hsl = hsSteps.hsl;
+
+      if (hsl.GetNumTimesPlayed() == 0) {
+        continue;
+      }
+
+      auto* steps_entry = song_entry->add_steps_scores();
+      steps_entry->set_steps_type(
+          GAMEMAN->GetStepsTypeInfo(stepsID.GetStepsType()).szName);
+      steps_entry->set_difficulty(DifficultyToString(stepsID.GetDifficulty()));
+      if (stepsID.GetDifficulty() == Difficulty_Edit) {
+        steps_entry->set_description(stepsID.GetDescription());
+        steps_entry->set_hash(stepsID.GetHash());
+      }
+
+      SaveHighScoreListToProtobuf(hsl, steps_entry->mutable_high_score_list());
+    }
+  }
+
+  auto* course_scores_pb = doc.mutable_course_scores();
+  for (const std::pair<const CourseID, HighScoresForACourse>& i :
+       m_CourseHighScores) {
+    const CourseID& courseID = i.first;
+    const HighScoresForACourse& hsCourse = i.second;
+
+    if (GetCourseNumTimesPlayed(courseID) == 0) {
+      continue;
+    }
+
+    auto* course_entry = course_scores_pb->add_courses();
+    course_entry->set_path(courseID.GetPath());
+    course_entry->set_full_title(courseID.GetFullTitle());
+
+    for (const std::pair<const TrailID, HighScoresForATrail>& j :
+         hsCourse.m_TrailHighScores) {
+      const TrailID& trailID = j.first;
+      const HighScoresForATrail& hsTrail = j.second;
+      const HighScoreList& hsl = hsTrail.hsl;
+
+      if (hsl.GetNumTimesPlayed() == 0) {
+        continue;
+      }
+
+      auto* trail_entry = course_entry->add_trail_scores();
+      trail_entry->set_steps_type(
+          GAMEMAN->GetStepsTypeInfo(trailID.GetStepsType()).szName);
+      trail_entry->set_course_difficulty(
+          DifficultyToString(trailID.GetCourseDifficulty()));
+      SaveHighScoreListToProtobuf(hsl, trail_entry->mutable_high_score_list());
+    }
+  }
+
+  auto* legacy_sections = doc.mutable_legacy_sections();
+  SaveXNodeToProtobuf(
+      *category_scores_xml, legacy_sections->mutable_category_scores());
+  SaveXNodeToProtobuf(
+      *screenshot_data_xml, legacy_sections->mutable_screenshot_data());
+  SaveXNodeToProtobuf(
+      *calorie_data_xml, legacy_sections->mutable_calorie_data());
+  if (SHOW_COIN_DATA.GetValue() && IsMachine()) {
+    std::unique_ptr<XNode> coin_data_xml(SaveCoinDataCreateNode());
+    SaveXNodeToProtobuf(*coin_data_xml, legacy_sections->mutable_coin_data());
+  }
+
+  std::string serialized_proto;
+  if (!doc.SerializeToString(&serialized_proto)) {
+    LOG->Warn("Failed to serialize protobuf stats document");
+    return false;
+  }
+
+  sDir = sDir + PROFILEMAN->GetStatsPrefix();
+  std::string fn = sDir + STATS_PROTOBUF;
+
+  RageFile f;
+  if (!f.Open(fn, RageFile::WRITE)) {
+    LuaHelpers::ReportScriptErrorFmt(
+        "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str());
+    return false;
+  }
+
+  if (f.Write(serialized_proto) == -1) {
+    LuaHelpers::ReportScriptErrorFmt(
+        "Couldn't write %s: %s", fn.c_str(), f.GetError().c_str());
+    return false;
+  }
+  if (f.Flush() == -1) {
+    return false;
+  }
+  f.Close();
+  LOG->Trace(
+      "Wrote protobuf stats '%s' (%d bytes)", fn.c_str(),
+      int(serialized_proto.size()));
+
+  if (bSignData) {
+    std::string sStatsSigFile = fn + SIGNATURE_APPEND;
+    CryptManager::SignFileToFile(fn, sStatsSigFile);
+
+    std::string sDontShareFile = sDir + DONT_SHARE_SIG;
+    CryptManager::SignFileToFile(sStatsSigFile, sDontShareFile);
+  }
+
+  return true;
+#endif
 }
 
 void Profile::SaveTypeToDir(std::string dir) const {

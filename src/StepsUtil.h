@@ -216,6 +216,8 @@ class StepsID {
 
   StepsType GetStepsType() const { return st; }
   Difficulty GetDifficulty() const { return dc; }
+  const std::string& GetDescription() const { return sDescription; }
+  unsigned GetHash() const { return uHash; }
 };
 
 #endif

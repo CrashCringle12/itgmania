@@ -53,6 +53,9 @@ struct HighScore {
    * @return the modifiers. */
   std::string GetModifiers() const;
   DateTime GetDateTime() const;
+  std::string GetPlayerGuid() const;
+  std::string GetMachineGuid() const;
+  int GetProductID() const;
   int GetTapNoteScore(TapNoteScore tns) const;
   int GetHoldNoteScore(HoldNoteScore tns) const;
   const RadarValues& GetRadarValues() const;
@@ -147,6 +150,7 @@ struct HighScoreList {
 
   void AddHighScore(HighScore hs, int& iIndexOut, bool bIsMachine);
   void IncrementPlayCount(DateTime dtLastPlayed);
+  void SetPlayCount(int count, const std::string& lastPlayed);
   void RemoveAllButOneOfEachName();
   void ClampSize(bool bIsMachine);
 

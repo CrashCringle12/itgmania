@@ -438,6 +438,8 @@ class Profile {
   bool HandleStatsPrefixChange(std::string dir, bool require_signature);
   ProfileLoadResult LoadAllFromDir(std::string sDir, bool bRequireSignature);
   ProfileLoadResult LoadStatsFromDir(std::string dir, bool require_signature);
+  ProfileLoadResult LoadStatsProtobufFromDir(
+      std::string dir, bool require_signature);
   void LoadSongsFromDir(
       const std::string& dir, ProfileSlot prof_slot, bool isMemoryCard = true);
   void LoadTypeFromDir(std::string dir);
@@ -446,7 +448,8 @@ class Profile {
 
   ProfileLoadResult LoadEditableDataFromDir(std::string sDir);
   ProfileLoadResult LoadStatsXmlFromNode(
-      const XNode* pNode, bool bIgnoreEditable = true);
+      const XNode* pNode, bool bIgnoreEditable = true,
+      bool bWarnOnMissingSections = true);
   void LoadGeneralDataFromNode(const XNode* pNode);
   void LoadSongScoresFromNode(const XNode* pNode);
   void LoadCourseScoresFromNode(const XNode* pNode);
@@ -457,6 +460,7 @@ class Profile {
   void SaveTypeToDir(std::string dir) const;
   void SaveEditableDataToDir(std::string sDir) const;
   bool SaveStatsXmlToDir(std::string sDir, bool bSignData) const;
+  bool SaveStatsProtobufToDir(std::string sDir, bool bSignData) const;
   XNode* SaveStatsXmlCreateNode() const;
   XNode* SaveGeneralDataCreateNode() const;
   XNode* SaveSongScoresCreateNode() const;

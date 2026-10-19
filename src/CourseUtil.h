@@ -97,6 +97,7 @@ class CourseID {
   void LoadFromNode(const XNode* pNode);
   void FromPath(std::string _sPath) { sPath = _sPath; }
   bool IsValid() const;
+  const std::string& GetFullTitle() const { return sFullTitle; }
 
  private:
   std::string sPath;
