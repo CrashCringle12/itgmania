@@ -18,3 +18,5 @@ include(CMakeProject-aubio.cmake)
 
 # External projects
 include(CMakeProject-libusb.cmake)
+
+include(CMakeProject-protobuf.cmake)

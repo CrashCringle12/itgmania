@@ -49,3 +49,6 @@
 [submodule "extern/aubio"]
 	path = extern/aubio
 	url = https://github.com/aubio/aubio.git
+[submodule "extern/profile-protobuf"]
+	path = extern/profile-protobuf
+	url = https://github.com/protocolbuffers/protobuf.git

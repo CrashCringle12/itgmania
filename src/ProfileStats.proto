@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package itgmania.profile;
+
+message XmlNodeAttr {
+  string key = 1;
+  string value = 2;
+}
+
+message XmlNode {
+  string name = 1;
+  repeated XmlNodeAttr attrs = 2;
+  repeated XmlNode children = 3;
+}
+
+message LegacySections {
+  XmlNode category_scores = 1;
+  XmlNode screenshot_data = 2;
+  XmlNode calorie_data = 3;
+  XmlNode coin_data = 4;
+}
+
+message GeneralDataSection {
+  message StringPair {
+    string key = 1;
+    string value = 2;
+  }
+
+  message IntPair {
+    string key = 1;
+    int32 value = 2;
+  }
+
+  message StylePlayCount {
+    string game = 1;
+    string style = 2;
+    int32 count = 3;
+  }
+
+  message LastSong {
+    string dir = 1;
+  }
+
+  message LastCourse {
+    string path = 1;
+    string full_title = 2;
+  }
+
+  message UnlockEntry {
+    string unlock_entry_id = 1;
+    string auth = 2;
+  }
+
+  string display_name = 1;
+  string character_id = 2;
+  string last_used_high_score_name = 3;
+  int32 weight_pounds = 4;
+  float voomax = 5;
+  int32 birth_year = 6;
+  bool ignore_step_count_calories = 7;
+  bool is_male = 8;
+  string guid = 9;
+  string sort_order = 10;
+  string last_difficulty = 11;
+  string last_course_difficulty = 12;
+  string last_steps_type = 13;
+  LastSong last_song = 14;
+  LastCourse last_course = 15;
+  int32 current_combo = 16;
+  int32 total_sessions = 17;
+  int32 total_session_seconds = 18;
+  int32 total_gameplay_seconds = 19;
+  float total_calories_burned = 20;
+  int32 goal_type = 21;
+  int32 goal_calories = 22;
+  int32 goal_seconds = 23;
+  string last_played_machine_guid = 24;
+  string last_played_date = 25;
+  int32 total_dance_points = 26;
+  int32 num_extra_stages_passed = 27;
+  int32 num_extra_stages_failed = 28;
+  int32 num_toasties = 29;
+  int32 total_taps_and_holds = 30;
+  int32 total_jumps = 31;
+  int32 total_holds = 32;
+  int32 total_rolls = 33;
+  int32 total_mines = 34;
+  int32 total_hands = 35;
+  int32 total_lifts = 36;
+  repeated StringPair default_modifiers = 37;
+  repeated UnlockEntry unlock_entries = 38;
+  repeated IntPair num_songs_played_by_play_mode = 39;
+  repeated StylePlayCount num_songs_played_by_style = 40;
+  repeated IntPair num_songs_played_by_difficulty = 41;
+  repeated int32 num_songs_played_by_meter = 42;
+  int32 num_total_songs_played = 43;
+  repeated IntPair num_stages_passed_by_play_mode = 44;
+  repeated IntPair num_stages_passed_by_grade = 45;
+  XmlNode user_table = 46;
+}
+
+message SongStepsScore {
+  string steps_type = 1;
+  string difficulty = 2;
+  string description = 3;
+  uint32 hash = 4;
+  HighScoreList high_score_list = 5;
+}
+
+message SongScoreEntry {
+  string dir = 1;
+  repeated SongStepsScore steps_scores = 2;
+}
+
+message SongScoresSection {
+  repeated SongScoreEntry songs = 1;
+}
+
+message HighScore {
+  string name = 1;
+  string grade = 2;
+  uint32 score = 3;
+  float percent_dp = 4;
+  float survive_seconds = 5;
+  uint32 max_combo = 6;
+  string stage_award = 7;
+  string peak_combo_award = 8;
+  string modifiers = 9;
+  string date_time = 10;
+  string player_guid = 11;
+  string machine_guid = 12;
+  int32 product_id = 13;
+  repeated int32 tap_note_scores = 14;
+  repeated int32 hold_note_scores = 15;
+  repeated float radar_values = 16;
+  float life_remaining_seconds = 17;
+  bool disqualified = 18;
+}
+
+message HighScoreList {
+  int32 num_times_played = 1;
+  string last_played = 2;
+  string high_grade = 3;
+  repeated HighScore high_scores = 4;
+}
+
+message CourseTrailScore {
+  string steps_type = 1;
+  string course_difficulty = 2;
+  HighScoreList high_score_list = 3;
+}
+
+message CourseScoreEntry {
+  string path = 1;
+  string full_title = 2;
+  repeated CourseTrailScore trail_scores = 3;
+}
+
+message CourseScoresSection {
+  repeated CourseScoreEntry courses = 1;
+}
+
+message ProfileStatsDocument {
+  uint32 schema_version = 1;
+  GeneralDataSection general_data = 3;
+  SongScoresSection song_scores = 4;
+  CourseScoresSection course_scores = 5;
+  LegacySections legacy_sections = 6;
+}

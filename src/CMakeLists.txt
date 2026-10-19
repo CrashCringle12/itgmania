@@ -34,7 +34,8 @@ list(APPEND SMDATA_ALL_FILES_SRC
             ${SMDATA_ALL_RAGE_SRC}
             ${SMDATA_ALL_SCREENS_SRC}
             ${SMDATA_OS_SRC}
-            ${SMDATA_FILE_TYPES_SRC})
+            ${SMDATA_FILE_TYPES_SRC}
+            "ProfileStats.pb.cc")
 list(APPEND SMDATA_ALL_FILES_HPP
             ${SMDATA_GLOBAL_FILES_HPP}
             ${SMDATA_GLOBAL_SINGLETON_HPP}
@@ -44,7 +45,8 @@ list(APPEND SMDATA_ALL_FILES_HPP
             ${SMDATA_ALL_RAGE_HPP}
             ${SMDATA_ALL_SCREENS_HPP}
             ${SMDATA_OS_HPP}
-            ${SMDATA_FILE_TYPES_HPP})
+            ${SMDATA_FILE_TYPES_HPP}
+            "ProfileStats.pb.h")
 
 if(NOT APPLE)
   list(APPEND SMDATA_ALL_FILES_SRC "Main.cpp")
@@ -607,3 +609,8 @@ if(WITH_CLUB_FANTASTIC)
             DESTINATION "${SM_INSTALL_DESTINATION}/Songs")
   endif()
 endif()
+
+# Generated with protoc 34.0; keep the runtime and generated code in sync.
+target_link_libraries("${SM_EXE_NAME}" protobuf::libprotobuf)
+target_compile_definitions("${SM_EXE_NAME}" PRIVATE ITGMANIA_HAS_PROFILE_STATS_PROTOBUF)
+source_group("Proto" FILES ProfileStats.proto ProfileStats.pb.cc ProfileStats.pb.h)
