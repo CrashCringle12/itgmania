@@ -1508,6 +1508,24 @@ void Profile::LoadSongsFromDir(
 
 ProfileLoadResult Profile::LoadStatsFromDir(
     std::string dir, bool require_signature) {
+  // Never hide corrupt or unsupported data behind a possibly stale alternate
+  // format. ProfileManager can recover the last known good profile instead.
+  const bool prefer_protobuf = PREFSMAN->m_ProfileScoresStorageFormat ==
+                               ProfileScoresStorageFormat_Protobuf;
+  ProfileLoadResult result =
+      prefer_protobuf ? LoadStatsProtobufFromDir(dir, require_signature)
+                      : LoadStatsXmlFromDir(dir, require_signature);
+  if (result != ProfileLoadResult_FailedNoProfile) {
+    return result;
+  }
+  // Loading (including LastGood validation) is read-only. Conversion happens
+  // on the next successful save, using the chosen format.
+  return prefer_protobuf ? LoadStatsXmlFromDir(dir, require_signature)
+                         : LoadStatsProtobufFromDir(dir, require_signature);
+}
+
+ProfileLoadResult Profile::LoadStatsXmlFromDir(
+    std::string dir, bool require_signature) {
   g_sProfileStatsLoadContextDir = dir;
 
   dir = dir + PROFILEMAN->GetStatsPrefix();
@@ -2052,7 +2070,10 @@ bool Profile::SaveAllToDir(std::string sDir, bool bSignData) const {
   // Save editable.ini
   SaveEditableDataToDir(sDir);
 
-  bool bSaved = SaveStatsXmlToDir(sDir, bSignData);
+  const bool bSaved = PREFSMAN->m_ProfileScoresStorageFormat ==
+                              ProfileScoresStorageFormat_Protobuf
+                          ? SaveStatsProtobufToDir(sDir, bSignData)
+                          : SaveStatsXmlToDir(sDir, bSignData);
 
   SaveStatsWebPageToDir(sDir);
 

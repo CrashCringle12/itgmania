@@ -133,6 +133,14 @@ XToString(SyncOffset);
 StringToX(SyncOffset);
 LuaXType(SyncOffset);
 
+static const char* ProfileScoresStorageFormatNames[] = {
+    "xml",
+    "protobuf",
+};
+XToString(ProfileScoresStorageFormat);
+StringToX(ProfileScoresStorageFormat);
+LuaXType(ProfileScoresStorageFormat);
+
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 #define TRUE_IF_DEBUG true
@@ -282,6 +290,8 @@ PrefsManager::PrefsManager()
       m_bAnisotropicFiltering("AnisotropicFiltering", false),
 
       m_bSignProfileData("SignProfileData", false),
+      m_ProfileScoresStorageFormat(
+          "ProfileScoresStorageFormat", ProfileScoresStorageFormat_Xml),
       m_ProfileSortOrder("ProfileSortOrder", ProfileSortOrder_Priority),
       m_bProfileSortOrderAscending("ProfileSortOrderAscending", true),
       m_CourseSortOrder("CourseSortOrder", COURSE_SORT_SONGS),

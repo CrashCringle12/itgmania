@@ -438,6 +438,8 @@ class Profile {
   bool HandleStatsPrefixChange(std::string dir, bool require_signature);
   ProfileLoadResult LoadAllFromDir(std::string sDir, bool bRequireSignature);
   ProfileLoadResult LoadStatsFromDir(std::string dir, bool require_signature);
+  ProfileLoadResult LoadStatsXmlFromDir(
+      std::string dir, bool require_signature);
   ProfileLoadResult LoadStatsProtobufFromDir(
       std::string dir, bool require_signature);
   void LoadSongsFromDir(

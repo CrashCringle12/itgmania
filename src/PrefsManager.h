@@ -118,6 +118,13 @@ enum SyncOffset {
   SyncOffset_Invalid
 };
 
+enum ProfileScoresStorageFormat {
+  ProfileScoresStorageFormat_Xml,
+  ProfileScoresStorageFormat_Protobuf,
+  NUM_ProfileScoresStorageFormat,
+  ProfileScoresStorageFormat_Invalid,
+};
+
 /** @brief Holds user-chosen preferences that are saved between sessions. */
 class PrefsManager {
  public:
@@ -300,6 +307,9 @@ class PrefsManager {
   // on different machines that don't have the same key, or else the
   // profile's data will be discarded.
   Preference<bool> m_bSignProfileData;
+
+  // Determines which format is used for profile score stats serialization.
+  Preference<ProfileScoresStorageFormat> m_ProfileScoresStorageFormat;
 
   // Used to control the ordering of the player profiles.
   // See the the definition of ProfileSortOrder above about the available sort
