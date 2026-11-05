@@ -3665,6 +3665,9 @@ class LunaPlayer : public Luna<Player> {
   }
 
   static int SetNoteShader(T* p, lua_State* L, int target) {
+    if (RageShaderProgram::CustomShadersDisabled("SetNoteShader")) {
+      COMMON_RETURN_SELF;
+    }
     PlayerState* state = p->GetPlayerState();
     if (!state) {
       return luaL_error(L, "Player has no state");

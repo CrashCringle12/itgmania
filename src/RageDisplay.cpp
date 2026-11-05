@@ -18,6 +18,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageMath.h"
+#include "RageShaderProgram.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface_Save_BMP.h"
@@ -898,6 +899,10 @@ void RageDisplay::PopShaderProgram() {
   m_ShaderPrograms.pop_back();
 }
 std::shared_ptr<RageShaderProgram> RageDisplay::GetShaderProgram() const {
+  if (!m_ShaderPrograms.empty() && m_ShaderPrograms.back().first &&
+      RageShaderProgram::CustomShadersDisabled("Render")) {
+    return nullptr;
+  }
   return m_ShaderPrograms.empty() ? nullptr : m_ShaderPrograms.back().first;
 }
 void RageDisplay::SetTextureWithMetadata(

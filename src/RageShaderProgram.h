@@ -29,6 +29,8 @@ class RageShaderProgram
   virtual bool Compile() = 0;
   virtual void Apply() = 0;
   virtual bool IsValid() const = 0;
+  // Optional operation name logs an ignored custom shader request.
+  static bool CustomShadersDisabled(const char* operation = nullptr);
   // Invalidate forgets names belonging to a context which no longer exists.
   virtual void Invalidate() = 0;
   // ReleaseGPUResources deletes names while their context is still current.

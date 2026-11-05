@@ -1307,6 +1307,9 @@ class RageShaderProgramGL final : public RageShaderProgram {
     m_locations.clear();
   }
   bool Compile() override {
+    if (CustomShadersDisabled("Compile")) {
+      return false;
+    }
     if (IsReleased()) {
       return false;
     }
@@ -1375,6 +1378,10 @@ class RageShaderProgramGL final : public RageShaderProgram {
     return true;
   }
   void Apply() override {
+    if (CustomShadersDisabled("Apply")) {
+      glUseProgramObjectARB(0);
+      return;
+    }
     if (IsDirty()) {
       Compile();
     }

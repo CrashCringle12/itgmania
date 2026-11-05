@@ -7,7 +7,9 @@
 #include <new>
 #include <set>
 
+#include "PrefsManager.h"
 #include "RageFile.h"
+#include "RageLog.h"
 #include "RageTexture.h"
 #include "RageTextureManager.h"
 #include "global.h"
@@ -36,6 +38,22 @@ bool ReadSource(
 }
 }  // namespace
 
+bool RageShaderProgram::CustomShadersDisabled(const char* operation) {
+  static std::set<std::string> warnedOperations;
+  if (!PREFSMAN || !PREFSMAN->m_bCustomShadersDisabled) {
+    warnedOperations.clear();
+    return false;
+  }
+  // Uniforms may be updated every frame. Warn once per operation while
+  // disabled.
+  if (operation && LOG && warnedOperations.insert(operation).second) {
+    LOG->Warn(
+        "CustomShadersDisabled: ignoring custom shader operation %s",
+        operation);
+  }
+  return true;
+}
+
 RageShaderProgram::RageShaderProgram() { Resources().insert(this); }
 RageShaderProgram::~RageShaderProgram() {
   ClearTextures();
@@ -44,6 +62,9 @@ RageShaderProgram::~RageShaderProgram() {
 void RageShaderProgram::SetSources(
     const std::string& vertexPath, const std::string& fragmentPath,
     const std::string& vertexSource, const std::string& fragmentSource) {
+  if (CustomShadersDisabled("SetSources")) {
+    return;
+  }
   m_vertexPath = vertexPath;
   m_fragmentPath = fragmentPath;
   m_vertexSource = vertexSource;
@@ -53,6 +74,9 @@ void RageShaderProgram::SetSources(
 }
 bool RageShaderProgram::LoadSources(
     const std::string& vertexPath, const std::string& fragmentPath) {
+  if (CustomShadersDisabled("LoadSources")) {
+    return true;
+  }
   std::string vertex, fragment, error;
   if (!ReadSource(vertexPath, vertex, error) ||
       !ReadSource(fragmentPath, fragment, error)) {
@@ -71,6 +95,9 @@ void RageShaderProgram::MarkCompiled(bool success, const std::string& error) {
 }
 void RageShaderProgram::SetDefine(
     const std::string& name, const std::string& value) {
+  if (CustomShadersDisabled("SetDefine")) {
+    return;
+  }
   const std::map<std::string, std::string>::iterator it = m_defines.find(name);
   if (it != m_defines.end() && it->second == value) {
     return;
@@ -79,6 +106,9 @@ void RageShaderProgram::SetDefine(
   RequestCompile();
 }
 void RageShaderProgram::ClearDefine(const std::string& name) {
+  if (CustomShadersDisabled("ClearDefine")) {
+    return;
+  }
   if (m_defines.erase(name)) {
     RequestCompile();
   }
@@ -86,6 +116,9 @@ void RageShaderProgram::ClearDefine(const std::string& name) {
 void RageShaderProgram::SetFloatUniform(
     const std::string& name, int arity, const std::vector<float>& values,
     bool matrix) {
+  if (CustomShadersDisabled("SetFloatUniform")) {
+    return;
+  }
   Uniform& uniform = m_uniforms[name];
   uniform.kind = matrix ? Uniform::Matrix : Uniform::Float;
   uniform.arity = arity;
@@ -94,6 +127,9 @@ void RageShaderProgram::SetFloatUniform(
 }
 void RageShaderProgram::SetIntUniform(
     const std::string& name, const std::vector<int>& values) {
+  if (CustomShadersDisabled("SetIntUniform")) {
+    return;
+  }
   Uniform& uniform = m_uniforms[name];
   uniform.kind = Uniform::Int;
   uniform.arity = 1;
@@ -102,6 +138,9 @@ void RageShaderProgram::SetIntUniform(
 }
 void RageShaderProgram::SetTextureUniform(
     const std::string& name, RageTexture* texture) {
+  if (CustomShadersDisabled("SetTextureUniform")) {
+    return;
+  }
   if (m_released) {
     return;
   }
@@ -234,6 +273,9 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
 
  public:
   static int define(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("define")) {
+      COMMON_RETURN_SELF;
+    }
     const char* name = luaL_checkstring(L, 1);
     const char* value = luaL_optstring(L, 2, "1");
     if (!IsDefineName(name)) {
@@ -246,10 +288,16 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
     COMMON_RETURN_SELF;
   }
   static int clearDefine(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("clearDefine")) {
+      COMMON_RETURN_SELF;
+    }
     p->ClearDefine(luaL_checkstring(L, 1));
     COMMON_RETURN_SELF;
   }
   static int compile(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("compile")) {
+      COMMON_RETURN_SELF;
+    }
     if (lua_gettop(L) != 0) {
       // Check both source strings before creating C++ strings on longjmp-based
       // Lua builds.
@@ -266,6 +314,9 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
     COMMON_RETURN_SELF;
   }
   static int compileImmediate(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("compileImmediate")) {
+      COMMON_RETURN_SELF;
+    }
     p->RequestCompile();
     if (!p->Compile()) {
       LuaHelpers::ReportScriptError("Shader compilation: " + p->GetError());
@@ -273,14 +324,21 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
     COMMON_RETURN_SELF;
   }
   static int isValid(T* p, lua_State* L) {
-    lua_pushboolean(L, p->IsValid());
+    const bool disabled = T::CustomShadersDisabled("isValid");
+    lua_pushboolean(L, !disabled && p->IsValid());
     return 1;
   }
   static int getError(T* p, lua_State* L) {
-    lua_pushstring(L, p->GetError().c_str());
+    const bool disabled = T::CustomShadersDisabled("getError");
+    lua_pushstring(
+        L,
+        disabled ? "CustomShadersDisabled is enabled" : p->GetError().c_str());
     return 1;
   }
   static int FloatScalar(T* p, lua_State* L, int arity) {
+    if (T::CustomShadersDisabled("float uniform")) {
+      COMMON_RETURN_SELF;
+    }
     const char* name = luaL_checkstring(L, 1);
     float values[4] = {};
     for (int i = 0; i < arity; ++i) {
@@ -294,12 +352,18 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
   static int uniform3f(T* p, lua_State* L) { return FloatScalar(p, L, 3); }
   static int uniform4f(T* p, lua_State* L) { return FloatScalar(p, L, 4); }
   static int uniform1i(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("uniform1i")) {
+      COMMON_RETURN_SELF;
+    }
     const char* name = luaL_checkstring(L, 1);
     const int value = IntegerArgument(L, 2);
     p->SetIntUniform(name, {value});
     COMMON_RETURN_SELF;
   }
   static int FloatArray(T* p, lua_State* L, int arity, bool matrix = false) {
+    if (T::CustomShadersDisabled("float array or matrix uniform")) {
+      COMMON_RETURN_SELF;
+    }
     const char* name = luaL_checkstring(L, 1);
     const size_t count =
         CheckArray(L, 2, matrix ? arity * arity : arity, false);
@@ -327,6 +391,9 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
     return FloatArray(p, L, 4, true);
   }
   static int uniform1iv(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("uniform1iv")) {
+      COMMON_RETURN_SELF;
+    }
     const char* name = luaL_checkstring(L, 1);
     const size_t count = CheckArray(L, 2, 1, true);
     std::vector<int> values;
@@ -340,6 +407,9 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
     COMMON_RETURN_SELF;
   }
   static int uniformTexture(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("uniformTexture")) {
+      COMMON_RETURN_SELF;
+    }
     const char* name = luaL_checkstring(L, 1);
     RageTexture* texture =
         lua_isnil(L, 2) ? nullptr : Luna<RageTexture>::check(L, 2);

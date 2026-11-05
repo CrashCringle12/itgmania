@@ -334,6 +334,13 @@ bool Actor::IsAlias(const std::string& name) {
 
 bool Actor::LoadShader(
     const std::string& vertexPath, const std::string& fragmentPath) {
+  if (RageShaderProgram::CustomShadersDisabled("LoadShader")) {
+    // Retain an inert resource so existing chart Lua can still use GetShader().
+    if (DISPLAY) {
+      SetShaderProgram(DISPLAY->CreateShaderProgram());
+    }
+    return false;
+  }
   if (!DISPLAY || !DISPLAY->SupportsShaders()) {
     LuaHelpers::ReportScriptError(
         "GLSL shaders require the OpenGL renderer and shader-capable drivers");
@@ -369,14 +376,18 @@ void Actor::LoadFromNode(const XNode* pNode) {
   bool hasFragment = pNode->GetAttr("Frag") != nullptr;
   bool hasAlias = pNode->GetAttr("Shader") != nullptr;
   if (hasVertex || hasFragment || hasAlias) {
-    const bool validVertex =
-        !hasVertex || ResolveShaderPath(pNode, "Vert", vertex);
-    const bool validFragment =
-        !hasFragment || ResolveShaderPath(pNode, "Frag", fragment);
-    const bool validAlias = hasFragment || !hasAlias ||
-                            ResolveShaderPath(pNode, "Shader", fragment);
-    if (validVertex && validFragment && validAlias) {
-      LoadShader(vertex, fragment);
+    if (RageShaderProgram::CustomShadersDisabled()) {
+      LoadShader("", "");
+    } else {
+      const bool validVertex =
+          !hasVertex || ResolveShaderPath(pNode, "Vert", vertex);
+      const bool validFragment =
+          !hasFragment || ResolveShaderPath(pNode, "Frag", fragment);
+      const bool validAlias = hasFragment || !hasAlias ||
+                              ResolveShaderPath(pNode, "Shader", fragment);
+      if (validVertex && validFragment && validAlias) {
+        LoadShader(vertex, fragment);
+      }
     }
   }
   Lua* L = LUA->Get();
@@ -2459,6 +2470,7 @@ class LunaActor : public Luna<Actor> {
   }
 
   static int GetShader(T* p, lua_State* L) {
+    RageShaderProgram::CustomShadersDisabled("GetShader");
     std::shared_ptr<RageShaderProgram> shader = p->GetShaderProgram();
     if (shader) {
       shader->PushSelf(L);
@@ -2468,6 +2480,7 @@ class LunaActor : public Luna<Actor> {
     return 1;
   }
   static int SetShader(T* p, lua_State* L) {
+    RageShaderProgram::CustomShadersDisabled("SetShader");
     if (lua_isnil(L, 1)) {
       p->ClearShader();
     } else {
@@ -2478,10 +2491,15 @@ class LunaActor : public Luna<Actor> {
     COMMON_RETURN_SELF;
   }
   static int ClearShader(T* p, lua_State* L) {
+    RageShaderProgram::CustomShadersDisabled("ClearShader");
     p->ClearShader();
     COMMON_RETURN_SELF;
   }
   static int LoadShader(T* p, lua_State* L) {
+    if (RageShaderProgram::CustomShadersDisabled()) {
+      p->LoadShader("", "");
+      COMMON_RETURN_SELF;
+    }
     const char* first = luaL_checkstring(L, 1);
     const char* second = lua_gettop(L) >= 2 ? luaL_checkstring(L, 2) : nullptr;
     if (second) {

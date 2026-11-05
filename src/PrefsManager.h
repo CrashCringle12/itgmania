@@ -167,6 +167,7 @@ class PrefsManager {
   Preference<int> m_iMaxTextureResolution;
   Preference<int> m_iRefreshRate;
   Preference<bool> m_bAllowMultitexture;
+  Preference<bool> m_bCustomShadersDisabled;
   Preference<bool> m_bFullscreenIsBorderlessWindow;
   Preference<bool> m_bShowStats;
   Preference<bool> m_bShowBanners;
