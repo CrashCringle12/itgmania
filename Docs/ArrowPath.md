@@ -6,6 +6,8 @@ Guides follow the same positions as notes, including distance-based
 They are hidden by default; enable them with the `arrowpath` modifier or the
 `PlayerOptions:ArrowPath()` method.
 
+Guides are drawn behind receptors and notes. 
+
 ## Setting up a guide
 
 Load this code from a song's foreground Lua actor during gameplay:

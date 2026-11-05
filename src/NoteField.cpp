@@ -1074,6 +1074,16 @@ void NoteField::DrawPrimitives() {
        fBeat, 0, m_FieldRenderArgs.draw_pixels_after_targets,       \
        m_FieldRenderArgs.draw_pixels_before_targets))
 
+  const Style* pStyle =
+      GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
+
+  // Draw all guide lines before receptors and notes, in the style's column
+  // order.
+  for (int j = 0; j < pStyle->m_iColsPerPlayer; ++j) {
+    const int c = pStyle->m_iColumnDrawOrder[j];
+    m_ColumnRenderers[c].DrawArrowPathUnderlay();
+  }
+
   // Draw Receptors
   {
     cur->m_ReceptorArrowRow.Draw();
@@ -1322,8 +1332,6 @@ void NoteField::DrawPrimitives() {
   // draw. Draw the arrows in order of column. This minimizes texture switches
   // and lets us draw in big batches.
 
-  const Style* pStyle =
-      GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
   ASSERT_M(
       m_pNoteData->GetNumTracks() ==
           GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)

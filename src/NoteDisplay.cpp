@@ -1685,6 +1685,21 @@ static float ArrowPathColorChannel(float value) {
   return std::isnan(value) ? 0.f : std::max(0.f, std::min(1.f, value));
 }
 
+void NoteColumnRenderer::DrawArrowPathUnderlay() {
+  const ArrowPath::Options& options =
+      m_field_render_args->player_state->m_PlayerOptions.GetCurrent()
+          .m_ArrowPaths;
+  const float width = options.Girth(m_column);
+  if (options.Alpha(m_column) <= 0 || width <= 0 || !std::isfinite(width)) {
+    return;
+  }
+  // Use the normal actor draw scope for column transforms, wrappers and
+  // shaders.
+  m_drawing_arrow_path = true;
+  Draw();
+  m_drawing_arrow_path = false;
+}
+
 void NoteColumnRenderer::DrawArrowPath() {
   const PlayerState* state = m_field_render_args->player_state;
   const ArrowPath::Options& options =
@@ -1766,7 +1781,10 @@ void NoteColumnRenderer::DrawPrimitives() {
   m_column_render_args.zoom_handler = &NCR_current.m_zoom_handler;
   m_column_render_args.diffuse = m_pTempState->diffuse[0];
   m_column_render_args.glow = m_pTempState->glow;
-  DrawArrowPath();
+  if (m_drawing_arrow_path) {
+    DrawArrowPath();
+    return;
+  }
   bool any_upcoming = false;
   // Build lists of holds and taps for each player number, then pass those
   // lists to the displays to draw.

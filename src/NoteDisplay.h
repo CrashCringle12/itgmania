@@ -299,7 +299,7 @@ class NoteDisplay {
 // state of their rows and the parent state of the column. -Kyz
 
 struct NoteColumnRenderer : public Actor {
-  void DrawArrowPath();
+  void DrawArrowPathUnderlay();
   NoteDisplay* m_displays[PLAYER_INVALID + 1];
   NoteFieldRenderArgs* m_field_render_args;
   NoteColumnRenderArgs m_column_render_args;
@@ -355,6 +355,8 @@ struct NoteColumnRenderer : public Actor {
   }
 
  private:
+  void DrawArrowPath();
+  bool m_drawing_arrow_path = false;
   std::vector<NCR_TweenState> NCR_Tweens;
   NCR_TweenState NCR_current;
   NCR_TweenState NCR_start;
