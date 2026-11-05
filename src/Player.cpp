@@ -4,6 +4,7 @@
 #include <climits>
 #include <cmath>
 #include <cstddef>
+#include <cstring>
 #include <set>
 #include <string>
 #include <vector>
@@ -3594,7 +3595,168 @@ class LunaPlayer : public Luna<Player> {
   }
   GET_SET_BOOL_METHOD(oitg_zoom_mode, m_oitg_zoom_mode);
 
+  static int SetSpline(T* p, lua_State* L, int axis) {
+    const double point = luaL_checknumber(L, 1),
+                 column = luaL_checknumber(L, 2);
+    const float value = FArg(3), offset = FArg(4), speed = FArg(5);
+    PlayerState* state = p->GetPlayerState();
+    if (!state) {
+      return luaL_error(L, "Player has no state");
+    }
+    const Style* style = GAMESTATE->GetCurrentStyle(state->m_PlayerNumber);
+    const int columns = style ? style->m_iColsPerPlayer : NotePath::Columns;
+    if (!std::isfinite(point) || point != std::floor(point) || point < 0 ||
+        point >= NotePath::Points || !std::isfinite(column) ||
+        column != std::floor(column) || column < -1 || column >= columns ||
+        column >= NotePath::Columns || !std::isfinite(value) ||
+        !std::isfinite(offset) || !std::isfinite(speed)) {
+      return luaL_error(
+          L, "Invalid spline point, column, value, offset, or speed");
+    }
+    state->m_PlayerOptions.GetSong().m_NotePaths.Set(
+        axis, static_cast<int>(point), static_cast<int>(column), value, offset,
+        speed, columns);
+    COMMON_RETURN_SELF;
+  }
+  static int ResetSpline(T* p, lua_State* L, int axis) {
+    const double column =
+        lua_gettop(L) > 0 && !lua_isnil(L, 1) ? luaL_checknumber(L, 1) : -1;
+    PlayerState* state = p->GetPlayerState();
+    if (!state) {
+      return luaL_error(L, "Player has no state");
+    }
+    if (!std::isfinite(column) || column != std::floor(column) || column < -1 ||
+        column >= NotePath::Columns) {
+      return luaL_error(L, "Invalid spline column");
+    }
+    state->m_PlayerOptions.GetSong().m_NotePaths.Reset(
+        axis, static_cast<int>(column));
+    COMMON_RETURN_SELF;
+  }
+  static int SetXSpline(T* p, lua_State* L) {
+    return SetSpline(p, L, NotePath::X);
+  }
+  static int SetYSpline(T* p, lua_State* L) {
+    return SetSpline(p, L, NotePath::Y);
+  }
+  static int SetZSpline(T* p, lua_State* L) {
+    return SetSpline(p, L, NotePath::Z);
+  }
+  static int ResetXSplines(T* p, lua_State* L) {
+    return ResetSpline(p, L, NotePath::X);
+  }
+  static int ResetYSplines(T* p, lua_State* L) {
+    return ResetSpline(p, L, NotePath::Y);
+  }
+  static int ResetZSplines(T* p, lua_State* L) {
+    return ResetSpline(p, L, NotePath::Z);
+  }
+  static int NoClearSplines(T* p, lua_State* L) {
+    luaL_checktype(L, 1, LUA_TBOOLEAN);
+    PlayerState* state = p->GetPlayerState();
+    if (!state) {
+      return luaL_error(L, "Player has no state");
+    }
+    const bool preserve = lua_toboolean(L, 1) != 0;
+    state->m_PlayerOptions.GetSong().m_NotePaths.preserve = preserve;
+    state->m_PlayerOptions.GetCurrent().m_NotePaths.preserve = preserve;
+    COMMON_RETURN_SELF;
+  }
+
+  static int PathColumns(T* p, lua_State* L) {
+    if (!p->GetPlayerState()) {
+      return luaL_error(L, "Player has no state");
+    }
+    const Style* style =
+        GAMESTATE->GetCurrentStyle(p->GetPlayerState()->m_PlayerNumber);
+    return style ? std::min(style->m_iColsPerPlayer, ArrowPath::Columns) : 0;
+  }
+  static int SetNumPathGradientPoints(T* p, lua_State* L) {
+    const int columns = PathColumns(p, L);
+    ArrowPath::Display& display = p->GetPlayerState()->m_ArrowPathDisplay;
+    const int column =
+        LuaHelpers::CheckIntegerInRange(L, 1, -1, columns - 1, "ArrowPath");
+    const int count =
+        LuaHelpers::CheckIntegerInRange(L, 2, 0, 65536, "ArrowPath");
+    for (int c = 0; c < columns; ++c) {
+      if (column == -1 || column == c) {
+        display.SetCount(c, count);
+      }
+    }
+    COMMON_RETURN_SELF;
+  }
+  static int SetPathGradientStop(T* p, lua_State* L, bool color) {
+    const int columns = PathColumns(p, L);
+    ArrowPath::Display& display = p->GetPlayerState()->m_ArrowPathDisplay;
+    const int point =
+        LuaHelpers::CheckIntegerInRange(L, 1, 0, 65535, "ArrowPath");
+    const int column =
+        LuaHelpers::CheckIntegerInRange(L, 2, -1, columns - 1, "ArrowPath");
+    const float first = LuaHelpers::CheckFiniteFloat(L, 3, "ArrowPath");
+    ArrowPath::Color rgba;
+    if (color) {
+      rgba = {
+          first, LuaHelpers::CheckFiniteFloat(L, 4, "ArrowPath"),
+          LuaHelpers::CheckFiniteFloat(L, 5, "ArrowPath"),
+          LuaHelpers::CheckFiniteFloat(L, 6, "ArrowPath")};
+    }
+    // Validate every selected column before changing any of them.
+    for (int c = 0; c < columns; ++c) {
+      if ((column == -1 || column == c) &&
+          point >= static_cast<int>(display.gradients[c].size())) {
+        luaL_error(
+            L, "ArrowPath gradient point %d does not exist in column %d", point,
+            c);
+      }
+    }
+    for (int c = 0; c < columns; ++c) {
+      if (column != -1 && column != c) {
+        continue;
+      }
+      ArrowPath::Stop& stop = display.gradients[c][point];
+      if (color) {
+        stop.color = rgba;
+      } else {
+        stop.position = first;
+      }
+    }
+    COMMON_RETURN_SELF;
+  }
+  static int SetPathGradientColor(T* p, lua_State* L) {
+    return SetPathGradientStop(p, L, true);
+  }
+  static int SetPathGradientPoint(T* p, lua_State* L) {
+    return SetPathGradientStop(p, L, false);
+  }
+  static int SetArrowPathBlendMode(T* p, lua_State* L) {
+    PathColumns(p, L);
+    ArrowPath::Display& display = p->GetPlayerState()->m_ArrowPathDisplay;
+    const char* name = luaL_checkstring(L, 1);
+    static const char* names[] = {
+        "normal",           "add",        "subtract",      "modulate",
+        "copysrc",          "alphamask",  "alphaknockout", "alphamultiply",
+        "weightedmultiply", "invertdest", "noeffect"};
+    for (int i = 0; i < 11; ++i) {
+      if (std::strcmp(name, names[i]) == 0) {
+        display.blend = i;
+        COMMON_RETURN_SELF;
+      }
+    }
+    luaL_error(L, "Unsupported ArrowPath blend mode: %s", name);
+    COMMON_RETURN_SELF;
+  }
   LunaPlayer() {
+    ADD_METHOD(SetNumPathGradientPoints);
+    ADD_METHOD(SetPathGradientColor);
+    ADD_METHOD(SetPathGradientPoint);
+    ADD_METHOD(SetArrowPathBlendMode);
+    ADD_METHOD(SetXSpline);
+    ADD_METHOD(SetYSpline);
+    ADD_METHOD(SetZSpline);
+    ADD_METHOD(ResetXSplines);
+    ADD_METHOD(ResetYSplines);
+    ADD_METHOD(ResetZSplines);
+    ADD_METHOD(NoClearSplines);
     ADD_METHOD(SetLife);
     ADD_METHOD(ChangeLife);
     ADD_METHOD(SetActorWithJudgmentPosition);

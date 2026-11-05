@@ -274,6 +274,8 @@ list(APPEND SM_DATA_REST_HPP
             "PlayerAI.h"
             "PlayerNumber.h"
             "PlayerOptions.h"
+            "NotePath.h"
+            "ArrowPath.h"
             "PlayerStageStats.h"
             "PlayerState.h"
             "Preference.h"

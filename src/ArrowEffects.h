@@ -54,12 +54,14 @@ class ArrowEffects {
    * @param fYOffset the original display position.
    * @param fYReverseOffsetPixels the amount offset due to reverse.
    * @param WithReverse a flag to see if the Reverse mod is on.
+   * @param WithNotePath apply the vertical path; false for hold mesh sampling.
    * @return the actual display position. */
   static float GetYPos(
       const PlayerState* pPlayerState, int iCol, float fYOffset,
-      float fYReverseOffsetPixels, bool WithReverse = true);
+      float fYReverseOffsetPixels, bool WithReverse = true,
+      bool WithNotePath = true);
 
-  // Inverse of ArrowGetYPos (YPos -> fYOffset).
+  // Inverse of ordinary sampling Y (YPos -> fYOffset), excluding note paths.
   static float GetYOffsetFromYPos(
       int iCol, float YPos, float fYReverseOffsetPixels);
 

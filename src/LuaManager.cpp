@@ -979,6 +979,26 @@ void LuaHelpers::ParseCommandList(
   // The function is now on the stack.
 }
 
+int LuaHelpers::CheckIntegerInRange(
+    Lua* L, int argument, int minimum, int maximum, const char* context) {
+  const double value = luaL_checknumber(L, argument);
+  if (!std::isfinite(value) || value != std::floor(value) || value < minimum ||
+      value > maximum) {
+    luaL_error(
+        L, "%s argument %d must be an integer in [%d,%d]", context, argument,
+        minimum, maximum);
+  }
+  return static_cast<int>(value);
+}
+
+float LuaHelpers::CheckFiniteFloat(Lua* L, int argument, const char* context) {
+  const float value = static_cast<float>(luaL_checknumber(L, argument));
+  if (!std::isfinite(value)) {
+    luaL_error(L, "%s argument %d must be finite", context, argument);
+  }
+  return value;
+}
+
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
  * in method calls, so we give a correct error message after we remove self. */
 int LuaHelpers::TypeError(Lua* L, int iArgNo, const char* szName) {

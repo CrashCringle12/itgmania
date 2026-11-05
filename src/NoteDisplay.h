@@ -299,6 +299,7 @@ class NoteDisplay {
 // state of their rows and the parent state of the column. -Kyz
 
 struct NoteColumnRenderer : public Actor {
+  void DrawArrowPath();
   NoteDisplay* m_displays[PLAYER_INVALID + 1];
   NoteFieldRenderArgs* m_field_render_args;
   NoteColumnRenderArgs m_column_render_args;

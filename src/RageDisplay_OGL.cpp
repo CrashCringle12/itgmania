@@ -1585,7 +1585,7 @@ void RageDisplay_Legacy::DrawLineStripInternal(
     const RageSpriteVertex v[], int iNumVerts, float fLineWidth) {
   TurnOffHardwareVBO();
 
-  if (!GetActualVideoModeParams().bSmoothLines) {
+  if (!IsSmoothLinesEnabled()) {
     /* Fall back on the generic polygon-based line strip. */
     RageDisplay::DrawLineStripInternal(v, iNumVerts, fLineWidth);
     return;

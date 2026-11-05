@@ -53,6 +53,7 @@ class PlayerState {
   // This is used by ArrowEffects and the NoteField to zoom both appropriately
   // to fit in the space available. -Kyz
   float m_NotefieldZoom;
+  ArrowPath::Display m_ArrowPathDisplay;
 
   // Music statistics:
   SongPosition m_Position;

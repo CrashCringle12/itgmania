@@ -165,6 +165,12 @@ void CreateTableFromArray(const std::vector<T>& aIn, lua_State* L) {
   }
 }
 
+// Validate numeric arguments without truncating fractions or accepting
+// nonfinite values.
+int CheckIntegerInRange(
+    Lua* L, int argument, int minimum, int maximum, const char* context);
+float CheckFiniteFloat(Lua* L, int argument, const char* context);
+
 int TypeError(Lua* L, int narg, const char* tname);
 inline int AbsIndex(Lua* L, int i) {
   if (i > 0 || i <= LUA_REGISTRYINDEX) {

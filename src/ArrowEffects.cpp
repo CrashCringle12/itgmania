@@ -727,7 +727,7 @@ static void ArrowGetReverseShiftAndScale(
 
 float ArrowEffects::GetYPos(
     const PlayerState* pPlayerState, int iCol, float fYOffset,
-    float fYReverseOffsetPixels, bool WithReverse) {
+    float fYReverseOffsetPixels, bool WithReverse, bool WithNotePath) {
   float f = fYOffset;
 
   if (WithReverse) {
@@ -774,6 +774,9 @@ float ArrowEffects::GetYPos(
   // floored, making arrows show on integer Y coordinates. Supposedly it makes
   // the arrows look better, but testing needs to be done.
   // todo: make this a noteskin metric instead of a theme metric? -aj
+  if (WithNotePath) {
+    f += curr_options->m_NotePaths.Evaluate(NotePath::Y, iCol, fYOffset);
+  }
   return QUANTIZE_ARROW_Y ? std::floor(f) : f;
 }
 
@@ -1030,7 +1033,8 @@ float ArrowEffects::GetXPos(
     fPixelOffsetFromCenter *= fTinyPercent;
   }
 
-  return fPixelOffsetFromCenter;
+  return fPixelOffsetFromCenter +
+         curr_options->m_NotePaths.Evaluate(NotePath::X, iColNum, fYOffset);
 }
 
 float ArrowEffects::GetRotationX(
@@ -1535,10 +1539,17 @@ float ArrowEffects::GetZPos(
              fBounceAmt;
   }
 
-  return fZPos;
+  return fZPos +
+         curr_options->m_NotePaths.Evaluate(NotePath::Z, iCol, fYOffset);
 }
 
 bool ArrowEffects::NeedZBuffer() {
+  for (const NotePath::Curve& curve :
+       curr_options->m_NotePaths.curves[NotePath::Z]) {
+    if (curve.active) {
+      return true;
+    }
+  }
   const float* fEffects = curr_options->m_fEffects;
   // We also need to use the Z buffer if twirl is in play, because of
   // hold modulation. -vyhd (OpenITG r623)

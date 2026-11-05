@@ -942,6 +942,31 @@ void NoteDisplay::DrawHoldPart(
         break;
     }
 
+    if (column_args.pos_handler->m_spline_mode != NCSM_Position &&
+        m_pPlayerState->m_PlayerOptions.GetCurrent().m_NotePaths.Active(
+            column_args.column)) {
+      const NotePath::Paths& paths =
+          m_pPlayerState->m_PlayerOptions.GetCurrent().m_NotePaths;
+      const int col = column_args.column;
+      ae_pos.y += paths.Evaluate(NotePath::Y, col, fYOffset);
+      // Tangent with respect to the mesh's sampling Y, including reverse.
+      const float next_offset = ArrowEffects::GetYOffsetFromYPos(
+          col, fY + 0.5f, m_fYReverseOffsetPixels);
+      render_forward.x += (paths.Evaluate(NotePath::X, col, next_offset) -
+                           paths.Evaluate(NotePath::X, col, fYOffset)) *
+                          2;
+      render_forward.y += (paths.Evaluate(NotePath::Y, col, next_offset) -
+                           paths.Evaluate(NotePath::Y, col, fYOffset)) *
+                          2;
+      render_forward.z += (paths.Evaluate(NotePath::Z, col, next_offset) -
+                           paths.Evaluate(NotePath::Z, col, fYOffset)) *
+                          2;
+      if (render_forward.x == 0 && render_forward.y == 0 &&
+          render_forward.z == 0) {
+        render_forward.y = 1;
+      }
+    }
+
     render_forward.x += sp_pos_forward.x;
     render_forward.y += sp_pos_forward.y;
     render_forward.z += sp_pos_forward.z;
@@ -1187,7 +1212,11 @@ void NoteDisplay::DrawHoldBody(
 
   // Hack: Z effects need a finer grain step.
   part_args.y_step =
-      bWavyPartsNeedZBuffer ? 4 : 16;  // use small steps only if wavy
+      (bWavyPartsNeedZBuffer ||
+       m_pPlayerState->m_PlayerOptions.GetCurrent().m_NotePaths.Active(
+           column_args.column))
+          ? 4
+          : 16;
 
   if (part_args.flip_texture_vertically) {
     y_head -= cache->m_iStopDrawingHoldBodyOffsetFromTail;
@@ -1204,10 +1233,10 @@ void NoteDisplay::DrawHoldBody(
 
   part_args.y_start_pos = ArrowEffects::GetYPos(
       m_pPlayerState, column_args.column, field_args.draw_pixels_after_targets,
-      m_fYReverseOffsetPixels);
+      m_fYReverseOffsetPixels, true, false);
   part_args.y_end_pos = ArrowEffects::GetYPos(
       m_pPlayerState, column_args.column, field_args.draw_pixels_before_targets,
-      m_fYReverseOffsetPixels);
+      m_fYReverseOffsetPixels, true, false);
   if (reverse) {
     std::swap(part_args.y_start_pos, part_args.y_end_pos);
   }
@@ -1286,9 +1315,10 @@ void NoteDisplay::DrawHold(
 
   const float fYHead = ArrowEffects::GetYPos(
       m_pPlayerState, column_args.column, fStartYOffset,
-      m_fYReverseOffsetPixels);
+      m_fYReverseOffsetPixels, true, false);
   const float fYTail = ArrowEffects::GetYPos(
-      m_pPlayerState, column_args.column, fEndYOffset, m_fYReverseOffsetPixels);
+      m_pPlayerState, column_args.column, fEndYOffset, m_fYReverseOffsetPixels,
+      true, false);
 
   const float fColorScale = SCALE(
       tn.HoldResult.fLife, 0.0f, 1.0f, cache->m_fHoldLetGoGrayPercent, 1.0f);
@@ -1643,6 +1673,90 @@ void NoteColumnRenderer::UpdateReceptorGhostStuff(Actor* receptor) const {
   receptor->SetInternalGlow(m_column_render_args.glow);
 }
 
+float FindFirstDisplayedBeat(const PlayerState*, int);
+float FindLastDisplayedBeat(const PlayerState*, int);
+
+static int ArrowPathDrawDistance(float pixels, float scale) {
+  return static_cast<int>(
+      std::max(-1000000.f, std::min(1000000.f, pixels * (1 + scale))));
+}
+
+static float ArrowPathColorChannel(float value) {
+  return std::isnan(value) ? 0.f : std::max(0.f, std::min(1.f, value));
+}
+
+void NoteColumnRenderer::DrawArrowPath() {
+  const PlayerState* state = m_field_render_args->player_state;
+  const ArrowPath::Options& options =
+      state->m_PlayerOptions.GetCurrent().m_ArrowPaths;
+  const float alpha = options.Alpha(m_column);
+  const float width = options.Girth(m_column);
+  if (alpha <= 0 || width <= 0 || !std::isfinite(width)) {
+    return;
+  }
+  const float first = FindFirstDisplayedBeat(
+      state, ArrowPathDrawDistance(
+                 m_field_render_args->draw_pixels_after_targets,
+                 options.values[ArrowPath::DrawSizeBack]));
+  const float last = FindLastDisplayedBeat(
+      state, ArrowPathDrawDistance(
+                 m_field_render_args->draw_pixels_before_targets,
+                 options.values[ArrowPath::DrawSize]));
+  if (!std::isfinite(first) || !std::isfinite(last) || last <= first) {
+    return;
+  }
+  // Bound work even for extreme grain/draw-size values; retain both endpoints.
+  const float step = std::max(options.BeatStep(), (last - first) / 16383.f);
+  const int segments = std::max(
+      1, std::min(16383, static_cast<int>(std::ceil((last - first) / step))));
+  const ArrowPath::Display& display = state->m_ArrowPathDisplay;
+  DISPLAY->ClearAllTextures();
+  DISPLAY->SetBlendMode(static_cast<BlendMode>(display.blend));
+  DISPLAY->SetZWrite(false);
+  DISPLAY->SetZTestMode(ZTEST_OFF);
+  DISPLAY->SetCullMode(CULL_NONE);
+  DISPLAY->SetAlphaTest(false);
+  std::vector<RageSpriteVertex> vertices;
+  vertices.reserve(512);
+  for (int i = 0; i <= segments; ++i) {
+    const float beat = std::min(last, first + i * step);
+    const float offset = ArrowEffects::GetYOffset(state, m_column, beat);
+    RageVector3 sp(0, 0, 0), ae(0, 0, 0);
+    m_column_render_args.spae_pos_for_beat(
+        state, beat, offset, m_field_render_args->reverse_offset_pixels, sp,
+        ae);
+    const ArrowPath::Color color = display.Evaluate(m_column, offset);
+    const RageColor& diffuse = m_column_render_args.diffuse;
+    RageSpriteVertex vertex;
+    vertex.p = sp + ae;
+    vertex.c = RageColor(
+        ArrowPathColorChannel(color.r * diffuse.r),
+        ArrowPathColorChannel(color.g * diffuse.g),
+        ArrowPathColorChannel(color.b * diffuse.b),
+        ArrowPathColorChannel(color.a * alpha * diffuse.a));
+    if (!std::isfinite(vertex.p.x) || !std::isfinite(vertex.p.y) ||
+        !std::isfinite(vertex.p.z)) {
+      if (vertices.size() >= 2) {
+        DISPLAY->DrawLineStrip(
+            vertices.data(), static_cast<int>(vertices.size()), width);
+      }
+      vertices.clear();
+      continue;
+    }
+    vertices.push_back(vertex);
+    if (vertices.size() == 512 || i == segments) {
+      if (vertices.size() >= 2) {
+        DISPLAY->DrawLineStrip(
+            vertices.data(), static_cast<int>(vertices.size()), width);
+      }
+      vertices.clear();
+      vertices.push_back(vertex);
+    }
+  }
+  DISPLAY->SetAlphaTest(true);
+  SetGlobalRenderStates();
+}
+
 void NoteColumnRenderer::DrawPrimitives() {
   m_column_render_args.song_beat =
       m_field_render_args->player_state->GetDisplayedPosition()
@@ -1652,6 +1766,7 @@ void NoteColumnRenderer::DrawPrimitives() {
   m_column_render_args.zoom_handler = &NCR_current.m_zoom_handler;
   m_column_render_args.diffuse = m_pTempState->diffuse[0];
   m_column_render_args.glow = m_pTempState->glow;
+  DrawArrowPath();
   bool any_upcoming = false;
   // Build lists of holds and taps for each player number, then pass those
   // lists to the displays to draw.

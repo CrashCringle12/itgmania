@@ -231,6 +231,12 @@ class RageDisplay {
   virtual const RagePixelFormatDesc* GetPixelFormatDesc(
       RagePixelFormat pf) const = 0;
 
+  // -1 follows the video preference; 0 forces polygon strips, 1 smooth lines.
+  void ForceSmoothLines(int value) { m_ForceSmoothLines = value; }
+  bool IsSmoothLinesEnabled() const {
+    return m_ForceSmoothLines < 0 ? GetActualVideoModeParams().bSmoothLines
+                                  : m_ForceSmoothLines != 0;
+  }
   RageDisplay();
   virtual ~RageDisplay();
 
@@ -478,6 +484,9 @@ class RageDisplay {
   // When it is disabled, these helpers apply any manual frame limiting.
   void FrameLimitBeforeVsync();
   void FrameLimitAfterVsync();
+
+ private:
+  int m_ForceSmoothLines = -1;
 };
 
 extern RageDisplay*

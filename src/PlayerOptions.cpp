@@ -88,6 +88,8 @@ static const float CMOD_DEFAULT = 200.0f;
 // -Kyz
 
 void PlayerOptions::Init() {
+  m_NotePaths.Init();
+  m_ArrowPaths = ArrowPath::Options();
   m_LifeType = LifeType_Bar;
   m_DrainType = DrainType_Normal;
   m_HideLightType = HideLightType_NoHideLights;
@@ -179,6 +181,9 @@ void PlayerOptions::Approach(const PlayerOptions& other, float fDeltaSeconds) {
       PREFSMAN->m_bRateModsAffectTweens
           ? GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate
           : 1.0f;
+
+  m_NotePaths.Update(other.m_NotePaths, fRateMult * fDeltaSeconds);
+  m_ArrowPaths.Update(other.m_ArrowPaths, fRateMult * fDeltaSeconds);
 
 #define APPROACH(opt) \
   fapproach(          \
@@ -562,6 +567,12 @@ void PlayerOptions::GetMods(
   AddPart(AddTo, m_fModTimerOffset, "ModTimerOffset");
   AddPart(AddTo, m_fDrawSize, "DrawSize");
   AddPart(AddTo, m_fDrawSizeBack, "DrawSizeBack");
+  for (int i = 0; i < ArrowPath::Properties; ++i) {
+    AddPart(AddTo, m_ArrowPaths.values[i], ArrowPath::Name(i));
+  }
+  AddPart(AddTo, m_NotePaths.types[NotePath::X], "SplineXType");
+  AddPart(AddTo, m_NotePaths.types[NotePath::Y], "SplineYType");
+  AddPart(AddTo, m_NotePaths.types[NotePath::Z], "SplineZType");
 
   AddPart(AddTo, m_fDark, "Dark");
 
@@ -884,12 +895,31 @@ bool PlayerOptions::FromOneModString(
     } else if (sBit == "modtimeroffset") {
       SET_FLOAT(fModTimerOffset)
     }
+  } else if (sBit.compare(0, 9, "arrowpath") == 0) {
+    const int property = ArrowPath::FindProperty(sBit);
+    if (property < 0 || !std::isfinite(level) || !std::isfinite(speed)) {
+      sErrorOut = "Invalid ArrowPath modifier";
+      return false;
+    }
+    m_ArrowPaths.values[property] = level;
+    m_ArrowPaths.speeds[property] = speed;
   } else if (sBit.find("drawsize") != sBit.npos) {
     if (sBit == "drawsize") {
       SET_FLOAT(fDrawSize)
     } else if (sBit == "drawsizeback") {
       SET_FLOAT(fDrawSizeBack)
     }
+  } else if (
+      sBit == "splinextype" || sBit == "splineytype" || sBit == "splineztype") {
+    if (!std::isfinite(level)) {
+      sErrorOut = "Spline type must be finite";
+      return false;
+    }
+    const int axis = sBit[6] == 'x'   ? NotePath::X
+                     : sBit[6] == 'y' ? NotePath::Y
+                                      : NotePath::Z;
+    m_NotePaths.types[axis] = level;
+    m_NotePaths.typeSpeeds[axis] = speed;
   } else if (sBit == "bar") {
     m_LifeType = LifeType_Bar;
   } else if (sBit == "battery") {
@@ -1644,6 +1674,8 @@ bool PlayerOptions::operator==(const PlayerOptions& other) const {
   {                                 \
     if (x != other.x) return false; \
   }
+  COMPARE(m_NotePaths);
+  COMPARE(m_ArrowPaths);
   COMPARE(m_LifeType);
   COMPARE(m_DrainType);
   COMPARE(m_HideLightType);
@@ -1745,6 +1777,8 @@ PlayerOptions& PlayerOptions::operator=(const PlayerOptions& other) {
 #define CPY_SPEED(x)   \
   m_##x = other.m_##x; \
   m_Speed##x = other.m_Speed##x;
+  CPY(m_NotePaths);
+  CPY(m_ArrowPaths);
   CPY(m_LifeType);
   CPY(m_DrainType);
   CPY(m_HideLightType);
@@ -2025,6 +2059,8 @@ void PlayerOptions::ResetPrefs(ResetPrefsType type) {
     case saved_prefs_invalid_for_course:
       break;
   }
+  CPY(m_NotePaths);
+  CPY(m_ArrowPaths);
   CPY(m_LifeType);
   CPY(m_DrainType);
   CPY(m_HideLightType);
@@ -2668,7 +2704,86 @@ class LunaPlayerOptions : public Luna<PlayerOptions> {
     COMMON_RETURN_SELF;
   }
 
+  static int PathOption(T* p, lua_State* L, int property, bool column = false) {
+    const int top = lua_gettop(L);
+    const int argument = column ? 2 : 1;
+    if (column) {
+      property += LuaHelpers::CheckIntegerInRange(
+          L, 1, 0, ArrowPath::Columns - 1, "ArrowPath");
+    }
+    const float previous = p->m_ArrowPaths.values[property];
+    const float previousSpeed = p->m_ArrowPaths.speeds[property];
+    if (top >= argument && lua_isnumber(L, argument)) {
+      p->m_ArrowPaths.values[property] =
+          LuaHelpers::CheckFiniteFloat(L, argument, "ArrowPath");
+    }
+    if (top >= argument + 1 && lua_isnumber(L, argument + 1)) {
+      p->m_ArrowPaths.speeds[property] =
+          LuaHelpers::CheckFiniteFloat(L, argument + 1, "ArrowPath");
+    }
+    if (top >= argument && lua_isboolean(L, top) && lua_toboolean(L, top)) {
+      COMMON_RETURN_SELF;
+    }
+    lua_pushnumber(L, previous);
+    lua_pushnumber(L, previousSpeed);
+    return 2;
+  }
+  static int ArrowPath(T* p, lua_State* L) {
+    return PathOption(p, L, ArrowPath::Opacity);
+  }
+  static int ArrowPathWidth(T* p, lua_State* L) {
+    return PathOption(p, L, ArrowPath::Width);
+  }
+  static int ArrowPathGrain(T* p, lua_State* L) {
+    return PathOption(p, L, ArrowPath::Grain);
+  }
+  static int ArrowPathDrawSize(T* p, lua_State* L) {
+    return PathOption(p, L, ArrowPath::DrawSize);
+  }
+  static int ArrowPathDrawSizeBack(T* p, lua_State* L) {
+    return PathOption(p, L, ArrowPath::DrawSizeBack);
+  }
+  static int ArrowPathCol(T* p, lua_State* L) {
+    return PathOption(p, L, ArrowPath::ColumnOpacity, true);
+  }
+  static int ArrowPathWidthCol(T* p, lua_State* L) {
+    return PathOption(p, L, ArrowPath::ColumnWidth, true);
+  }
+  static int SplineType(T* p, lua_State* L, int axis) {
+    if (lua_gettop(L) == 0) {
+      lua_pushnumber(L, p->m_NotePaths.types[axis]);
+      return 1;
+    }
+    const float value = FArg(1);
+    const float speed = lua_gettop(L) > 1 ? FArg(2) : 1.0f;
+    if (!std::isfinite(value) || !std::isfinite(speed)) {
+      return luaL_error(L, "Spline type and speed must be finite");
+    }
+    p->m_NotePaths.types[axis] = value;
+    p->m_NotePaths.typeSpeeds[axis] = speed;
+    COMMON_RETURN_SELF;
+  }
+  static int SplineXType(T* p, lua_State* L) {
+    return SplineType(p, L, NotePath::X);
+  }
+  static int SplineYType(T* p, lua_State* L) {
+    return SplineType(p, L, NotePath::Y);
+  }
+  static int SplineZType(T* p, lua_State* L) {
+    return SplineType(p, L, NotePath::Z);
+  }
+
   LunaPlayerOptions() {
+    ADD_METHOD(ArrowPath);
+    ADD_METHOD(ArrowPathWidth);
+    ADD_METHOD(ArrowPathGrain);
+    ADD_METHOD(ArrowPathDrawSize);
+    ADD_METHOD(ArrowPathDrawSizeBack);
+    ADD_METHOD(ArrowPathCol);
+    ADD_METHOD(ArrowPathWidthCol);
+    ADD_METHOD(SplineXType);
+    ADD_METHOD(SplineYType);
+    ADD_METHOD(SplineZType);
     ADD_METHOD(IsEasierForSongAndSteps);
     ADD_METHOD(IsEasierForCourseAndTrail);
 

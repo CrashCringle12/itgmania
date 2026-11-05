@@ -1,7 +1,9 @@
 #ifndef PLAYER_OPTIONS_H
 #define PLAYER_OPTIONS_H
 
+#include "ArrowPath.h"
 #include "EnumHelper.h"
+#include "NotePath.h"
 #include "RageUtil.h"
 class Course;
 class Song;
@@ -403,6 +405,9 @@ class PlayerOptions {
 
   float GetReversePercentForColumn(
       int iCol) const;  // accounts for all Directions
+
+  NotePath::Paths m_NotePaths;
+  ArrowPath::Options m_ArrowPaths;
 
   PlayerNumber m_pn;  // Needed for fetching the style.
 

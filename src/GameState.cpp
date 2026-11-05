@@ -46,6 +46,7 @@
 #include "PrefsManager.h"
 #include "Profile.h"
 #include "ProfileManager.h"
+#include "RageDisplay.h"
 #include "RageException.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
@@ -3356,7 +3357,15 @@ class LunaGameState : public Luna<GameState> {
     return 1;
   }
 
+  static int ForceSmoothLines(T* p, lua_State* L) {
+    const int value = LuaHelpers::CheckIntegerInRange(L, 1, -1, 1, "ArrowPath");
+    if (DISPLAY) {
+      DISPLAY->ForceSmoothLines(value);
+    }
+    COMMON_RETURN_SELF;
+  }
   LunaGameState() {
+    ADD_METHOD(ForceSmoothLines);
     ADD_METHOD(IsPlayerEnabled);
     ADD_METHOD(IsHumanPlayer);
     ADD_METHOD(GetPlayerDisplayName);
