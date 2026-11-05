@@ -1100,7 +1100,7 @@ void NoteDisplay::DrawHoldPart(
         int i = 0;
         for (Sprite* spr : vpSpr) {
           RageTexture* pTexture = spr->GetTexture();
-          DISPLAY->SetTexture(TextureUnit_1, pTexture->GetTexHandle());
+          DISPLAY->SetTextureWithMetadata(TextureUnit_1, pTexture);
           DISPLAY->SetBlendMode((i++ == 0) ? BLEND_NORMAL : BLEND_ADD);
           DISPLAY->SetCullMode(CULL_NONE);
           DISPLAY->SetTextureWrapping(TextureUnit_1, part_args.wrapping);
@@ -1247,6 +1247,8 @@ void NoteDisplay::DrawHoldBody(
 
   part_args.anchor_to_top = reverse && cache->m_bTopHoldAnchorWhenReverse;
 
+  DISPLAY->PushShaderProgram(
+      m_pPlayerState->m_NoteShaders[PlayerState::HoldShader], true);
   DISPLAY->SetTextureMode(TextureUnit_1, TextureMode_Modulate);
   DrawHoldBodyInternal(
       vpSprTop, vpSprBody, vpSprBottom, field_args, column_args, part_args,
@@ -1258,6 +1260,7 @@ void NoteDisplay::DrawHoldBody(
       vpSprTop, vpSprBody, vpSprBottom, field_args, column_args, part_args,
       head_minus_top, tail_plus_bottom, y_head, y_tail, top_beat, bottom_beat,
       true);
+  DISPLAY->PopShaderProgram();
 }
 
 void NoteDisplay::DrawHold(
@@ -1520,7 +1523,10 @@ void NoteDisplay::DrawActor(
         cache->m_fNoteColorTextureCoordSpacing[part] * color);
   }
 
+  DISPLAY->PushShaderProgram(
+      m_pPlayerState->m_NoteShaders[PlayerState::ArrowShader], true);
   pActor->Draw();
+  DISPLAY->PopShaderProgram();
 
   if (bNeedsTranslate) {
     DISPLAY->TexturePopMatrix();
@@ -1725,6 +1731,8 @@ void NoteColumnRenderer::DrawArrowPath() {
   const int segments = std::max(
       1, std::min(16383, static_cast<int>(std::ceil((last - first) / step))));
   const ArrowPath::Display& display = state->m_ArrowPathDisplay;
+  DISPLAY->PushShaderProgram(
+      state->m_NoteShaders[PlayerState::ArrowPathShader], true);
   DISPLAY->ClearAllTextures();
   DISPLAY->SetBlendMode(static_cast<BlendMode>(display.blend));
   DISPLAY->SetZWrite(false);
@@ -1770,6 +1778,7 @@ void NoteColumnRenderer::DrawArrowPath() {
   }
   DISPLAY->SetAlphaTest(true);
   SetGlobalRenderStates();
+  DISPLAY->PopShaderProgram();
 }
 
 void NoteColumnRenderer::DrawPrimitives() {

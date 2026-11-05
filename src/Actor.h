@@ -9,9 +9,12 @@
 class XNode;
 struct lua_State;
 class LuaClass;
+class RageShaderProgram;
 #include <cstddef>
 #include <map>
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "MessageManager.h"
@@ -275,6 +278,17 @@ class Actor : public MessageSubscriber {
   /** @brief Start the drawing and push the transform on the world matrix stack.
    */
   virtual void BeginDraw();
+  bool LoadShader(
+      const std::string& vertexPath, const std::string& fragmentPath);
+  void SetShaderProgram(
+      std::shared_ptr<RageShaderProgram> shader, bool propagate = false) {
+    m_ShaderProgram = std::move(shader);
+    m_bShaderPropagates = propagate;
+  }
+  std::shared_ptr<RageShaderProgram> GetShaderProgram() const {
+    return m_ShaderProgram;
+  }
+  void ClearShader() { m_ShaderProgram.reset(); }
   /**
    * @brief Set the global rendering states of this Actor.
    *
@@ -838,6 +852,8 @@ class Actor : public MessageSubscriber {
   static std::vector<float> g_vfCurrentBGMBeatPlayerNoOffset;
 
  private:
+  std::shared_ptr<RageShaderProgram> m_ShaderProgram;
+  bool m_bShaderPropagates = false;
   // Some actors shouldn't be scaled by the engine i.e. using with tab for
   // speeding up or tilde for slowing down.
   // In the case both are pressed (setting rate to 0), this bool does nothing.

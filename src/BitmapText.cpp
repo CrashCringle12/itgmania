@@ -462,13 +462,11 @@ void BitmapText::DrawChars(bool bUseStrokeTexture) {
     if (bHaveATexture) {
       DISPLAY->ClearAllTextures();
       if (bUseStrokeTexture) {
-        DISPLAY->SetTexture(
-            TextureUnit_1,
-            m_vpFontPageTextures[start]->m_pTextureStroke->GetTexHandle());
+        DISPLAY->SetTextureWithMetadata(
+            TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureStroke);
       } else {
-        DISPLAY->SetTexture(
-            TextureUnit_1,
-            m_vpFontPageTextures[start]->m_pTextureMain->GetTexHandle());
+        DISPLAY->SetTextureWithMetadata(
+            TextureUnit_1, m_vpFontPageTextures[start]->m_pTextureMain);
       }
 
       // Don't bother setting texture render states for text. We never go

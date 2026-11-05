@@ -23,6 +23,7 @@
 #include "RageSurface_Save_BMP.h"
 #include "RageSurface_Save_JPEG.h"
 #include "RageSurface_Save_PNG.h"
+#include "RageTexture.h"
 #include "RageTimer.h"
 #include "RageTypes.h"
 #include "RageUtil.h"
@@ -883,6 +884,45 @@ static void register_REFRESH_DEFAULT(lua_State* L) {
 }
 REGISTER_WITH_LUA_FUNCTION(register_REFRESH_DEFAULT);
 
+void RageDisplay::PushShaderProgram(
+    std::shared_ptr<RageShaderProgram> shader, bool propagate) {
+  if (!m_ShaderPrograms.empty() && m_ShaderPrograms.back().second) {
+    m_ShaderPrograms.push_back(m_ShaderPrograms.back());
+  } else {
+    const bool force = shader && propagate;
+    m_ShaderPrograms.emplace_back(shader ? shader : GetShaderProgram(), force);
+  }
+}
+void RageDisplay::PopShaderProgram() {
+  ASSERT(!m_ShaderPrograms.empty());
+  m_ShaderPrograms.pop_back();
+}
+std::shared_ptr<RageShaderProgram> RageDisplay::GetShaderProgram() const {
+  return m_ShaderPrograms.empty() ? nullptr : m_ShaderPrograms.back().first;
+}
+void RageDisplay::SetTextureWithMetadata(
+    TextureUnit unit, RageTexture* texture) {
+  SetTexture(unit, texture ? texture->GetTexHandle() : 0);
+  if (unit == TextureUnit_1) {
+    if (texture) {
+      m_ShaderTextureDimensions = {
+          {static_cast<float>(std::max(1, texture->GetTextureWidth())),
+           static_cast<float>(std::max(1, texture->GetTextureHeight())),
+           static_cast<float>(std::max(1, texture->GetImageWidth())),
+           static_cast<float>(std::max(1, texture->GetImageHeight()))}};
+    } else {
+      ResetShaderTextureDimensions();
+    }
+  }
+}
+void RageDisplay::GetShaderMatrices(
+    RageMatrix& model, RageMatrix& view, RageMatrix& projection,
+    RageMatrix& texture) const {
+  model = *GetWorldTop();
+  view = *GetViewTop();
+  projection = *GetProjectionTop();
+  texture = *GetTextureTop();
+}
 /** @brief Allow Lua to have access to the RageDisplay. */
 class LunaRageDisplay : public Luna<RageDisplay> {
  public:
@@ -930,7 +970,12 @@ class LunaRageDisplay : public Luna<RageDisplay> {
     return 1;
   }
 
+  static int SupportsShaders(T* p, lua_State* L) {
+    lua_pushboolean(L, p->SupportsShaders());
+    return 1;
+  }
   LunaRageDisplay() {
+    ADD_METHOD(SupportsShaders);
     ADD_METHOD(GetDisplayWidth);
     ADD_METHOD(GetDisplayHeight);
     ADD_METHOD(GetFPS);

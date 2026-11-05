@@ -375,22 +375,16 @@ void Model::DrawPrimitives() {
                                 DISPLAY->GetNumTextureUnits() >= 2;
         if (bUseMultitexture) {
           // render the diffuse texture with texture unit 1
-          DISPLAY->SetTexture(
-              TextureUnit_1,
-              mat.diffuse.GetCurrentTexture()
-                  ? mat.diffuse.GetCurrentTexture()->GetTexHandle()
-                  : 0);
+          DISPLAY->SetTextureWithMetadata(
+              TextureUnit_1, mat.diffuse.GetCurrentTexture());
           Actor::SetTextureRenderStates();  // set Actor-specified render states
           DISPLAY->SetSphereEnvironmentMapping(
               TextureUnit_1, mat.diffuse.m_bSphereMapped);
 
           // render the additive texture with texture unit 2
           if (mat.alpha.GetCurrentTexture()) {
-            DISPLAY->SetTexture(
-                TextureUnit_2,
-                mat.alpha.GetCurrentTexture()
-                    ? mat.alpha.GetCurrentTexture()->GetTexHandle()
-                    : 0);
+            DISPLAY->SetTextureWithMetadata(
+                TextureUnit_2, mat.alpha.GetCurrentTexture());
             Actor::SetTextureRenderStates();  // set Actor-specified render
                                               // states
             DISPLAY->SetSphereEnvironmentMapping(
@@ -402,11 +396,8 @@ void Model::DrawPrimitives() {
 
             // set current texture back to 0 or else texture
             // transform applied above  isn't used. Why?!?
-            DISPLAY->SetTexture(
-                TextureUnit_1,
-                mat.diffuse.GetCurrentTexture()
-                    ? mat.diffuse.GetCurrentTexture()->GetTexHandle()
-                    : 0);
+            DISPLAY->SetTextureWithMetadata(
+                TextureUnit_1, mat.diffuse.GetCurrentTexture());
           }
 
           // go
@@ -416,11 +407,8 @@ void Model::DrawPrimitives() {
           DISPLAY->SetSphereEnvironmentMapping(TextureUnit_1, false);
         } else {
           // render the diffuse texture
-          DISPLAY->SetTexture(
-              TextureUnit_1,
-              mat.diffuse.GetCurrentTexture()
-                  ? mat.diffuse.GetCurrentTexture()->GetTexHandle()
-                  : 0);
+          DISPLAY->SetTextureWithMetadata(
+              TextureUnit_1, mat.diffuse.GetCurrentTexture());
           Actor::SetTextureRenderStates();  // set Actor-specified render states
           DISPLAY->SetSphereEnvironmentMapping(
               TextureUnit_1, mat.diffuse.m_bSphereMapped);
@@ -428,11 +416,8 @@ void Model::DrawPrimitives() {
 
           // render the additive texture
           if (mat.alpha.GetCurrentTexture()) {
-            DISPLAY->SetTexture(
-                TextureUnit_1,
-                mat.alpha.GetCurrentTexture()
-                    ? mat.alpha.GetCurrentTexture()->GetTexHandle()
-                    : 0);
+            DISPLAY->SetTextureWithMetadata(
+                TextureUnit_1, mat.alpha.GetCurrentTexture());
             Actor::SetTextureRenderStates();  // set Actor-specified render
                                               // states
 
@@ -484,10 +469,8 @@ void Model::DrawPrimitives() {
 
       if (pMesh->nMaterialIndex != -1) {
         msMaterial& mat = m_Materials[pMesh->nMaterialIndex];
-        DISPLAY->SetTexture(
-            TextureUnit_1, mat.diffuse.GetCurrentTexture()
-                               ? mat.diffuse.GetCurrentTexture()->GetTexHandle()
-                               : 0);
+        DISPLAY->SetTextureWithMetadata(
+            TextureUnit_1, mat.diffuse.GetCurrentTexture());
         Actor::SetTextureRenderStates();  // set Actor-specified render states
       } else {
         // hey why is this otherwise empty else block here? -aj

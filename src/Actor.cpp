@@ -21,6 +21,7 @@
 #include "Preference.h"
 #include "RageDisplay.h"
 #include "RageMath.h"
+#include "RageShaderProgram.h"
 #include "RageTimer.h"
 #include "RageTypes.h"
 #include "RageUtil.h"
@@ -179,6 +180,8 @@ Actor::Actor(const Actor& cpy) : MessageSubscriber(cpy) {
   m_pTempState = nullptr;
 
 #define CPY(x) x = cpy.x
+  CPY(m_ShaderProgram);
+  CPY(m_bShaderPropagates);
   CPY(m_sName);
   CPY(alias_);
   CPY(m_pParent);
@@ -256,6 +259,8 @@ Actor& Actor::operator=(Actor other) {
   m_pTempState = nullptr;
 
 #define SWAP(x) std::swap(x, other.x)
+  SWAP(m_ShaderProgram);
+  SWAP(m_bShaderPropagates);
   SWAP(m_sName);
   SWAP(alias_);
   SWAP(m_pParent);
@@ -327,11 +332,53 @@ bool Actor::IsAlias(const std::string& name) {
   return name == alias_;
 }
 
+bool Actor::LoadShader(
+    const std::string& vertexPath, const std::string& fragmentPath) {
+  if (!DISPLAY || !DISPLAY->SupportsShaders()) {
+    LuaHelpers::ReportScriptError(
+        "GLSL shaders require the OpenGL renderer and shader-capable drivers");
+    return false;
+  }
+  std::shared_ptr<RageShaderProgram> shader = DISPLAY->CreateShaderProgram();
+  if (!shader || !shader->LoadSources(vertexPath, fragmentPath)) {
+    LuaHelpers::ReportScriptError(
+        shader ? shader->GetError() : "Cannot create GLSL shader");
+    return false;
+  }
+  SetShaderProgram(shader);
+  return true;
+}
+
+static bool ResolveShaderPath(
+    const XNode* node, const char* name, std::string& path) {
+  std::string value;
+  if (node->GetAttrValue(name, value) && value.empty()) {
+    path.clear();
+    return true;
+  }
+  return ActorUtil::GetAttrPath(node, name, path);
+}
+
 /* XXX: This calls InitCommand, which must happen after all other
  * initialization (eg. ActorFrame loading children).  However, it
  * also loads input variables, which should happen first.  The
  * former is more important. */
 void Actor::LoadFromNode(const XNode* pNode) {
+  std::string vertex, fragment;
+  bool hasVertex = pNode->GetAttr("Vert") != nullptr;
+  bool hasFragment = pNode->GetAttr("Frag") != nullptr;
+  bool hasAlias = pNode->GetAttr("Shader") != nullptr;
+  if (hasVertex || hasFragment || hasAlias) {
+    const bool validVertex =
+        !hasVertex || ResolveShaderPath(pNode, "Vert", vertex);
+    const bool validFragment =
+        !hasFragment || ResolveShaderPath(pNode, "Frag", fragment);
+    const bool validAlias = hasFragment || !hasAlias ||
+                            ResolveShaderPath(pNode, "Shader", fragment);
+    if (validVertex && validFragment && validAlias) {
+      LoadShader(vertex, fragment);
+    }
+  }
   Lua* L = LUA->Get();
   FOREACH_CONST_Attr(pNode, pAttr) {
     // Load Name, if any.
@@ -655,6 +702,7 @@ void Actor::PreDraw()  // calculate actor properties
 }
 
 void Actor::BeginDraw() {
+  DISPLAY->PushShaderProgram(m_ShaderProgram, m_bShaderPropagates);
   DISPLAY->PushMatrix();  // Save the current transformation matrix
 
   // Get the position of the actor
@@ -764,6 +812,7 @@ void Actor::SetTextureRenderStates() {
 }
 
 void Actor::EndDraw() {
+  DISPLAY->PopShaderProgram();
   DISPLAY->PopMatrix();
 
   if (m_texTranslate.x != 0 || m_texTranslate.y != 0) {
@@ -2409,7 +2458,44 @@ class LunaActor : public Luna<Actor> {
     return 1;
   }
 
+  static int GetShader(T* p, lua_State* L) {
+    std::shared_ptr<RageShaderProgram> shader = p->GetShaderProgram();
+    if (shader) {
+      shader->PushSelf(L);
+    } else {
+      lua_pushnil(L);
+    }
+    return 1;
+  }
+  static int SetShader(T* p, lua_State* L) {
+    if (lua_isnil(L, 1)) {
+      p->ClearShader();
+    } else {
+      p->SetShaderProgram(
+          Luna<RageShaderProgram>::check(L, 1)->shared_from_this(),
+          dynamic_cast<ActorFrame*>(p) != nullptr);
+    }
+    COMMON_RETURN_SELF;
+  }
+  static int ClearShader(T* p, lua_State* L) {
+    p->ClearShader();
+    COMMON_RETURN_SELF;
+  }
+  static int LoadShader(T* p, lua_State* L) {
+    const char* first = luaL_checkstring(L, 1);
+    const char* second = lua_gettop(L) >= 2 ? luaL_checkstring(L, 2) : nullptr;
+    if (second) {
+      p->LoadShader(first, second);
+    } else {
+      p->LoadShader("", first);
+    }
+    COMMON_RETURN_SELF;
+  }
   LunaActor() {
+    ADD_METHOD(GetShader);
+    ADD_METHOD(SetShader);
+    ADD_METHOD(ClearShader);
+    ADD_METHOD(LoadShader);
     ADD_METHOD(name);
     ADD_METHOD(sleep);
     ADD_METHOD(linear);

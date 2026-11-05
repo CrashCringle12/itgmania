@@ -3,16 +3,21 @@
 #ifndef RAGEDISPLAY_H
 #define RAGEDISPLAY_H
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "ModelTypes.h"
 #include "RageTypes.h"
 
 class DisplaySpec;
+class RageTexture;
+class RageShaderProgram;
 typedef std::set<DisplaySpec> DisplaySpecs;
 
 const int REFRESH_DEFAULT = 0;
@@ -285,6 +290,24 @@ class RageDisplay {
   virtual int GetMaxTextureSize() const = 0;
   virtual void SetTextureFiltering(TextureUnit, bool) = 0;
   virtual void SetEffectMode(EffectMode) {}
+  virtual bool SupportsShaders() const { return false; }
+  virtual std::shared_ptr<RageShaderProgram> CreateShaderProgram() {
+    return nullptr;
+  }
+  void PushShaderProgram(
+      std::shared_ptr<RageShaderProgram> shader, bool propagate = false);
+  void PopShaderProgram();
+  std::shared_ptr<RageShaderProgram> GetShaderProgram() const;
+  void SetTextureWithMetadata(TextureUnit unit, RageTexture* texture);
+  void ResetShaderTextureDimensions() {
+    m_ShaderTextureDimensions = {{1, 1, 1, 1}};
+  }
+  const std::array<float, 4>& GetShaderTextureDimensions() const {
+    return m_ShaderTextureDimensions;
+  }
+  void GetShaderMatrices(
+      RageMatrix& model, RageMatrix& view, RageMatrix& projection,
+      RageMatrix& texture) const;
   virtual bool IsEffectModeSupported(EffectMode effect) {
     return effect == EffectMode_Normal;
   }
@@ -487,6 +510,9 @@ class RageDisplay {
 
  private:
   int m_ForceSmoothLines = -1;
+  std::vector<std::pair<std::shared_ptr<RageShaderProgram>, bool>>
+      m_ShaderPrograms;
+  std::array<float, 4> m_ShaderTextureDimensions{{1, 1, 1, 1}};
 };
 
 extern RageDisplay*

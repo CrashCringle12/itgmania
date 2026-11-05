@@ -180,7 +180,7 @@ void ActorMultiVertex::DrawPrimitives() {
   Actor::SetGlobalRenderStates();  // set Actor-specified render states
 
   DISPLAY->ClearAllTextures();
-  DISPLAY->SetTexture(TextureUnit_1, _Texture->GetTexHandle());
+  DISPLAY->SetTextureWithMetadata(TextureUnit_1, _Texture);
 
   Actor::SetTextureRenderStates();
   DISPLAY->SetEffectMode(_EffectMode);

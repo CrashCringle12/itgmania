@@ -3,6 +3,8 @@
 #ifndef PlayerState_H
 #define PlayerState_H
 
+#include <array>
+#include <memory>
 #include <vector>
 
 #include "Attack.h"
@@ -15,6 +17,7 @@
 #include "TimingData.h"
 
 struct lua_State;
+class RageShaderProgram;
 
 struct CacheDisplayedBeat {
   float beat;
@@ -54,6 +57,15 @@ class PlayerState {
   // to fit in the space available. -Kyz
   float m_NotefieldZoom;
   ArrowPath::Display m_ArrowPathDisplay;
+  enum ShaderTarget {
+    ArrowShader,
+    HoldShader,
+    ReceptorShader,
+    ArrowPathShader,
+    ShaderTargetCount
+  };
+  std::array<std::shared_ptr<RageShaderProgram>, ShaderTargetCount>
+      m_NoteShaders;
 
   // Music statistics:
   SongPosition m_Position;

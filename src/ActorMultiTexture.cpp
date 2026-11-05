@@ -86,7 +86,7 @@ void ActorMultiTexture::DrawPrimitives() {
   DISPLAY->ClearAllTextures();
   for (size_t i = 0; i < m_aTextureUnits.size(); ++i) {
     TextureUnit tu = enum_add2(TextureUnit_1, i);
-    DISPLAY->SetTexture(tu, m_aTextureUnits[i].m_pTexture->GetTexHandle());
+    DISPLAY->SetTextureWithMetadata(tu, m_aTextureUnits[i].m_pTexture);
     DISPLAY->SetTextureWrapping(tu, m_bTextureWrapping);
     DISPLAY->SetTextureMode(tu, m_aTextureUnits[i].m_TextureMode);
   }

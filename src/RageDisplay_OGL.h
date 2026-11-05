@@ -39,6 +39,8 @@
 class RageDisplay_Legacy : public RageDisplay {
  public:
   RageDisplay_Legacy();
+  bool SupportsShaders() const override;
+  std::shared_ptr<RageShaderProgram> CreateShaderProgram() override;
   virtual ~RageDisplay_Legacy();
   virtual std::string Init(
       const VideoModeParams& p, bool bAllowUnacceleratedRenderer);
@@ -128,6 +130,7 @@ class RageDisplay_Legacy : public RageDisplay {
   void SendCurrentMatrices();
 
  private:
+  EffectMode m_CustomShaderEffectMode = EffectMode_Normal;
   RageTextureRenderTarget* offscreenRenderTarget;
 };
 

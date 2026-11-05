@@ -558,8 +558,7 @@ void Sprite::DrawTexture(const TweenState* state) {
   }
 
   DISPLAY->ClearAllTextures();
-  DISPLAY->SetTexture(
-      TextureUnit_1, m_pTexture ? m_pTexture->GetTexHandle() : 0);
+  DISPLAY->SetTextureWithMetadata(TextureUnit_1, m_pTexture);
 
   // Must call this after setting the texture or else texture
   // parameters have no effect.

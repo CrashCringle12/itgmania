@@ -112,4 +112,4 @@ controls, and additional path draw modes are not supported.
 Guides use ITGmania's displayed-beat searches and draw bounds. Paths that loop
 back from far outside those bounds can be clipped. Geometry is limited to
 16,384 samples per column; very small grain values increase the sampling step
-when needed to stay within that limit. This feature does not add shader support.
+when needed to stay within that limit. See [GLSL actor shaders](GLSLShaders.md) for applying a shader to guide lines.

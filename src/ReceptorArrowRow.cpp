@@ -9,6 +9,7 @@
 #include "GameState.h"
 #include "NoteDisplay.h"
 #include "PlayerState.h"
+#include "RageDisplay.h"
 #include "RageUtil.h"
 #include "ReceptorArrow.h"
 #include "Style.h"
@@ -90,12 +91,15 @@ void ReceptorArrowRow::Update(float fDeltaTime) {
 }
 
 void ReceptorArrowRow::DrawPrimitives() {
+  DISPLAY->PushShaderProgram(
+      m_pPlayerState->m_NoteShaders[PlayerState::ReceptorShader], true);
   const Style* pStyle =
       GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
   for (unsigned i = 0; i < m_ReceptorArrow.size(); i++) {
     const int c = pStyle->m_iColumnDrawOrder[i];
     m_ReceptorArrow[c]->Draw();
   }
+  DISPLAY->PopShaderProgram();
 }
 
 void ReceptorArrowRow::Step(int iCol, TapNoteScore score) {

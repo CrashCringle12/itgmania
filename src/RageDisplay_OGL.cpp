@@ -1,11 +1,13 @@
 #include "RageDisplay_OGL.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -14,6 +16,7 @@
 #include "Actor.h"
 #include "DisplaySpec.h"
 #include "EnumHelper.h"
+#include "GameState.h"
 #include "LocalizedString.h"
 #include "ModelTypes.h"
 #include "RageDisplay.h"
@@ -22,14 +25,17 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageMath.h"
+#include "RageShaderProgram.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "RageTexture.h"
 #include "RageTextureID.h"
 #include "RageTextureManager.h"
 #include "RageTextureRenderTarget.h"
 #include "RageTypes.h"
 #include "RageUtil.h"
 #include "RageUtil/Endian.h"
+#include "ScreenDimensions.h"
 #include "Sprite.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 #include "global.h"
@@ -590,7 +596,10 @@ std::string RageDisplay_Legacy::Init(
   return std::string();
 }
 
-RageDisplay_Legacy::~RageDisplay_Legacy() { delete g_pWind; }
+RageDisplay_Legacy::~RageDisplay_Legacy() {
+  RageShaderProgram::InvalidateAll();
+  delete g_pWind;
+}
 
 void RageDisplay_Legacy::GetDisplaySpecs(DisplaySpecs& out) const {
   out.clear();
@@ -1084,6 +1093,15 @@ void RageDisplay_Legacy::SendCurrentMatrices() {
 
   glMatrixMode(GL_TEXTURE);
   glLoadMatrixf((const float*)GetTextureTop());
+  const std::shared_ptr<RageShaderProgram> shader = GetShaderProgram();
+  if (shader) {
+    shader->Apply();
+  } else {
+    if (GLEW_ARB_shader_objects) {
+      glUseProgramObjectARB(0);
+    }
+    SetEffectMode(m_CustomShaderEffectMode);
+  }
 }
 
 class RageCompiledGeometrySWOGL : public RageCompiledGeometry {
@@ -1190,9 +1208,307 @@ class InvalidateObject {
 };
 
 static void InvalidateObjects() {
+  RageShaderProgram::InvalidateAll();
   for (InvalidateObject* it : g_InvalidateList) {
     it->Invalidate();
   }
+}
+
+namespace ShaderSources {
+// Default stages provide the varyings and texture coordinates used by actor
+// shaders.
+inline const char* Vertex() {
+  return R"GLSL(attribute vec4 TextureMatrixScale;
+varying vec3 position;
+varying vec3 normal;
+varying vec4 color;
+varying vec2 textureCoord;
+varying vec2 imageCoord;
+uniform vec2 textureSize;
+uniform vec2 imageSize;
+uniform mat4 textureMatrix;
+void main() {
+  normal = gl_NormalMatrix * gl_Normal * vec3(1.0, -1.0, 1.0);
+  gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+  position = gl_Vertex.xyz;
+  gl_TexCoord[0] = textureMatrix * gl_MultiTexCoord0 * TextureMatrixScale
+      + gl_MultiTexCoord0 * (vec4(1.0) - TextureMatrixScale);
+  textureCoord = gl_TexCoord[0].xy;
+  imageCoord = textureCoord * textureSize / imageSize;
+  gl_FrontColor = gl_Color;
+  color = gl_Color;
+}
+)GLSL";
+}
+inline const char* Fragment() {
+  return R"GLSL(uniform sampler2D sampler0;
+varying vec2 textureCoord;
+varying vec4 color;
+void main() { gl_FragColor = texture2D(sampler0, textureCoord) * color; }
+)GLSL";
+}
+// Keep authored #version first, and insert chart defines immediately after it.
+// No version downgrading, textual GLSL transpilation, or syntax rewriting.
+inline std::string Assemble(
+    std::string source, const std::map<std::string, std::string>& defines) {
+  if (source.compare(0, 3, "\xEF\xBB\xBF") == 0) {
+    source.erase(0, 3);
+  }
+  std::string prefix;
+  size_t version = 0;
+  while (version < source.size()) {
+    if (source[version] == ' ' || source[version] == '\t' ||
+        source[version] == '\r' || source[version] == '\n') {
+      ++version;
+      continue;
+    }
+    if (source.compare(version, 2, "//") == 0) {
+      const size_t end = source.find('\n', version + 2);
+      version = end == std::string::npos ? source.size() : end + 1;
+      continue;
+    }
+    if (source.compare(version, 2, "/*") == 0) {
+      const size_t end = source.find("*/", version + 2);
+      version = end == std::string::npos ? source.size() : end + 2;
+      continue;
+    }
+    break;
+  }
+  if (source.compare(version, 8, "#version") == 0) {
+    const size_t end = source.find('\n', version);
+    prefix =
+        source.substr(0, end == std::string::npos ? source.size() : end + 1);
+    source.erase(0, prefix.size());
+    if (prefix.empty() || prefix.back() != '\n') {
+      prefix += '\n';
+    }
+  }
+  for (const std::pair<const std::string, std::string>& define : defines) {
+    prefix += "#define " + define.first + " " + define.second + "\n";
+  }
+  return prefix + source;
+}
+}  // namespace ShaderSources
+
+class RageShaderProgramGL final : public RageShaderProgram {
+ public:
+  ~RageShaderProgramGL() override { ReleaseGPUResources(); }
+  bool IsValid() const override { return !IsReleased() && m_program != 0; }
+  void Invalidate() override {
+    m_program = 0;
+    m_locations.clear();
+    RequestCompile();
+  }
+  void ReleaseGPUResources() override {
+    if (m_program) {
+      glDeleteObjectARB(m_program);
+    }
+    m_program = 0;
+    m_locations.clear();
+  }
+  bool Compile() override {
+    if (IsReleased()) {
+      return false;
+    }
+    if (!DISPLAY || !DISPLAY->SupportsShaders()) {
+      MarkCompiled(
+          false,
+          "GLSL shaders require the OpenGL renderer and shader-capable "
+          "drivers");
+      return false;
+    }
+    const std::string vertex = ShaderSources::Assemble(
+        GetVertexSource().empty() ? ShaderSources::Vertex() : GetVertexSource(),
+        GetDefines());
+    const std::string fragment = ShaderSources::Assemble(
+        GetFragmentSource().empty() ? ShaderSources::Fragment()
+                                    : GetFragmentSource(),
+        GetDefines());
+    GLhandleARB shaders[2] = {0, 0};
+    const GLenum types[2] = {GL_VERTEX_SHADER_ARB, GL_FRAGMENT_SHADER_ARB};
+    const std::string sources[2] = {vertex, fragment};
+    std::string errors;
+    for (int i = 0; i < 2; ++i) {
+      shaders[i] = glCreateShaderObjectARB(types[i]);
+      const char* text = sources[i].c_str();
+      glShaderSourceARB(shaders[i], 1, &text, nullptr);
+      glCompileShaderARB(shaders[i]);
+      GLint success = 0;
+      glGetObjectParameterivARB(
+          shaders[i], GL_OBJECT_COMPILE_STATUS_ARB, &success);
+      if (!success) {
+        errors += (i == 0 ? "Vertex " + GetVertexPath()
+                          : "Fragment " + GetFragmentPath()) +
+                  ":\n" + GetInfoLog(shaders[i]) + "\n";
+      }
+    }
+    GLhandleARB candidate = 0;
+    if (errors.empty()) {
+      candidate = glCreateProgramObjectARB();
+      glAttachObjectARB(candidate, shaders[0]);
+      glAttachObjectARB(candidate, shaders[1]);
+      // The conventional vertex array occupies attribute zero on legacy GL.
+      glBindAttribLocationARB(candidate, 7, "TextureMatrixScale");
+      glLinkProgramARB(candidate);
+      GLint success = 0;
+      glGetObjectParameterivARB(candidate, GL_OBJECT_LINK_STATUS_ARB, &success);
+      if (!success) {
+        errors = "Shader link:\n" + GetInfoLog(candidate);
+      }
+    }
+    for (GLhandleARB shader : shaders) {
+      if (shader) {
+        glDeleteObjectARB(shader);
+      }
+    }
+    if (!errors.empty()) {
+      if (candidate) {
+        glDeleteObjectARB(candidate);
+      }
+      LOG->Warn("%s", errors.c_str());
+      MarkCompiled(false, errors);
+      return false;
+    }
+    ReleaseGPUResources();
+    m_program = candidate;
+    MarkCompiled(true);
+    return true;
+  }
+  void Apply() override {
+    if (IsDirty()) {
+      Compile();
+    }
+    glUseProgramObjectARB(IsValid() ? m_program : 0);
+    if (!IsValid()) {
+      return;
+    }
+    glDisableVertexAttribArrayARB(7);
+    glVertexAttrib4fARB(7, 1, 1, 1, 1);
+    glUniform1iARB(Location("sampler0"), 0);
+    glUniform1iARB(Location("sampler1"), 1);
+    const std::array<float, 4>& dimensions =
+        DISPLAY->GetShaderTextureDimensions();
+    glUniform2fARB(Location("textureSize"), dimensions[0], dimensions[1]);
+    glUniform2fARB(Location("imageSize"), dimensions[2], dimensions[3]);
+    glUniform2fARB(Location("resolution"), SCREEN_WIDTH, SCREEN_HEIGHT);
+    RageMatrix model, view, projection, texture;
+    DISPLAY->GetShaderMatrices(model, view, projection, texture);
+    glUniformMatrix4fvARB(
+        Location("textureMatrix"), 1, GL_FALSE,
+        reinterpret_cast<const GLfloat*>(&texture));
+    glUniformMatrix4fvARB(
+        Location("modelMatrix"), 1, GL_FALSE,
+        reinterpret_cast<const GLfloat*>(&model));
+    glUniformMatrix4fvARB(
+        Location("viewMatrix"), 1, GL_FALSE,
+        reinterpret_cast<const GLfloat*>(&view));
+    glUniformMatrix4fvARB(
+        Location("perspectiveMatrix"), 1, GL_FALSE,
+        reinterpret_cast<const GLfloat*>(&projection));
+    glUniformMatrix4fvARB(
+        Location("projectionMatrix"), 1, GL_FALSE,
+        reinterpret_cast<const GLfloat*>(&projection));
+    glUniform1fARB(
+        Location("time"),
+        GAMESTATE ? GAMESTATE->m_Position.m_fMusicSeconds : 0.f);
+    glUniform1fARB(
+        Location("beat"), GAMESTATE ? GAMESTATE->m_Position.m_fSongBeat : 0.f);
+    for (const std::pair<const std::string, Uniform>& item : GetUniforms()) {
+      const GLint location = Location(item.first);
+      const Uniform& uniform = item.second;
+      if (location < 0) {
+        continue;
+      }
+      if (uniform.kind == Uniform::Int) {
+        glUniform1ivARB(
+            location, static_cast<GLsizei>(uniform.integers.size()),
+            uniform.integers.data());
+      } else if (uniform.kind == Uniform::Matrix) {
+        const GLsizei count = static_cast<GLsizei>(
+            uniform.floats.size() / (uniform.arity * uniform.arity));
+        switch (uniform.arity) {
+          case 2:
+            glUniformMatrix2fvARB(
+                location, count, GL_FALSE, uniform.floats.data());
+            break;
+          case 3:
+            glUniformMatrix3fvARB(
+                location, count, GL_FALSE, uniform.floats.data());
+            break;
+          case 4:
+            glUniformMatrix4fvARB(
+                location, count, GL_FALSE, uniform.floats.data());
+            break;
+        }
+      } else {
+        const GLsizei count =
+            static_cast<GLsizei>(uniform.floats.size() / uniform.arity);
+        switch (uniform.arity) {
+          case 1:
+            glUniform1fvARB(location, count, uniform.floats.data());
+            break;
+          case 2:
+            glUniform2fvARB(location, count, uniform.floats.data());
+            break;
+          case 3:
+            glUniform3fvARB(location, count, uniform.floats.data());
+            break;
+          case 4:
+            glUniform4fvARB(location, count, uniform.floats.data());
+            break;
+        }
+      }
+    }
+    GLint units = 1;
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &units);
+    int unit = 2;  // sampler0/1 are the renderer's ordinary texture stages.
+    for (const std::pair<const std::string, RageTexture*>& item :
+         GetTextures()) {
+      const GLint location = Location(item.first);
+      if (location < 0) {
+        continue;
+      }
+      if (unit >= units || !GLEW_ARB_multitexture) {
+        const std::string error =
+            "Shader requests more sampler textures than this driver supports";
+        if (GetError() != error) {
+          LOG->Warn("%s", error.c_str());
+        }
+        SetError(error);
+        glUseProgramObjectARB(0);
+        if (GLEW_ARB_multitexture) {
+          glActiveTextureARB(GL_TEXTURE0_ARB);
+        }
+        return;
+      }
+      glActiveTextureARB(GL_TEXTURE0_ARB + unit);
+      glBindTexture(
+          GL_TEXTURE_2D, static_cast<GLuint>(item.second->GetTexHandle()));
+      glUniform1iARB(location, unit++);
+    }
+    if (GLEW_ARB_multitexture) {
+      glActiveTextureARB(GL_TEXTURE0_ARB);
+    }
+  }
+
+ private:
+  GLint Location(const std::string& name) {
+    const std::map<std::string, GLint>::iterator found = m_locations.find(name);
+    if (found != m_locations.end()) {
+      return found->second;
+    }
+    return m_locations[name] = glGetUniformLocationARB(m_program, name.c_str());
+  }
+  GLhandleARB m_program = 0;
+  std::map<std::string, GLint> m_locations;
+};
+
+bool RageDisplay_Legacy::SupportsShaders() const {
+  return GLEW_ARB_shader_objects && GLEW_ARB_vertex_shader &&
+         GLEW_ARB_fragment_shader;
+}
+std::shared_ptr<RageShaderProgram> RageDisplay_Legacy::CreateShaderProgram() {
+  return std::make_shared<RageShaderProgramGL>();
 }
 
 class RageCompiledGeometryHWOGL : public RageCompiledGeometrySWOGL,
@@ -1406,7 +1722,8 @@ void RageCompiledGeometryHWOGL::Draw(int iMeshIndex) const {
   GLboolean bTextureGenT;
   glGetBooleanv(GL_TEXTURE_GEN_T, &bTextureGenT);
 
-  if (bLighting || bTextureGenS || bTextureGenT) {
+  if (bLighting || bTextureGenS || bTextureGenT ||
+      DISPLAY->GetShaderProgram()) {
     glEnableClientState(GL_NORMAL_ARRAY);
     DebugAssertNoGLError();
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_nNormals);
@@ -1418,20 +1735,23 @@ void RageCompiledGeometryHWOGL::Draw(int iMeshIndex) const {
     DebugAssertNoGLError();
   }
 
+  const bool customShader = DISPLAY->GetShaderProgram() != nullptr;
+  const GLint scaleAttribute = customShader ? 7 : g_iAttribTextureMatrixScale;
   if (meshInfo.m_bNeedsTextureMatrixScale) {
-    if (g_bTextureMatrixShader != 0) {
+    if (g_bTextureMatrixShader != 0 || customShader) {
       /* If we're using texture matrix scales, set up that buffer, too, and
        * enable the vertex shader.  This shader doesn't support all OpenGL
        * state, so only enable it if we're using it. */
-      glEnableVertexAttribArrayARB(g_iAttribTextureMatrixScale);
+      glEnableVertexAttribArrayARB(scaleAttribute);
       DebugAssertNoGLError();
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale);
       DebugAssertNoGLError();
-      glVertexAttribPointerARB(
-          g_iAttribTextureMatrixScale, 2, GL_FLOAT, false, 0, nullptr);
+      glVertexAttribPointerARB(scaleAttribute, 2, GL_FLOAT, false, 0, nullptr);
       DebugAssertNoGLError();
 
-      glUseProgramObjectARB(g_bTextureMatrixShader);
+      if (!customShader) {
+        glUseProgramObjectARB(g_bTextureMatrixShader);
+      }
       DebugAssertNoGLError();
     } else {
       // Kill the texture translation.
@@ -1476,9 +1796,12 @@ void RageCompiledGeometryHWOGL::Draw(int iMeshIndex) const {
       BUFFER_OFFSET(meshInfo.iTriangleStart * sizeof(msTriangle)));
   DebugAssertNoGLError();
 
-  if (meshInfo.m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0) {
-    glDisableVertexAttribArrayARB(g_iAttribTextureMatrixScale);
-    glUseProgramObjectARB(0);
+  if (meshInfo.m_bNeedsTextureMatrixScale &&
+      (g_bTextureMatrixShader != 0 || customShader)) {
+    glDisableVertexAttribArrayARB(scaleAttribute);
+    if (!customShader) {
+      glUseProgramObjectARB(0);
+    }
   }
 }
 
@@ -1671,6 +1994,7 @@ static bool SetTextureUnit(TextureUnit tu) {
 }
 
 void RageDisplay_Legacy::ClearAllTextures() {
+  ResetShaderTextureDimensions();
   FOREACH_ENUM(TextureUnit, i)
   SetTexture(i, 0);
 
@@ -1771,6 +2095,10 @@ void RageDisplay_Legacy::SetTextureFiltering(TextureUnit tu, bool b) {
 }
 
 void RageDisplay_Legacy::SetEffectMode(EffectMode effect) {
+  m_CustomShaderEffectMode = effect;
+  if (GetShaderProgram()) {
+    return;
+  }
   if (!GLEW_ARB_fragment_program || !GLEW_ARB_shading_language_100 ||
       !GLEW_ARB_shader_objects) {
     return;

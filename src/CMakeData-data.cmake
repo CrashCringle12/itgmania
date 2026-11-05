@@ -1,10 +1,12 @@
 list(APPEND SM_DATA_LUA_SRC
             "LuaBinding.cpp"
+            "RageShaderProgram.cpp"
             "LuaExpressionTransform.cpp"
             "LuaReference.cpp")
 
 list(APPEND SM_DATA_LUA_HPP
             "LuaBinding.h"
+            "RageShaderProgram.h"
             "LuaExpressionTransform.h"
             "LuaReference.h")
 

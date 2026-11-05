@@ -28,6 +28,7 @@
 #include "RageDisplay.h"
 #include "RageInput.h"
 #include "RageLog.h"
+#include "RageShaderProgram.h"
 #include "RageSoundManager.h"
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
@@ -302,6 +303,7 @@ void ShutdownGame() {
   RageUtil::SafeDelete(LIGHTSMAN);
   RageUtil::SafeDelete(SOUNDMAN);
   RageUtil::SafeDelete(FONT);
+  RageShaderProgram::ReleaseAllResources();
   RageUtil::SafeDelete(TEXTUREMAN);
   RageUtil::SafeDelete(DISPLAY);
   Dialog::Shutdown();

@@ -42,6 +42,7 @@
 #include "ProfileManager.h"
 #include "RageDisplay.h"
 #include "RageLog.h"
+#include "RageShaderProgram.h"
 #include "RageSound.h"
 #include "RageSoundManager.h"
 #include "RageUtil.h"
@@ -3663,6 +3664,29 @@ class LunaPlayer : public Luna<Player> {
     COMMON_RETURN_SELF;
   }
 
+  static int SetNoteShader(T* p, lua_State* L, int target) {
+    PlayerState* state = p->GetPlayerState();
+    if (!state) {
+      return luaL_error(L, "Player has no state");
+    }
+    state->m_NoteShaders[target] =
+        lua_isnil(L, 1)
+            ? nullptr
+            : Luna<RageShaderProgram>::check(L, 1)->shared_from_this();
+    COMMON_RETURN_SELF;
+  }
+  static int SetArrowShader(T* p, lua_State* L) {
+    return SetNoteShader(p, L, PlayerState::ArrowShader);
+  }
+  static int SetHoldShader(T* p, lua_State* L) {
+    return SetNoteShader(p, L, PlayerState::HoldShader);
+  }
+  static int SetReceptorShader(T* p, lua_State* L) {
+    return SetNoteShader(p, L, PlayerState::ReceptorShader);
+  }
+  static int SetArrowPathShader(T* p, lua_State* L) {
+    return SetNoteShader(p, L, PlayerState::ArrowPathShader);
+  }
   static int PathColumns(T* p, lua_State* L) {
     if (!p->GetPlayerState()) {
       return luaL_error(L, "Player has no state");
@@ -3746,6 +3770,10 @@ class LunaPlayer : public Luna<Player> {
     COMMON_RETURN_SELF;
   }
   LunaPlayer() {
+    ADD_METHOD(SetArrowShader);
+    ADD_METHOD(SetHoldShader);
+    ADD_METHOD(SetReceptorShader);
+    ADD_METHOD(SetArrowPathShader);
     ADD_METHOD(SetNumPathGradientPoints);
     ADD_METHOD(SetPathGradientColor);
     ADD_METHOD(SetPathGradientPoint);
