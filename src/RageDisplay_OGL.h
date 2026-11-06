@@ -82,6 +82,8 @@ class RageDisplay_Legacy : public RageDisplay {
       int& iTextureHeightOut);
   uintptr_t GetRenderTarget();
   void SetRenderTarget(uintptr_t iHandle, bool bPreserveTexture);
+  bool CopyFramebufferToTexture(
+      uintptr_t texture, int width, int height) override;
   bool IsZWriteEnabled() const;
   void SetZWrite(bool b);
   void SetZBias(float f);

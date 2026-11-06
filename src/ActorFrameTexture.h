@@ -1,6 +1,7 @@
 #ifndef ACTOR_FRAME_TEXTURE_H
 #define ACTOR_FRAME_TEXTURE_H
 
+#include <cstdint>
 #include <string>
 
 #include "ActorFrame.h"
@@ -29,14 +30,26 @@ class ActorFrameTexture : public ActorFrame {
   void EnablePreserveTexture(bool b) { m_bPreserveTexture = b; }
 
   void Create();
+  void SetUpdateFPS(float fps) override {
+    Actor::SetUpdateFPS(fps);
+    m_RenderOnce = false;
+    m_HasRendered = false;
+  }
+  void RenderOnce() {
+    m_RenderOnce = true;
+    m_HasRendered = false;
+  }
 
   virtual void DrawPrimitives();
 
   // Commands
   virtual void PushSelf(lua_State* L);
 
- private:
+ protected:
+  bool ShouldRender();
   RageTextureRenderTarget* m_pRenderTarget;
+  bool m_RenderOnce = false, m_HasRendered = false;
+  uint64_t m_LastGeneration = 0;
 
   bool m_bDepthBuffer;
   bool m_bAlphaBuffer;
@@ -44,6 +57,18 @@ class ActorFrameTexture : public ActorFrame {
   bool m_bPreserveTexture;
   /** @brief the name of this ActorFrameTexture. */
   std::string m_sTextureName;
+};
+
+// Capture actors snapshot earlier siblings at their position in draw order.
+class ActorScreenTexture : public ActorFrameTexture {
+ public:
+  ActorScreenTexture();
+  ActorScreenTexture* Copy() const override;
+  void DrawPrimitives() override;
+  void PushSelf(lua_State* L) override;
+
+ private:
+  bool m_ReportedCaptureFailure = false;
 };
 
 class ActorFrameTextureAutoDeleteChildren : public ActorFrameTexture {

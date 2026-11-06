@@ -366,6 +366,9 @@ class RageDisplay {
   virtual void SetRenderTarget(
       uintptr_t /* iHandle */, bool /* bPreserveTexture */ = true) {}
 
+  // Copy the currently drawn color buffer into a texture with top-left image
+  // orientation. Backends that cannot capture return false without mutation.
+  virtual bool CopyFramebufferToTexture(uintptr_t, int, int) { return false; }
   virtual bool IsZWriteEnabled() const = 0;
   virtual void SetZWrite(bool) = 0;
   virtual void SetZTestMode(ZTestMode) = 0;

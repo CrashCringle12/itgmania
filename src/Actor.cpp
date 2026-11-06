@@ -90,6 +90,8 @@ void Actor::SetBGMLight(int iLightNumber, float fCabinetLights) {
 }
 
 void Actor::InitState() {
+  m_fUpdateFPS = m_fUpdateElapsed = 0;
+  m_bUpdateReady = true;
   this->StopTweening();
 
   m_pTempState = nullptr;
@@ -182,6 +184,9 @@ Actor::Actor(const Actor& cpy) : MessageSubscriber(cpy) {
 #define CPY(x) x = cpy.x
   CPY(m_ShaderProgram);
   CPY(m_bShaderPropagates);
+  CPY(m_fUpdateFPS);
+  CPY(m_fUpdateElapsed);
+  CPY(m_bUpdateReady);
   CPY(m_sName);
   CPY(alias_);
   CPY(m_pParent);
@@ -261,6 +266,9 @@ Actor& Actor::operator=(Actor other) {
 #define SWAP(x) std::swap(x, other.x)
   SWAP(m_ShaderProgram);
   SWAP(m_bShaderPropagates);
+  SWAP(m_fUpdateFPS);
+  SWAP(m_fUpdateElapsed);
+  SWAP(m_bUpdateReady);
   SWAP(m_sName);
   SWAP(alias_);
   SWAP(m_pParent);
@@ -897,6 +905,18 @@ void Actor::UpdateTweening(float fDeltaTime) {
 }
 
 bool Actor::IsFirstUpdate() const { return m_bFirstUpdate; }
+
+bool Actor::CheckUpdate(float& deltaTime) {
+  m_fUpdateElapsed += deltaTime;
+  m_bUpdateReady = false;
+  if (m_fUpdateFPS > 0 && m_fUpdateElapsed < 1.0f / m_fUpdateFPS) {
+    return false;
+  }
+  deltaTime = m_fUpdateElapsed;
+  m_fUpdateElapsed = 0;
+  m_bUpdateReady = true;
+  return true;
+}
 
 void Actor::Update(float fDeltaTime) {
   //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
@@ -2495,6 +2515,14 @@ class LunaActor : public Luna<Actor> {
     p->ClearShader();
     COMMON_RETURN_SELF;
   }
+  static int SetUpdateFPS(T* p, lua_State* L) {
+    const float fps = static_cast<float>(luaL_checknumber(L, 1));
+    if (!std::isfinite(fps)) {
+      return luaL_error(L, "SetUpdateFPS requires a finite rate");
+    }
+    p->SetUpdateFPS(fps);
+    COMMON_RETURN_SELF;
+  }
   static int AddShader(T* p, lua_State* L) { return SetShader(p, L); }
   static int StopShader(T* p, lua_State* L) { return ClearShader(p, L); }
   static int LoadShader(T* p, lua_State* L) {
@@ -2518,6 +2546,7 @@ class LunaActor : public Luna<Actor> {
     ADD_METHOD(LoadShader);
     ADD_METHOD(AddShader);
     ADD_METHOD(StopShader);
+    ADD_METHOD(SetUpdateFPS);
     ADD_METHOD(name);
     ADD_METHOD(sleep);
     ADD_METHOD(linear);

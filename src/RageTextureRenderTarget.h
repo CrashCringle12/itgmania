@@ -18,6 +18,7 @@ class RageTextureRenderTarget : public RageTexture {
   virtual void Reload();
   virtual uintptr_t GetTexHandle() const { return m_iTexHandle; }
 
+  uint64_t GetGeneration() const { return m_Generation; }
   void BeginRenderingTo(bool bPreserveTexture = true);
   void FinishRenderingTo();
 
@@ -25,6 +26,7 @@ class RageTextureRenderTarget : public RageTexture {
 
  private:
   const RenderTargetParam m_Param;
+  uint64_t m_Generation = 0;
 
   void Create();
   void Destroy();

@@ -1,6 +1,7 @@
 #include "ActorFrameTexture.h"
 
 #include <cinttypes>
+#include <cmath>
 #include <cstdint>
 
 #include "ActorFrame.h"
@@ -13,6 +14,8 @@
 #include "RageTextureRenderTarget.h"
 #include "RageUtil.h"
 #include "global.h"
+
+REGISTER_ACTOR_CLASS(ActorScreenTexture);
 
 REGISTER_ACTOR_CLASS_WITH_NAME(
     ActorFrameTextureAutoDeleteChildren, ActorFrameTexture);
@@ -77,8 +80,28 @@ void ActorFrameTexture::Create() {
   TEXTUREMAN->RegisterTexture(id, m_pRenderTarget);
 }
 
+bool ActorFrameTexture::ShouldRender() {
+  if (!m_pRenderTarget) {
+    return false;
+  }
+  bool recreated = false;
+  if (m_LastGeneration != m_pRenderTarget->GetGeneration()) {
+    recreated = m_LastGeneration != 0;
+    m_LastGeneration = m_pRenderTarget->GetGeneration();
+    m_HasRendered = false;
+  }
+  if (m_RenderOnce && m_HasRendered) {
+    return false;
+  }
+  if (!WasUpdated() && !recreated) {
+    return false;
+  }
+  m_HasRendered = true;
+  return true;
+}
+
 void ActorFrameTexture::DrawPrimitives() {
-  if (m_pRenderTarget == nullptr) {
+  if (!ShouldRender()) {
     return;
   }
 
@@ -87,6 +110,26 @@ void ActorFrameTexture::DrawPrimitives() {
   ActorFrame::DrawPrimitives();
 
   m_pRenderTarget->FinishRenderingTo();
+}
+
+ActorScreenTexture::ActorScreenTexture() {
+  const ActualVideoModeParams mode = DISPLAY->GetActualVideoModeParams();
+  SetWidth(static_cast<float>(mode.windowWidth));
+  SetHeight(static_cast<float>(mode.windowHeight));
+}
+void ActorScreenTexture::DrawPrimitives() {
+  if (!ShouldRender()) {
+    return;
+  }
+  if (!DISPLAY->CopyFramebufferToTexture(
+          m_pRenderTarget->GetTexHandle(), m_pRenderTarget->GetImageWidth(),
+          m_pRenderTarget->GetImageHeight()) &&
+      !m_ReportedCaptureFailure) {
+    m_ReportedCaptureFailure = true;
+    LuaHelpers::ReportScriptError(
+        "ActorScreenTexture: framebuffer capture unavailable for this renderer "
+        "or target");
+  }
 }
 
 // lua start
@@ -129,7 +172,12 @@ class LunaActorFrameTexture : public Luna<ActorFrameTexture> {
     return 1;
   }
 
+  static int RenderOnce(T* p, lua_State* L) {
+    p->RenderOnce();
+    COMMON_RETURN_SELF;
+  }
   LunaActorFrameTexture() {
+    ADD_METHOD(RenderOnce);
     ADD_METHOD(Create);
     ADD_METHOD(EnableDepthBuffer);
     ADD_METHOD(EnableAlphaBuffer);
@@ -141,6 +189,8 @@ class LunaActorFrameTexture : public Luna<ActorFrameTexture> {
 };
 
 LUA_REGISTER_DERIVED_CLASS(ActorFrameTexture, ActorFrame)
+class LunaActorScreenTexture : public Luna<ActorScreenTexture> {};
+LUA_REGISTER_DERIVED_CLASS(ActorScreenTexture, ActorFrameTexture)
 // lua end
 
 /*

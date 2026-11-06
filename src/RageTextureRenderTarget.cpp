@@ -22,6 +22,7 @@ void RageTextureRenderTarget::Reload() {
  * loaded elsewhere. Render targets can't be loaded blindly like a regular
  * texture, anyway, since something has to render into it. */
 void RageTextureRenderTarget::Create() {
+  ++m_Generation;
   /* All render targets support non-power-of-two targets,
    * but some require that the resulting texture dimensions be powers of two.
    * CreateRenderTarget returns the actual resolution. */

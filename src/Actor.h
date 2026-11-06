@@ -311,6 +311,10 @@ class Actor : public MessageSubscriber {
   // TODO: make Update non virtual and change all classes to override
   // UpdateInternal instead.
   bool IsFirstUpdate() const;
+  virtual void SetUpdateFPS(float fps) { m_fUpdateFPS = fps; }
+  float GetUpdateFPS() const { return m_fUpdateFPS; }
+  bool CheckUpdate(float& deltaTime);
+  bool WasUpdated() const { return m_bUpdateReady; }
   virtual void Update(
       float fDeltaTime);  // this can short circuit UpdateInternal
   virtual void UpdateInternal(float fDeltaTime);  // override this
@@ -780,6 +784,8 @@ class Actor : public MessageSubscriber {
   TweenState* m_pTempState;
 
   bool m_bFirstUpdate;
+  float m_fUpdateFPS = 0, m_fUpdateElapsed = 0;
+  bool m_bUpdateReady = true;
 
   // Stuff for alignment
   /** @brief The particular horizontal alignment.

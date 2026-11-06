@@ -237,3 +237,34 @@ remain available to chart Lua, and `isValid()` returns false. Hardware shader
 capability and this preference are separate checks. Built-in rendering effects
 are unaffected. Reload the screen or song after re-enabling custom shaders to
 load any skipped sources.
+
+## Screen capture and texture update rates
+
+`Def.ActorScreenTexture` supports the ActorFrameTexture `Create`, `GetTexture`,
+texture-name, and buffer controls. It captures the current color buffer at
+its position in draw order instead of rendering children. Default dimensions
+are the physical window dimensions when constructed; explicit width and
+height select the output size. Captures use top-left image orientation,
+including when the source is an inverted render target. Depth is not copied.
+
+The OpenGL backend uses framebuffer blit for copying and scaling on the GPU.
+Older drivers use a GPU row-copy fallback, which requires matching source and
+destination dimensions. Unsupported backends or capture targets report a
+script error. Capture before drawing sprites that sample the resulting image,
+and use separate targets for feedback; capturing a target into itself is
+unsupported. Multiple passes can be composed with render textures and sprites.
+
+Actors provide `SetUpdateFPS(rate)` to limit updates when they are children of
+an ActorFrame. Positive rates accumulate parent update time until the next
+interval, then update the actor and its subtree with the accumulated delta.
+Zero or negative rates remove the limit; nonfinite rates raise a Lua error.
+Tweens, callbacks, and descendant updates follow the same limit. Ordinary
+actors keep drawing their most recently updated state. ActorFrameTexture and
+ActorScreenTexture also preserve their previous image when an update is
+skipped. The first limited update and render wait for the first interval.
+
+`RenderOnce()` requests one ActorFrameTexture or ActorScreenTexture render and
+then reuses its image. Setting an update rate resumes repeated rendering.
+Recreating the render target forces a fresh render, including in render-once
+mode. A zero update rate remains unlimited rather than selecting render-once
+mode. Scheduling follows parent update time rather than a wall-clock timer.

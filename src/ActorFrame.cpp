@@ -439,7 +439,10 @@ void ActorFrame::UpdateInternal(float fDeltaTime) {
   for (std::vector<Actor*>::iterator it = m_SubActors.begin();
        it != m_SubActors.end(); it++) {
     Actor* pActor = *it;
-    pActor->Update(fDeltaTime);
+    float childDelta = fDeltaTime;
+    if (pActor->CheckUpdate(childDelta)) {
+      pActor->Update(childDelta);
+    }
   }
 
   if (unlikely(!m_UpdateFunction.IsNil())) {

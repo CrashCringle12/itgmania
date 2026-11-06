@@ -3026,6 +3026,70 @@ void RageDisplay_Legacy::SetRenderTarget(
   }
 }
 
+bool RageDisplay_Legacy::CopyFramebufferToTexture(
+    uintptr_t texture, int width, int height) {
+  if (!texture || width <= 0 || height <= 0 || GetRenderTarget() == texture) {
+    return false;
+  }
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  // Ordinary framebuffer row zero is the bottom; inverted render targets
+  // already store their top image row there.
+  const bool flip = !g_bInvertY;
+  if (GLEW_EXT_framebuffer_object && GLEW_EXT_framebuffer_blit) {
+    GLint previousRead = 0, previousDraw = 0;
+    glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING_EXT, &previousRead);
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING_EXT, &previousDraw);
+    GLuint destination = 0;
+    glGenFramebuffersEXT(1, &destination);
+    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, destination);
+    glFramebufferTexture2DEXT(
+        GL_DRAW_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D,
+        static_cast<GLuint>(texture), 0);
+    const bool complete =
+        glCheckFramebufferStatusEXT(GL_DRAW_FRAMEBUFFER_EXT) ==
+        GL_FRAMEBUFFER_COMPLETE_EXT;
+    if (complete) {
+      glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, previousDraw);
+      const GLboolean scissor = glIsEnabled(GL_SCISSOR_TEST);
+      glDisable(GL_SCISSOR_TEST);
+      glBlitFramebufferEXT(
+          viewport[0], viewport[1], viewport[0] + viewport[2],
+          viewport[1] + viewport[3], 0, flip ? height : 0, width,
+          flip ? 0 : height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+      if (scissor) {
+        glEnable(GL_SCISSOR_TEST);
+      }
+    }
+    glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, previousRead);
+    glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, previousDraw);
+    glDeleteFramebuffersEXT(1, &destination);
+    return complete;
+  }
+  // Compatibility fallback stays on the GPU. Scaling requires framebuffer
+  // blit; copying rows preserves orientation on older drivers without it.
+  if (width != viewport[2] || height != viewport[3]) {
+    return false;
+  }
+  GLint active = GL_TEXTURE0_ARB, previousTexture = 0;
+  if (GLEW_ARB_multitexture) {
+    glGetIntegerv(GL_ACTIVE_TEXTURE_ARB, &active);
+    glActiveTextureARB(GL_TEXTURE0_ARB);
+  }
+  glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
+  glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(texture));
+  for (int row = 0; row < height; ++row) {
+    glCopyTexSubImage2D(
+        GL_TEXTURE_2D, 0, 0, row, viewport[0],
+        viewport[1] + (flip ? height - row - 1 : row), width, 1);
+  }
+  glBindTexture(GL_TEXTURE_2D, previousTexture);
+  if (GLEW_ARB_multitexture) {
+    glActiveTextureARB(active);
+  }
+  return true;
+}
+
 void RageDisplay_Legacy::SetLineWidth(float fWidth) { glLineWidth(fWidth); }
 
 /*
