@@ -202,3 +202,38 @@ playfield -1, false flags, and zero note values; non-model draws default to
 material -1. These values belong to each draw and are restored when a nested
 draw ends, including when several actors share a shader. Explicit uniforms
 override the automatic values. There is no per-vertex `fYOffset` attribute.
+
+## NoteField shader controls
+
+Actors provide `AddShader(shader)` as an alias of `SetShader` and
+`StopShader()` as an alias of `ClearShader`. These select one shader rather
+than creating a sequence of passes.
+
+The NoteField actor exposes Get/Set/Add/Stop/Clear methods for `NoteShader`,
+`HoldShader`, `ReceptorShader`, and `NotePathShader`. For example:
+
+```lua
+field:SetNoteShader(shader)
+field:GetNoteShader()
+field:AddHoldShader(shader)
+field:StopNotePathShader()
+field:ClearReceptorShader()
+```
+
+These use the same player-state layer selections as Player's shader methods:
+NoteShader corresponds to ArrowShader, and NotePathShader to ArrowPathShader.
+Stop/Clear only detach the selection; another actor can keep using the same
+shader resource. Get returns nil before the field has player state. Set/Add
+require initialized player state. Mutators return the NoteField.
+
+## Disabling custom shaders
+
+`CustomShadersDisabled` defaults to false. Set it to true through PREFSMAN or
+set `CustomShadersDisabled=1` in the `[Options]` section of `Preferences.ini`
+to disable custom shader loading, compilation, updates, and drawing globally.
+Attempts log warnings instead of showing shader error dialogs. Repeated
+warnings for the same operation are suppressed while disabled. Shader objects
+remain available to chart Lua, and `isValid()` returns false. Hardware shader
+capability and this preference are separate checks. Built-in rendering effects
+are unaffected. Reload the screen or song after re-enabling custom shaders to
+load any skipped sources.

@@ -32,6 +32,7 @@
 #include "PlayerState.h"
 #include "RageDisplay.h"
 #include "RageLog.h"
+#include "RageShaderProgram.h"
 #include "RageSoundReader_FileReader.h"
 #include "RageTimer.h"
 #include "RageTypes.h"
@@ -70,6 +71,7 @@ static ThemeMetric<float> WAVEFORM_POINTS_PER_PIXEL(
     "NoteField", "WaveformPointsPerPixel");
 
 NoteField::NoteField() {
+  m_pPlayerState = nullptr;
   m_pNoteData = nullptr;
   m_pCurDisplay = nullptr;
   m_drawing_board_primitive = false;
@@ -1575,7 +1577,125 @@ class LunaNoteField : public Luna<NoteField> {
     return 0;
   }
 
+  static int ShaderForLayer(T* p, lua_State* L, int layer, bool get) {
+    if (RageShaderProgram::CustomShadersDisabled("NoteField shader access") &&
+        !get) {
+      COMMON_RETURN_SELF;
+    }
+    const PlayerState* state = p->GetPlayerState();
+    if (get) {
+      std::shared_ptr<RageShaderProgram> shader =
+          state ? state->m_NoteShaders[layer] : nullptr;
+      if (shader) {
+        shader->PushSelf(L);
+      } else {
+        lua_pushnil(L);
+      }
+      return 1;
+    }
+    if (!state) {
+      return luaL_error(L, "NoteField has no player state");
+    }
+    state->m_NoteShaders[layer] =
+        lua_isnil(L, 1)
+            ? nullptr
+            : Luna<RageShaderProgram>::check(L, 1)->shared_from_this();
+    COMMON_RETURN_SELF;
+  }
+  static int GetNoteShader(T* p, lua_State* L) {
+    return ShaderForLayer(p, L, PlayerState::ArrowShader, true);
+  }
+  static int SetNoteShader(T* p, lua_State* L) {
+    return ShaderForLayer(p, L, PlayerState::ArrowShader, false);
+  }
+  static int AddNoteShader(T* p, lua_State* L) { return SetNoteShader(p, L); }
+  static int StopNoteShader(T* p, lua_State* L) {
+    RageShaderProgram::CustomShadersDisabled("NoteField shader detach");
+    if (p->GetPlayerState()) {
+      p->GetPlayerState()->m_NoteShaders[PlayerState::ArrowShader].reset();
+    }
+    COMMON_RETURN_SELF;
+  }
+  static int ClearNoteShader(T* p, lua_State* L) {
+    return StopNoteShader(p, L);
+  }
+  static int GetHoldShader(T* p, lua_State* L) {
+    return ShaderForLayer(p, L, PlayerState::HoldShader, true);
+  }
+  static int SetHoldShader(T* p, lua_State* L) {
+    return ShaderForLayer(p, L, PlayerState::HoldShader, false);
+  }
+  static int AddHoldShader(T* p, lua_State* L) { return SetHoldShader(p, L); }
+  static int StopHoldShader(T* p, lua_State* L) {
+    RageShaderProgram::CustomShadersDisabled("NoteField shader detach");
+    if (p->GetPlayerState()) {
+      p->GetPlayerState()->m_NoteShaders[PlayerState::HoldShader].reset();
+    }
+    COMMON_RETURN_SELF;
+  }
+  static int ClearHoldShader(T* p, lua_State* L) {
+    return StopHoldShader(p, L);
+  }
+  static int GetReceptorShader(T* p, lua_State* L) {
+    return ShaderForLayer(p, L, PlayerState::ReceptorShader, true);
+  }
+  static int SetReceptorShader(T* p, lua_State* L) {
+    return ShaderForLayer(p, L, PlayerState::ReceptorShader, false);
+  }
+  static int AddReceptorShader(T* p, lua_State* L) {
+    return SetReceptorShader(p, L);
+  }
+  static int StopReceptorShader(T* p, lua_State* L) {
+    RageShaderProgram::CustomShadersDisabled("NoteField shader detach");
+    if (p->GetPlayerState()) {
+      p->GetPlayerState()->m_NoteShaders[PlayerState::ReceptorShader].reset();
+    }
+    COMMON_RETURN_SELF;
+  }
+  static int ClearReceptorShader(T* p, lua_State* L) {
+    return StopReceptorShader(p, L);
+  }
+  static int GetNotePathShader(T* p, lua_State* L) {
+    return ShaderForLayer(p, L, PlayerState::ArrowPathShader, true);
+  }
+  static int SetNotePathShader(T* p, lua_State* L) {
+    return ShaderForLayer(p, L, PlayerState::ArrowPathShader, false);
+  }
+  static int AddNotePathShader(T* p, lua_State* L) {
+    return SetNotePathShader(p, L);
+  }
+  static int StopNotePathShader(T* p, lua_State* L) {
+    RageShaderProgram::CustomShadersDisabled("NoteField shader detach");
+    if (p->GetPlayerState()) {
+      p->GetPlayerState()->m_NoteShaders[PlayerState::ArrowPathShader].reset();
+    }
+    COMMON_RETURN_SELF;
+  }
+  static int ClearNotePathShader(T* p, lua_State* L) {
+    return StopNotePathShader(p, L);
+  }
   LunaNoteField() {
+    ADD_METHOD(GetNoteShader);
+    ADD_METHOD(SetNoteShader);
+    ADD_METHOD(AddNoteShader);
+    ADD_METHOD(StopNoteShader);
+    ADD_METHOD(ClearNoteShader);
+    ADD_METHOD(GetHoldShader);
+    ADD_METHOD(SetHoldShader);
+    ADD_METHOD(AddHoldShader);
+    ADD_METHOD(StopHoldShader);
+    ADD_METHOD(ClearHoldShader);
+    ADD_METHOD(GetReceptorShader);
+    ADD_METHOD(SetReceptorShader);
+    ADD_METHOD(AddReceptorShader);
+    ADD_METHOD(StopReceptorShader);
+    ADD_METHOD(ClearReceptorShader);
+    ADD_METHOD(GetNotePathShader);
+    ADD_METHOD(SetNotePathShader);
+    ADD_METHOD(AddNotePathShader);
+    ADD_METHOD(StopNotePathShader);
+    ADD_METHOD(ClearNotePathShader);
+
     ADD_METHOD(set_step_callback);
     ADD_METHOD(set_set_pressed_callback);
     ADD_METHOD(set_did_tap_note_callback);

@@ -64,7 +64,9 @@ class PlayerState {
     ArrowPathShader,
     ShaderTargetCount
   };
-  std::array<std::shared_ptr<RageShaderProgram>, ShaderTargetCount>
+  // Visual configuration is also writable through a NoteField's const state
+  // view.
+  mutable std::array<std::shared_ptr<RageShaderProgram>, ShaderTargetCount>
       m_NoteShaders;
 
   // Music statistics:

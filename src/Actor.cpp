@@ -2495,6 +2495,8 @@ class LunaActor : public Luna<Actor> {
     p->ClearShader();
     COMMON_RETURN_SELF;
   }
+  static int AddShader(T* p, lua_State* L) { return SetShader(p, L); }
+  static int StopShader(T* p, lua_State* L) { return ClearShader(p, L); }
   static int LoadShader(T* p, lua_State* L) {
     if (RageShaderProgram::CustomShadersDisabled()) {
       p->LoadShader("", "");
@@ -2514,6 +2516,8 @@ class LunaActor : public Luna<Actor> {
     ADD_METHOD(SetShader);
     ADD_METHOD(ClearShader);
     ADD_METHOD(LoadShader);
+    ADD_METHOD(AddShader);
+    ADD_METHOD(StopShader);
     ADD_METHOD(name);
     ADD_METHOD(sleep);
     ADD_METHOD(linear);
