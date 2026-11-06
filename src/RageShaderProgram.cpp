@@ -126,13 +126,14 @@ void RageShaderProgram::SetFloatUniform(
   uniform.integers.clear();
 }
 void RageShaderProgram::SetIntUniform(
-    const std::string& name, const std::vector<int>& values) {
+    const std::string& name, const std::vector<int>& values, int arity) {
   if (CustomShadersDisabled("SetIntUniform")) {
     return;
   }
+
   Uniform& uniform = m_uniforms[name];
   uniform.kind = Uniform::Int;
-  uniform.arity = 1;
+  uniform.arity = arity;
   uniform.integers = values;
   uniform.floats.clear();
 }
@@ -256,6 +257,8 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
     lua_setfield(L, metatable, "__gc");
     lua_pushcfunction(L, Equal);
     lua_setfield(L, metatable, "__eq");
+    lua_getglobal(L, "RageShaderProgram");
+    lua_setglobal(L, "Shader");
   }
   static int Collect(lua_State* L) {
     ShaderUserdata* value = static_cast<ShaderUserdata*>(lua_touserdata(L, 1));
@@ -277,7 +280,9 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
       COMMON_RETURN_SELF;
     }
     const char* name = luaL_checkstring(L, 1);
-    const char* value = luaL_optstring(L, 2, "1");
+    const char* value = lua_isboolean(L, 2)
+                            ? (lua_toboolean(L, 2) ? "true" : "false")
+                            : luaL_optstring(L, 2, "1");
     if (!IsDefineName(name)) {
       return luaL_error(L, "Invalid shader define name");
     }
@@ -351,15 +356,24 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
   static int uniform2f(T* p, lua_State* L) { return FloatScalar(p, L, 2); }
   static int uniform3f(T* p, lua_State* L) { return FloatScalar(p, L, 3); }
   static int uniform4f(T* p, lua_State* L) { return FloatScalar(p, L, 4); }
-  static int uniform1i(T* p, lua_State* L) {
-    if (T::CustomShadersDisabled("uniform1i")) {
+
+  static int IntScalar(T* p, lua_State* L, int arity) {
+    if (T::CustomShadersDisabled("integer uniform")) {
       COMMON_RETURN_SELF;
     }
+
     const char* name = luaL_checkstring(L, 1);
-    const int value = IntegerArgument(L, 2);
-    p->SetIntUniform(name, {value});
+    int values[4] = {};
+    for (int i = 0; i < arity; ++i) {
+      values[i] = IntegerArgument(L, i + 2);
+    }
+    p->SetIntUniform(name, std::vector<int>(values, values + arity), arity);
     COMMON_RETURN_SELF;
   }
+  static int uniform1i(T* p, lua_State* L) { return IntScalar(p, L, 1); }
+  static int uniform2i(T* p, lua_State* L) { return IntScalar(p, L, 2); }
+  static int uniform3i(T* p, lua_State* L) { return IntScalar(p, L, 3); }
+  static int uniform4i(T* p, lua_State* L) { return IntScalar(p, L, 4); }
   static int FloatArray(T* p, lua_State* L, int arity, bool matrix = false) {
     if (T::CustomShadersDisabled("float array or matrix uniform")) {
       COMMON_RETURN_SELF;
@@ -390,12 +404,14 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
   static int uniformMatrix4fv(T* p, lua_State* L) {
     return FloatArray(p, L, 4, true);
   }
-  static int uniform1iv(T* p, lua_State* L) {
-    if (T::CustomShadersDisabled("uniform1iv")) {
+
+  static int IntArray(T* p, lua_State* L, int arity) {
+    if (T::CustomShadersDisabled("integer array uniform")) {
       COMMON_RETURN_SELF;
     }
+
     const char* name = luaL_checkstring(L, 1);
-    const size_t count = CheckArray(L, 2, 1, true);
+    const size_t count = CheckArray(L, 2, arity, true);
     std::vector<int> values;
     values.reserve(count);
     for (size_t i = 0; i < count; ++i) {
@@ -403,7 +419,48 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
       values.push_back(static_cast<int>(lua_tonumber(L, -1)));
       lua_pop(L, 1);
     }
-    p->SetIntUniform(name, values);
+    p->SetIntUniform(name, values, arity);
+    COMMON_RETURN_SELF;
+  }
+  static int uniform1iv(T* p, lua_State* L) { return IntArray(p, L, 1); }
+  static int uniform2iv(T* p, lua_State* L) { return IntArray(p, L, 2); }
+  static int uniform3iv(T* p, lua_State* L) { return IntArray(p, L, 3); }
+  static int uniform4iv(T* p, lua_State* L) { return IntArray(p, L, 4); }
+  static int cleardefine(T* p, lua_State* L) { return clearDefine(p, L); }
+  static int compileimmediate(T* p, lua_State* L) {
+    return compileImmediate(p, L);
+  }
+  // File loading is separate from the source-string compilation API.
+  static int loadFiles(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("loadFiles")) {
+      COMMON_RETURN_SELF;
+    }
+    const char* vertex = luaL_checkstring(L, 1);
+    const char* fragment = luaL_optstring(L, 2, "");
+    if (!p->LoadSources(vertex, fragment)) {
+      LuaHelpers::ReportScriptError(p->GetError());
+    }
+    COMMON_RETURN_SELF;
+  }
+  static int compilebg(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("compilebg")) {
+      COMMON_RETURN_SELF;
+    }
+    p->SetBackground(true);
+    return compile(p, L);
+  }
+  static int compileimmediatebg(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("compileimmediatebg")) {
+      COMMON_RETURN_SELF;
+    }
+    p->SetBackground(true);
+    return compileImmediate(p, L);
+  }
+  static int setBackground(T* p, lua_State* L) {
+    if (T::CustomShadersDisabled("setBackground")) {
+      COMMON_RETURN_SELF;
+    }
+    p->SetBackground(lua_toboolean(L, 1) != 0);
     COMMON_RETURN_SELF;
   }
   static int uniformTexture(T* p, lua_State* L) {
@@ -426,7 +483,19 @@ class LunaRageShaderProgram : public Luna<RageShaderProgram> {
     ADD_METHOD(uniform3f);
     ADD_METHOD(uniform4f);
     ADD_METHOD(uniform1i);
+    ADD_METHOD(uniform2i);
+    ADD_METHOD(uniform3i);
+    ADD_METHOD(uniform4i);
     ADD_METHOD(uniform1iv);
+    ADD_METHOD(uniform2iv);
+    ADD_METHOD(uniform3iv);
+    ADD_METHOD(uniform4iv);
+    ADD_METHOD(cleardefine);
+    ADD_METHOD(compileimmediate);
+    ADD_METHOD(loadFiles);
+    ADD_METHOD(compilebg);
+    ADD_METHOD(compileimmediatebg);
+    ADD_METHOD(setBackground);
     ADD_METHOD(uniform1fv);
     ADD_METHOD(uniform2fv);
     ADD_METHOD(uniform3fv);

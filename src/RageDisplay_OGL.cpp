@@ -1415,11 +1415,15 @@ class RageShaderProgramGL final : public RageShaderProgram {
     glUniformMatrix4fvARB(
         Location("projectionMatrix"), 1, GL_FALSE,
         reinterpret_cast<const GLfloat*>(&projection));
-    glUniform1fARB(
-        Location("time"),
-        GAMESTATE ? GAMESTATE->m_Position.m_fMusicSeconds : 0.f);
-    glUniform1fARB(
-        Location("beat"), GAMESTATE ? GAMESTATE->m_Position.m_fSongBeat : 0.f);
+
+    if (!IsBackground()) {
+      glUniform1fARB(
+          Location("time"),
+          GAMESTATE ? GAMESTATE->m_Position.m_fMusicSeconds : 0.f);
+      glUniform1fARB(
+          Location("beat"),
+          GAMESTATE ? GAMESTATE->m_Position.m_fSongBeat : 0.f);
+    }
     for (const std::pair<const std::string, Uniform>& item : GetUniforms()) {
       const GLint location = Location(item.first);
       const Uniform& uniform = item.second;
@@ -1427,9 +1431,22 @@ class RageShaderProgramGL final : public RageShaderProgram {
         continue;
       }
       if (uniform.kind == Uniform::Int) {
-        glUniform1ivARB(
-            location, static_cast<GLsizei>(uniform.integers.size()),
-            uniform.integers.data());
+        const GLsizei count =
+            static_cast<GLsizei>(uniform.integers.size() / uniform.arity);
+        switch (uniform.arity) {
+          case 1:
+            glUniform1ivARB(location, count, uniform.integers.data());
+            break;
+          case 2:
+            glUniform2ivARB(location, count, uniform.integers.data());
+            break;
+          case 3:
+            glUniform3ivARB(location, count, uniform.integers.data());
+            break;
+          case 4:
+            glUniform4ivARB(location, count, uniform.integers.data());
+            break;
+        }
       } else if (uniform.kind == Uniform::Matrix) {
         const GLsizei count = static_cast<GLsizei>(
             uniform.floats.size() / (uniform.arity * uniform.arity));

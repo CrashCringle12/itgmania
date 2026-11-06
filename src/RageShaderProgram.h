@@ -69,7 +69,10 @@ class RageShaderProgram
   void SetFloatUniform(
       const std::string& name, int arity, const std::vector<float>& values,
       bool matrix = false);
-  void SetIntUniform(const std::string& name, const std::vector<int>& values);
+  void SetIntUniform(
+      const std::string& name, const std::vector<int>& values, int arity = 1);
+  bool IsBackground() const { return m_background; }
+  void SetBackground(bool background) { m_background = background; }
   void SetTextureUniform(const std::string& name, RageTexture* texture);
 
   // Call before TEXTUREMAN and DISPLAY are destroyed. This also protects Lua
@@ -86,6 +89,7 @@ class RageShaderProgram
   std::map<std::string, Uniform> m_uniforms;
   std::map<std::string, RageTexture*> m_textures;
   std::string m_error;
+  bool m_background = false;
   bool m_dirty = true;
   bool m_released = false;
 };

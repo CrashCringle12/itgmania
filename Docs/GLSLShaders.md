@@ -102,14 +102,28 @@ A shader returned by `GetShader()` supports:
 authored `#version` directive, or at the start if there is none. Define names
 must be identifiers, and values cannot contain line breaks.
 
+`cleardefine` and `compileimmediate` are aliases for `clearDefine` and
+`compileImmediate`. Defines also accept Lua booleans, which become GLSL
+`true` or `false`.
+
+`loadFiles(vertexPath, fragmentPath)` loads virtual-filesystem paths; the
+fragment path defaults to an empty string. The `compile` methods continue to
+take source strings. `compilebg(vertexSource, fragmentSource)` queues a
+background program, and `compileimmediatebg()` immediately compiles the current
+program in background mode. Background mode skips automatic song `time` and
+`beat` uploads while retaining resolution and explicit uniforms.
+`setBackground(false)` restores automatic song clocks. These operations do
+not create worker threads. The global `Shader` table aliases
+`RageShaderProgram` for capability checks.
+
 Uniform setters take a uniform name followed by these arguments:
 
 | Methods | Arguments after the name |
 | --- | --- |
 | `uniform1f`, `uniform2f`, `uniform3f`, `uniform4f` | One to four float components |
-| `uniform1i` | One integer |
+| `uniform1i`, `uniform2i`, `uniform3i`, `uniform4i` | One to four integer components |
 | `uniform1fv`, `uniform2fv`, `uniform3fv`, `uniform4fv` | A flat Lua table whose length is a multiple of the vector width |
-| `uniform1iv` | A flat Lua table of integers |
+| `uniform1iv`, `uniform2iv`, `uniform3iv`, `uniform4iv` | A flat Lua table of integers whose length is a multiple of the vector width |
 | `uniformMatrix2fv`, `uniformMatrix3fv`, `uniformMatrix4fv` | A flat column-major table in multiples of 4, 9, or 16 values |
 | `uniformTexture` | A texture such as `sprite:GetTexture()`, or `nil` to remove the binding |
 
