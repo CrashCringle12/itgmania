@@ -1247,6 +1247,17 @@ void NoteDisplay::DrawHoldBody(
 
   part_args.anchor_to_top = reverse && cache->m_bTopHoldAnchorWhenReverse;
 
+  RageDisplay::ShaderDrawContext context;
+  context.column = column_args.column;
+  context.playfield = m_pPlayerState->m_PlayerNumber;
+  context.hold = true;
+  context.noteBeat = context.adjustedNoteBeat = beat;
+  // Hold vertices include column translation; tap actor vertices are local.
+  context.columnOffset =
+      GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber)
+          ->m_ColumnInfo[m_pPlayerState->m_PlayerNumber][column_args.column]
+          .fXOffset;
+  RageDisplay::ShaderContextScope shaderContext(*DISPLAY, context);
   DISPLAY->PushShaderProgram(
       m_pPlayerState->m_NoteShaders[PlayerState::HoldShader], true);
   DISPLAY->SetTextureMode(TextureUnit_1, TextureMode_Modulate);
@@ -1523,6 +1534,13 @@ void NoteDisplay::DrawActor(
         cache->m_fNoteColorTextureCoordSpacing[part] * color);
   }
 
+  RageDisplay::ShaderDrawContext context;
+  context.column = column_args.column;
+  context.playfield = m_pPlayerState->m_PlayerNumber;
+  context.mine = tn.type == TapNoteType_Mine;
+  context.yOffset = fYOffset;
+  context.noteBeat = context.adjustedNoteBeat = fBeat;
+  RageDisplay::ShaderContextScope shaderContext(*DISPLAY, context);
   DISPLAY->PushShaderProgram(
       m_pPlayerState->m_NoteShaders[PlayerState::ArrowShader], true);
   pActor->Draw();
@@ -1731,6 +1749,13 @@ void NoteColumnRenderer::DrawArrowPath() {
   const int segments = std::max(
       1, std::min(16383, static_cast<int>(std::ceil((last - first) / step))));
   const ArrowPath::Display& display = state->m_ArrowPathDisplay;
+  RageDisplay::ShaderDrawContext context;
+  context.column = m_column;
+  context.playfield = state->m_PlayerNumber;
+  context.columnOffset = GAMESTATE->GetCurrentStyle(state->m_PlayerNumber)
+                             ->m_ColumnInfo[state->m_PlayerNumber][m_column]
+                             .fXOffset;
+  RageDisplay::ShaderContextScope shaderContext(*DISPLAY, context);
   DISPLAY->PushShaderProgram(
       state->m_NoteShaders[PlayerState::ArrowPathShader], true);
   DISPLAY->ClearAllTextures();

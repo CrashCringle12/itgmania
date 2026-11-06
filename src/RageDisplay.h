@@ -290,6 +290,35 @@ class RageDisplay {
   virtual int GetMaxTextureSize() const = 0;
   virtual void SetTextureFiltering(TextureUnit, bool) = 0;
   virtual void SetEffectMode(EffectMode) {}
+  // Per-draw values live on the renderer, never on shared shader resources.
+  struct ShaderDrawContext {
+    int column = -1, playfield = -1, material = -1;
+    bool receptor = false, hold = false, mine = false;
+    float yOffset = 0, columnOffset = 0, noteBeat = 0, adjustedNoteBeat = 0;
+  };
+  const ShaderDrawContext& GetShaderDrawContext() const {
+    return m_ShaderDrawContext;
+  }
+  class ShaderContextScope {
+   public:
+    ShaderContextScope(RageDisplay& display, const ShaderDrawContext& context)
+        : m_display(display), m_previous(display.m_ShaderDrawContext) {
+      display.m_ShaderDrawContext = context;
+    }
+    ~ShaderContextScope() { m_display.m_ShaderDrawContext = m_previous; }
+    ShaderContextScope(const ShaderContextScope&) = delete;
+    ShaderContextScope& operator=(const ShaderContextScope&) = delete;
+
+   private:
+    RageDisplay& m_display;
+    ShaderDrawContext m_previous;
+  };
+  bool GetShaderEnvironmentMapping() const {
+    return m_ShaderEnvironmentMapping[TextureUnit_1];
+  }
+  void SetShaderEnvironmentMapping(TextureUnit unit, bool enabled) {
+    m_ShaderEnvironmentMapping[unit] = enabled;
+  }
   virtual bool SupportsShaders() const { return false; }
   virtual std::shared_ptr<RageShaderProgram> CreateShaderProgram() {
     return nullptr;
@@ -513,6 +542,8 @@ class RageDisplay {
   std::vector<std::pair<std::shared_ptr<RageShaderProgram>, bool>>
       m_ShaderPrograms;
   std::array<float, 4> m_ShaderTextureDimensions{{1, 1, 1, 1}};
+  ShaderDrawContext m_ShaderDrawContext;
+  std::array<bool, NUM_TextureUnit> m_ShaderEnvironmentMapping{};
 };
 
 extern RageDisplay*

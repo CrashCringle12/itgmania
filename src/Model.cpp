@@ -495,6 +495,9 @@ void Model::DrawMesh(int i) const {
   // Draw it
   const RageCompiledGeometry* TempGeometry =
       m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pCompiledGeometry;
+  RageDisplay::ShaderDrawContext context = DISPLAY->GetShaderDrawContext();
+  context.material = pMesh->nMaterialIndex;
+  RageDisplay::ShaderContextScope shaderContext(*DISPLAY, context);
   DISPLAY->DrawCompiledGeometry(TempGeometry, i, m_pGeometry->m_Meshes);
 
   if (pMesh->m_iBoneIndex != -1) {

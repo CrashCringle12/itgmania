@@ -1449,6 +1449,7 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix(
 
 void RageDisplay_D3D::SetSphereEnvironmentMapping(TextureUnit tu, bool b) {
   g_bSphereMapping[tu] = b;
+  SetShaderEnvironmentMapping(tu, b);
 }
 
 void RageDisplay_D3D::SetCelShaded(int stage) {

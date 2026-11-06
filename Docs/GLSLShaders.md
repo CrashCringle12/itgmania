@@ -185,3 +185,20 @@ The actor methods, gameplay-layer selections, and shader inputs include
 NotITG-compatible names. Existing shaders still need to fit the available
 GLSL version and inputs; this feature does not supply other NotITG chart,
 actor, XML, or template APIs.
+
+## Automatic draw context
+
+Gameplay draws supply zero-based `iCol` and `iPlayfield`, plus `isReceptor`,
+`isHold` (hold bodies and caps), and `isMine`. Tap, head, and tail draws supply
+`fYOffset`; applicable note draws also supply `fNoteBeat` and `fNoteBeatAdj`.
+In ITGmania, the adjusted beat currently equals the actual note beat.
+Hold bodies and ArrowPath guides supply `fColOffset`, the style column's X
+translation already included in their vertices. Modifiers and splines can
+further displace those vertices.
+
+Models supply `materialId` per mesh. `isEnvMap` reflects sphere environment
+mapping on the primary texture stage. Non-note draws default to column and
+playfield -1, false flags, and zero note values; non-model draws default to
+material -1. These values belong to each draw and are restored when a nested
+draw ends, including when several actors share a shader. Explicit uniforms
+override the automatic values. There is no per-vertex `fYOffset` attribute.

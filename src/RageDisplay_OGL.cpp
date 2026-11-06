@@ -1424,6 +1424,20 @@ class RageShaderProgramGL final : public RageShaderProgram {
           Location("beat"),
           GAMESTATE ? GAMESTATE->m_Position.m_fSongBeat : 0.f);
     }
+    const RageDisplay::ShaderDrawContext& context =
+        DISPLAY->GetShaderDrawContext();
+    glUniform1iARB(Location("iCol"), context.column);
+    glUniform1iARB(Location("iPlayfield"), context.playfield);
+    glUniform1iARB(Location("materialId"), context.material);
+    glUniform1iARB(Location("isReceptor"), context.receptor);
+    glUniform1iARB(Location("isHold"), context.hold);
+    glUniform1iARB(Location("isMine"), context.mine);
+    glUniform1iARB(
+        Location("isEnvMap"), DISPLAY->GetShaderEnvironmentMapping());
+    glUniform1fARB(Location("fYOffset"), context.yOffset);
+    glUniform1fARB(Location("fColOffset"), context.columnOffset);
+    glUniform1fARB(Location("fNoteBeat"), context.noteBeat);
+    glUniform1fARB(Location("fNoteBeatAdj"), context.adjustedNoteBeat);
     for (const std::pair<const std::string, Uniform>& item : GetUniforms()) {
       const GLint location = Location(item.first);
       const Uniform& uniform = item.second;
@@ -3081,6 +3095,7 @@ void RageDisplay_Legacy::SetSphereEnvironmentMapping(TextureUnit tu, bool b) {
   if (!SetTextureUnit(tu)) {
     return;
   }
+  SetShaderEnvironmentMapping(tu, b);
 
   if (b) {
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);

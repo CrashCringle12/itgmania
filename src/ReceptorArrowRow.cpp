@@ -97,6 +97,11 @@ void ReceptorArrowRow::DrawPrimitives() {
       GAMESTATE->GetCurrentStyle(m_pPlayerState->m_PlayerNumber);
   for (unsigned i = 0; i < m_ReceptorArrow.size(); i++) {
     const int c = pStyle->m_iColumnDrawOrder[i];
+    RageDisplay::ShaderDrawContext context;
+    context.column = c;
+    context.playfield = m_pPlayerState->m_PlayerNumber;
+    context.receptor = true;
+    RageDisplay::ShaderContextScope shaderContext(*DISPLAY, context);
     m_ReceptorArrow[c]->Draw();
   }
   DISPLAY->PopShaderProgram();
